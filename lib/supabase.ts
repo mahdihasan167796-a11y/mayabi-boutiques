@@ -1,16 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
-// ⚠️ এই ফাইলটি সার্ভার-সাইডে (API route) ইমপোর্ট করবেন।
-// বিল্ড টাইমে URL মিসিং থাকলে যেন Invalid URL এরর না দেয়, সেজন্য fallback URL যুক্ত করা হয়েছে।
-
+// Vercel Build-এর সময় যেন Invalid URL এরর না দেয়, সে জন্য বৈধ ডিফল্ট URL যুক্ত করা হয়েছে
 const supabaseUrl =
-  process.env.SUPABASE_URL ||
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
-  "https://placeholder-project.supabase.co";
+  process.env.SUPABASE_URL ||
+  "https://xyzcompany.supabase.co";
+
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy";
 
 const supabaseServiceKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || "placeholder-key";
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy";
 
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { persistSession: false },
 });
