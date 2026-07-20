@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 const VALID_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
