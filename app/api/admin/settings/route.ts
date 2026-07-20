@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const { data, error } = await supabaseAdmin.from("site_settings").select("*").eq("id", 1).single();
   if (error) {
