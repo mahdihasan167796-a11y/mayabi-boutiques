@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
     const { data, error } = await supabaseAdmin
-      .from("products")
+      .from("orders")
       .select("*")
       .order("created_at", { ascending: false });
 
@@ -14,28 +15,8 @@ export async function GET() {
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, products: data });
+    return NextResponse.json({ ok: true, orders: data });
   } catch {
     return NextResponse.json({ ok: false, error: "সার্ভার এরর" }, { status: 500 });
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-
-    const { data, error } = await supabaseAdmin
-      .from("products")
-      .insert(body)
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ ok: true, product: data });
-  } catch {
-    return NextResponse.json({ ok: false, error: "অবৈধ রিকোয়েস্ট" }, { status: 400 });
   }
 }
