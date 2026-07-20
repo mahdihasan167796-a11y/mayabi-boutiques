@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { slugify } from "@/lib/slugify";
 
+// Next.js static rendering বন্ধ করার জন্য
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const BUCKET = "product-images";
 const DEFAULT_SIZES = ["৩৮", "৪০", "৪২", "৪৪"];
 
