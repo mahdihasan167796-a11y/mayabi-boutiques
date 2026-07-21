@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { categories, featuredCategorySlugs } from "@/lib/categories";
 import { getSiteSettings } from "@/lib/settings";
-
+export const revalidate = 0; // এটি পেজটিকে ক্যাশ করতে বাধা দেবে
 export default async function HomePage() {
   const products: any[] = [];
   const settings = await getSiteSettings();
