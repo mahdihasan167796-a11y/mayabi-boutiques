@@ -196,6 +196,14 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
     ...initialSettings,
     isOfferActive: (initialSettings as any).isOfferActive ?? true,
     noOfferMessage: (initialSettings as any).noOfferMessage || "বর্তমানে কোনো বিশেষ অফার চালু নেই। নতুন অফারের জন্য আমাদের সাথেই থাকুন!",
+    combo1Title: (initialSettings as any).combo1Title || "মেহেফিল কম্বো",
+    combo1Price: (initialSettings as any).combo1Price || "৪৫০০",
+    combo1OldPrice: (initialSettings as any).combo1OldPrice || "৬০০০",
+    combo1Features: (initialSettings as any).combo1Features || "১টি কাস্টম ফিটেড থ্রি-পিস\n১টি প্রিমিয়াম ওরনা\nফ্রি হোম ডেলিভারি",
+    combo2Title: (initialSettings as any).combo2Title || "ব্রাইডাল মেগা সেট",
+    combo2Price: (initialSettings as any).combo2Price || "৬৮০০",
+    combo2OldPrice: (initialSettings as any).combo2OldPrice || "৯৫০০",
+    combo2Features: (initialSettings as any).combo2Features || "২টি প্রিমিয়াম ড্রেস সেট\n১টি এক্সক্লুসিভ স্কার্ফ\nভিআইপি গিফট বক্স\nফ্রি হোম ডেলিভারি",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -251,7 +259,81 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
           </button>
         </div>
 
-        {!form.isOfferActive && (
+        {/* অফার অন থাকলে কম্বো বক্সগুলো দেখাবে */}
+        {form.isOfferActive ? (
+          <div className="space-y-6 pt-3 border-t border-[#c9a054]/10">
+            {/* কম্বো ১ */}
+            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
+              <h4 className="text-xs font-bold text-[#c9a054]">📦 প্রথম কম্বো প্যাকেজ</h4>
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <input
+                  type="text" value={form.combo1Title} onChange={handleChange("combo1Title")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo1Price} onChange={handleChange("combo1Price")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo1OldPrice} onChange={handleChange("combo1OldPrice")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <textarea
+                  rows={3} value={form.combo1Features} onChange={handleChange("combo1Features")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+            </div>
+
+            {/* কম্বো ২ */}
+            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
+              <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <input
+                  type="text" value={form.combo2Title} onChange={handleChange("combo2Title")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo2Price} onChange={handleChange("combo2Price")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo2OldPrice} onChange={handleChange("combo2OldPrice")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <textarea
+                  rows={3} value={form.combo2Features} onChange={handleChange("combo2Features")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* অফার অফ থাকলে সাধারণ টেক্সট এরিয়া দেখাবে */
           <div>
             <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">
               অফার না থাকলে যে বার্তাটি দেখানো হবে:
