@@ -192,12 +192,16 @@ function OrdersTab({
 }
 
 function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
-  const [form, setForm] = useState(initialSettings);
+  const [form, setForm] = useState({
+    ...initialSettings,
+    isOfferActive: (initialSettings as any).isOfferActive ?? true,
+    noOfferMessage: (initialSettings as any).noOfferMessage || "বর্তমানে কোনো বিশেষ অফার চালু নেই। নতুন অফারের জন্য আমাদের সাথেই থাকুন!",
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleChange = (field: keyof SiteSettings) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [field]: e.target.value });
   };
 
@@ -226,53 +230,91 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
   };
 
   return (
-    <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-6 space-y-5">
-      <h3 className="text-sm font-bold text-white border-b border-[#c9a054]/10 pb-3">
-        ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
-      </h3>
-      <p className="text-xs text-gray-500 -mt-3">
-        এখানে যা বসাবেন, তা সাথে সাথে হোমপেজের ফুটারে দেখাবে। খালি রাখলে সেই আইকনটি দেখানো হবে না।
-      </p>
+    <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-6 space-y-6">
+      
+      {/* --- স্পেশাল অফার কন্ট্রোল সেকশন --- */}
+      <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-4">
+        <h3 className="text-sm font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
+          🎁 কম্বো অফার কন্ট্রোল
+        </h3>
 
-      <div>
-        <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Facebook পেজ লিংক</label>
-        <input
-          type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
-          placeholder="https://facebook.com/yourpage"
-          className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-        />
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-gray-300">অফার স্ট্যাটাস (On/Off):</label>
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, isOfferActive: !form.isOfferActive })}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+              form.isOfferActive ? "bg-green-600 text-white" : "bg-red-600 text-white"
+            }`}
+          >
+            {form.isOfferActive ? "অফার চালু আছে (Active)" : "অফার বন্ধ আছে (Inactive)"}
+          </button>
+        </div>
+
+        {!form.isOfferActive && (
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">
+              অফার না থাকলে যে বার্তাটি দেখানো হবে:
+            </label>
+            <textarea
+              rows={2}
+              value={form.noOfferMessage}
+              onChange={handleChange("noOfferMessage")}
+              placeholder="অফার না থাকলে কি লিখা থাকবে..."
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        )}
       </div>
+
+      {/* --- সোশ্যাল ও কন্টাক্ট সেকশন --- */}
       <div>
-        <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Instagram প্রোফাইল লিংক</label>
-        <input
-          type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
-          placeholder="https://instagram.com/yourprofile"
-          className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-        />
-      </div>
-      <div>
-        <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">TikTok প্রোফাইল লিংক</label>
-        <input
-          type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
-          placeholder="https://tiktok.com/@yourprofile"
-          className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-        />
-      </div>
-      <div>
-        <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Messenger লিংক</label>
-        <input
-          type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
-          placeholder="https://m.me/yourpage"
-          className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-        />
-      </div>
-      <div>
-        <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">যোগাযোগের ফোন নাম্বার</label>
-        <input
-          type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
-          placeholder="০১৭০০-০০০০০০"
-          className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-        />
+        <h3 className="text-sm font-bold text-white border-b border-[#c9a054]/10 pb-3 mb-3">
+          ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
+        </h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Facebook পেজ লিংক</label>
+            <input
+              type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
+              placeholder="https://facebook.com/yourpage"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Instagram প্রোফাইল লিংক</label>
+            <input
+              type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
+              placeholder="https://instagram.com/yourprofile"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">TikTok প্রোফাইল লিংক</label>
+            <input
+              type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
+              placeholder="https://tiktok.com/@yourprofile"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Messenger লিংক</label>
+            <input
+              type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
+              placeholder="https://m.me/yourpage"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">যোগাযোগের ফোন নাম্বার</label>
+            <input
+              type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
+              placeholder="০১৭০০-০০০০০০"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        </div>
       </div>
 
       {message && <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-2">{message}</p>}
@@ -280,7 +322,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
 
       <button
         type="submit" disabled={isSaving}
-        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-3 rounded-xl transition-all"
+        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-3 rounded-xl transition-all cursor-pointer"
       >
         {isSaving ? "সেভ হচ্ছে..." : "সেটিংস সেভ করুন"}
       </button>

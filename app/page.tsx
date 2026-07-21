@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { categories, featuredCategorySlugs } from "@/lib/categories";
+import { getSiteSettings } from "@/lib/settings";
 
-export default function HomePage() {
+export default async function HomePage() {
   const products: any[] = [];
+  const settings = await getSiteSettings();
+
   const featured = featuredCategorySlugs
     .map((slug) => categories.find((c) => c.slug === slug))
     .filter(Boolean) as typeof categories;
@@ -18,6 +21,12 @@ export default function HomePage() {
     { icon: "🎨", title: "ইউনিক রাজকীয় ডিজাইন", desc: "আমাদের কারিগরদের তৈরি প্রতিটি ডিজাইন স্বতন্ত্র ও সীমিত সংস্করণের।" },
     { icon: "🤝", title: "সহজ রিটার্ন ও ক্যাশ অন ডেলিভারি", desc: "সারা বাংলাদেশে ঘরে বসে পণ্য দেখে মূল্য পরিশোধ ও ৭ দিনের ইজি এক্সচেঞ্জ সুবিধা।" },
   ];
+
+  // কম্বো ১ ফীচারসমূহ
+  const combo1FeaturesList = (settings.combo1Features || `১টি প্রিমিয়াম জর্জেট/লিনেন থ্রি-পিস\n১টি এক্সক্লুসিভ সেমি-লং সুতি পাঞ্জাবি\nমায়াবী সিগনেচার লাক্সারি বক্স প্যাকিং\nফ্রি হোম ডেলিভারি সুবিধা`).split('\n');
+
+  // কম্বো ২ ফীচারসমূহ
+  const combo2FeaturesList = (settings.combo2Features || `১টি এক্সক্লুসিভ কাতান/জামদানি শাড়ি\n১টি প্রিমিয়াম সিকোয়েন্স থ্রি-পিস সেট\nরাজকীয় কাস্টমাইজড গিফট বক্সিং\n২৪ ঘণ্টার সুপার-ফাস্ট ডেলিভারি`).split('\n');
 
   return (
     <>
@@ -186,47 +195,61 @@ export default function HomePage() {
           <h2 className="text-xl sm:text-3xl font-bold text-white">উৎসবের বিশেষ লাক্সারি কম্বো প্যাকেজ</h2>
           <p className="text-xs text-gray-400 mt-1">সীমিত সময়ের বিশেষ ছাড় ও জমকালো আকর্ষণ</p>
         </div>
-        <div className="max-w-4xl mx-auto px-4 grid md:grid-cols-2 gap-8">
-          <div className="bg-[#121211] p-8 rounded-2xl border border-gray-800 space-y-6 flex flex-col justify-between">
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white">মেহেফিল কম্বো (কাপল সেট)</h3>
-              <p className="text-2xl font-black text-[#c9a054]">৳৪,৫০০ <span className="text-xs text-gray-500 line-through">৳৬,০০০</span></p>
-              <hr className="border-gray-800" />
-              <ul className="text-xs text-gray-400 space-y-2.5 pt-2">
-                <li>✓ ১টি প্রিমিয়াম জর্জেট/লিনেন থ্রি-পিস</li>
-                <li>✓ ১টি এক্সক্লুসিভ সেমি-লং সুতি পাঞ্জাবি</li>
-                <li>✓ মায়াবী সিগনেচার লাক্সারি বক্স প্যাকিং</li>
-                <li>✓ ফ্রি হোম ডেলিভারি সুবিধা</li>
-              </ul>
+
+        {settings.isOfferActive !== false ? (
+          <div className="max-w-4xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+            {/* কম্বো ১ */}
+            <div className="bg-[#121211] p-8 rounded-2xl border border-gray-800 space-y-6 flex flex-col justify-between">
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold text-white">{settings.combo1Title || "মেহেফিল কম্বো (কাপল সেট)"}</h3>
+                <p className="text-2xl font-black text-[#c9a054]">
+                  ৳{settings.combo1Price || "৪,৫০০"} <span className="text-xs text-gray-500 line-through">৳{settings.combo1OldPrice || "৬,০০০"}</span>
+                </p>
+                <hr className="border-gray-800" />
+                <ul className="text-xs text-gray-400 space-y-2.5 pt-2">
+                  {combo1FeaturesList.map((feature, i) => (
+                    <li key={i}>✓ {feature}</li>
+                  ))}
+                </ul>
+              </div>
+              <Link
+                href="#featured"
+                className="w-full bg-[#1e1e1d] hover:bg-[#c9a054] hover:text-black border border-[#c9a054]/30 text-[#c9a054] text-xs font-bold py-3 rounded-xl transition-all text-center block"
+              >
+                পণ্য পছন্দ করুন
+              </Link>
             </div>
-            <Link
-              href="#featured"
-              className="w-full bg-[#1e1e1d] hover:bg-[#c9a054] hover:text-black border border-[#c9a054]/30 text-[#c9a054] text-xs font-bold py-3 rounded-xl transition-all text-center"
-            >
-              পণ্য পছন্দ করুন
-            </Link>
-          </div>
-          <div className="bg-[#121211] p-8 rounded-2xl border-2 border-[#c9a054] space-y-6 relative flex flex-col justify-between">
-            <span className="absolute -top-3 right-6 bg-[#c9a054] text-black font-extrabold text-[10px] px-3 py-1 rounded-full">সেরা ডিল</span>
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white">ব্রাইডাল/উৎসব মেগা সেট</h3>
-              <p className="text-2xl font-black text-[#c9a054]">৳৬,৮০০ <span className="text-xs text-gray-500 line-through">৳৯,৫০০</span></p>
-              <hr className="border-gray-800" />
-              <ul className="text-xs text-gray-300 space-y-2.5 pt-2">
-                <li>✓ ১টি এক্সক্লুসিভ কাতান/জামদানি শাড়ি</li>
-                <li>✓ ১টি প্রিমিয়াম সিকোয়েন্স থ্রি-পিস সেট</li>
-                <li>✓ রাজকীয় কাস্টমাইজড গিফট বক্সিং</li>
-                <li>✓ ২৪ ঘণ্টার সুপার-ফাস্ট ডেলিভারি</li>
-              </ul>
+
+            {/* কম্বো ২ */}
+            <div className="bg-[#121211] p-8 rounded-2xl border-2 border-[#c9a054] space-y-6 relative flex flex-col justify-between">
+              <span className="absolute -top-3 right-6 bg-[#c9a054] text-black font-extrabold text-[10px] px-3 py-1 rounded-full">সেরা ডিল</span>
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold text-white">{settings.combo2Title || "ব্রাইডাল/উৎসব মেগা সেট"}</h3>
+                <p className="text-2xl font-black text-[#c9a054]">
+                  ৳{settings.combo2Price || "৬,৮০০"} <span className="text-xs text-gray-500 line-through">৳{settings.combo2OldPrice || "৯,৫০০"}</span>
+                </p>
+                <hr className="border-gray-800" />
+                <ul className="text-xs text-gray-300 space-y-2.5 pt-2">
+                  {combo2FeaturesList.map((feature, i) => (
+                    <li key={i}>✓ {feature}</li>
+                  ))}
+                </ul>
+              </div>
+              <Link
+                href="#featured"
+                className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] text-black text-xs font-bold py-3 rounded-xl transition-all shadow-md text-center block"
+              >
+                কালেকশন থেকে কিনুন
+              </Link>
             </div>
-            <Link
-              href="#featured"
-              className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] text-black text-xs font-bold py-3 rounded-xl transition-all shadow-md text-center"
-            >
-              কালেকশন থেকে কিনুন
-            </Link>
           </div>
-        </div>
+        ) : (
+          <div className="max-w-2xl mx-auto px-4 text-center bg-[#121211] border border-[#c9a054]/20 p-8 rounded-2xl">
+            <p className="text-base font-bold text-[#c9a054]">
+              {settings.noOfferMessage || "বর্তমানে কোনো বিশেষ অফার চালু নেই। নতুন অফারের জন্য আমাদের সাথেই থাকুন!"}
+            </p>
+          </div>
+        )}
       </section>
     </>
   );

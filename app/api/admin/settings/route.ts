@@ -19,7 +19,18 @@ export async function PATCH(request: Request) {
     tiktokUrl?: string;
     messengerUrl?: string;
     phoneNumber?: string;
+    isOfferActive?: boolean;
+    noOfferMessage?: string;
+    combo1Title?: string;
+    combo1Price?: string;
+    combo1OldPrice?: string;
+    combo1Features?: string;
+    combo2Title?: string;
+    combo2Price?: string;
+    combo2OldPrice?: string;
+    combo2Features?: string;
   };
+
   try {
     body = await request.json();
   } catch {
@@ -35,6 +46,16 @@ export async function PATCH(request: Request) {
       tiktok_url: body.tiktokUrl ?? "",
       messenger_url: body.messengerUrl ?? "",
       phone_number: body.phoneNumber ?? "",
+      is_offer_active: body.isOfferActive ?? true,
+      no_offer_message: body.noOfferMessage ?? "",
+      combo1_title: body.combo1Title ?? "",
+      combo1_price: body.combo1Price ?? "",
+      combo1_old_price: body.combo1OldPrice ?? "",
+      combo1_features: body.combo1Features ?? "",
+      combo2_title: body.combo2Title ?? "",
+      combo2_price: body.combo2Price ?? "",
+      combo2_old_price: body.combo2OldPrice ?? "",
+      combo2_features: body.combo2Features ?? "",
       updated_at: new Date().toISOString(),
     })
     .select()
