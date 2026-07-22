@@ -7,6 +7,9 @@ import { supabaseAdmin } from "./supabase";
 export interface ProductVariant {
   name: string;
   image: string;
+  price?: number;
+  oldPrice?: number;
+  stock?: number;
 }
 
 export interface Product {
@@ -16,6 +19,7 @@ export interface Product {
   categorySlug: string;
   price: number;
   oldPrice: number;
+  stock?: number; // 👈 টাইপস্ক্রিপ্ট এরর সমাধানের জন্য যোগ করা হলো
   images: string[];
   variants: ProductVariant[];
   sizes: string[];
@@ -32,6 +36,7 @@ function mapRow(row: any): Product {
     categorySlug: row.category_slug,
     price: Number(row.price),
     oldPrice: Number(row.old_price ?? row.price),
+    stock: row.stock != null ? Number(row.stock) : undefined, // 👈 ডাটাবেজ থেকে স্টক ম্যাপ করা হলো
     images: row.images ?? [],
     variants: row.variants ?? [],
     sizes: row.sizes ?? [],
