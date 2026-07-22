@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { categories } from "@/lib/categories";
 import { MobileNav } from "@/components/mobile-nav";
 import { formatBDT } from "@/lib/utils";
@@ -16,6 +17,7 @@ interface Product {
 }
 
 export function SiteHeader({ products = [] }: { products?: Product[] }) {
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>(products);
@@ -55,6 +57,42 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // প্রোডাক্ট পেজ অথবা ধন্যবাদ পেজ কিনা পরীক্ষা করা
+  const isMinimal = pathname?.startsWith("/product") || pathname?.startsWith("/thank-you");
+
+  // 🛍️ ১. প্রোডাক্ট এবং থ্যাংক ইউ পেজের জন্য স্লিম মিনিমাল হেডার
+  if (isMinimal) {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 shadow-[0_10px_30px_rgba(0,0,0,0.9)] border-b border-[#c9a054]/20 bg-[#070706]/95 backdrop-blur-md py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          {/* লোগো */}
+          <Link
+            href="/"
+            className="text-base sm:text-xl font-black tracking-widest cursor-pointer flex items-center gap-1.5 select-none animate-text-shine"
+          >
+            <span>⚜</span> MAYABI BOUTIQUES
+          </Link>
+
+          {/* ট্রাস্ট নোট (ডেস্কটপে দেখাবে) */}
+          <div className="hidden md:flex items-center gap-2 text-xs font-medium text-[#c9a054]/80 bg-[#141413] px-3.5 py-1.5 rounded-full border border-[#c9a054]/20">
+            <span>🛡️ ১০০% অরিজিনাল কালেকশন</span>
+            <span>•</span>
+            <span>🚚 ক্যাশ অন ডেলিভারি</span>
+          </div>
+
+          {/* হোমে ফিরে যাওয়ার বাটন */}
+          <Link
+            href="/"
+            className="text-xs sm:text-sm font-bold text-[#c9a054] hover:text-black bg-[#181817] hover:bg-[#c9a054] border border-[#c9a054]/40 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <span>←</span> হোমে ফিরে যান
+          </Link>
+        </div>
+      </header>
+    );
+  }
+
+  // 🏠 ২. হোম পেজ ও অন্যান্য পেজের জন্য আপনার মূল ফুল হেডার
   return (
     <div className="fixed top-0 left-0 right-0 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.9)] border-b border-[#c9a054]/15 bg-[#070706]/95 backdrop-blur-md">
       <div className="bg-gradient-to-r from-[#8a6829] via-[#c9a054] to-[#8a6829] text-black text-center py-2 text-[10px] sm:text-sm font-bold tracking-wide px-2">
@@ -74,7 +112,7 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
 
         <div className="hidden lg:flex space-x-6 text-xs uppercase tracking-widest font-semibold text-gray-300">
           <Link href="/" className="hover:text-[#c9a054] transition-all">হোম</Link>
-          <Link href="/#featured" className="hover:text-[#c9a054] transition-all">ফিচারড কালেকশন</Link>
+          <Link href="/#featured" className="hover:text-[#c9a054] transition-all">ফিচার্ড কালেকশন</Link>
           <Link href="/#our-story" className="hover:text-[#c9a054] transition-all">আমাদের গল্প</Link>
           <Link href="/#why-us" className="hover:text-[#c9a054] transition-all">কেন আমরা সেরা</Link>
           <Link href="/#reviews" className="hover:text-[#c9a054] transition-all">গ্রাহকদের মন্তব্য</Link>
@@ -138,14 +176,14 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
                   ))}
                 </div>
               ) : (
-                /* পণ্য না পাওয়া গেলে প্রফেশনাল বিনয়ী বার্তা */
+                /* পণ্য না পাওয়া গেলে প্রফেশনাল বিনয়ী বার্তা */
                 <div className="p-4 text-center space-y-1 bg-[#181817] rounded-lg border border-[#c9a054]/20">
                   <div className="text-xl">🔍</div>
                   <p className="text-xs font-bold text-gray-200">
-                    ক্ষমা করবেন, কোনো পণ্য পাওয়া যায়নি!
+                    ক্ষমা করবেন, কোনো পণ্য পাওয়া যায়নি!
                   </p>
                   <p className="text-[10px] text-gray-400 leading-relaxed">
-                    আপনার খোঁজা পোশাকটি এই মুহূর্তে স্টকে নেই। অন্য নামে অথবা ক্যাটাগরি দিয়ে চেষ্টা করুন।
+                    আপনার খোঁজা পোশাকটি এই মুহূর্তে স্টকে নেই। অন্য নামে অথবা ক্যাটাগরি দিয়ে চেষ্টা করুন।
                   </p>
                 </div>
               )}
