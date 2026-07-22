@@ -4,6 +4,15 @@ import React, { useState } from "react";
 import { Product } from "@/lib/products";
 import { engToBdNum, formatBDT } from "@/lib/utils";
 
+// ভ্যারিয়েন্ট টাইপ ডিফাইন (যদি আলাদা দাম বা স্টক থাকে)
+type VariantType = {
+  name: string;
+  image?: string;
+  price?: number;
+  oldPrice?: number;
+  stock?: number;
+};
+
 export function ProductDetailClient({ product }: { product: Product }) {
   const [currentStep, setCurrentStep] = useState<0 | 1>(0);
   const [showThankYou, setShowThankYou] = useState(false);
@@ -31,6 +40,13 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const BKASH_NUMBER = process.env.NEXT_PUBLIC_BKASH_NUMBER || "01700-000000";
   const NAGAD_NUMBER = process.env.NEXT_PUBLIC_NAGAD_NUMBER || "01700-000000";
 
+  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা
+  const currentVariant = (product.variants as VariantType[])?.find((v) => v.name === selectedColor);
+  const currentPrice = currentVariant?.price ?? product.price;
+  const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
+  const currentStock = currentVariant?.stock ?? product.stock ?? 10;
+  const isOutOfStock = currentStock <= 0;
+
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -38,6 +54,11 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("");
+
+    if (isOutOfStock) {
+      setSubmitError("দুঃখিত, এই প্রোডাক্টটি বর্তমানে স্টক আউট রয়েছে।");
+      return;
+    }
 
     if (paymentMethod !== "cod" && !transactionId.trim()) {
       setSubmitError("বিকাশ/নগদ-এ সেন্ড মানি করার পর ট্রানজেকশন আইডি দিন।");
@@ -57,8 +78,8 @@ export function ProductDetailClient({ product }: { product: Product }) {
           color: selectedColor,
           size: selectedSize,
           quantity,
-          unitPrice: product.price,
-          totalPrice: product.price * quantity,
+          unitPrice: currentPrice,
+          totalPrice: currentPrice * quantity,
           customerName: formData.fullName,
           phone: formData.phoneNumber,
           region: formData.region,
@@ -93,8 +114,13 @@ export function ProductDetailClient({ product }: { product: Product }) {
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* বাম পাশ: প্রোডাক্ট ইমেজ */}
             <div>
-              <div className="overflow-hidden rounded-xl bg-neutral-800 border border-neutral-700 aspect-square flex items-center justify-center">
+              <div className="overflow-hidden rounded-xl bg-neutral-800 border border-neutral-700 aspect-square flex items-center justify-center relative">
                 <img src={product.images[activeImageIdx]} alt={product.name} className="w-full h-full object-cover" />
+                {isOutOfStock && (
+                  <div className="absolute top-4 right-4 bg-red-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-lg backdrop-blur-sm">
+                    Out of Stock (স্টক শেষ)
+                  </div>
+                )}
               </div>
               <div className="flex gap-2 mt-4 overflow-x-auto">
                 {product.images.map((img, idx) => (
@@ -126,71 +152,100 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
                 <hr className="my-4 border-neutral-800" />
 
+                {/* 🔹 প্রাইস ডিসপ্লে (ভ্যারিয়েন্ট সিলেক্ট করলে প্রাইস চেঞ্জ হবে) */}
                 <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-3xl font-extrabold text-amber-500">{formatBDT(product.price)}</span>
-                    <span className="text-sm line-through text-neutral-500">{formatBDT(product.oldPrice)}</span>
-                    <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded font-bold">
-                      -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
-                    </span>
+                    <span className="text-3xl font-extrabold text-amber-500">{formatBDT(currentPrice)}</span>
+                    {currentOldPrice && (
+                      <span className="text-sm line-through text-neutral-500">{formatBDT(currentOldPrice)}</span>
+                    )}
+                    {currentOldPrice && currentOldPrice > currentPrice && (
+                      <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded font-bold">
+                        -{Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)}%
+                      </span>
+                    )}
                   </div>
+                  <p className="text-xs text-neutral-400 mt-2">
+                    স্টক অবস্থা: {isOutOfStock ? <span className="text-red-500 font-bold">স্টক শেষ</span> : <span className="text-green-400 font-bold">স্টকে আছে ({engToBdNum(currentStock)}টি)</span>}
+                  </p>
                 </div>
 
                 {/* Color */}
-                <div className="mt-6">
-                  <h3 className="text-sm text-neutral-400 mb-2">Color Family: <span className="text-white font-bold">{selectedColor}</span></h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.variants.map((v) => (
-                      <button
-                        key={v.name}
-                        onClick={() => { setSelectedColor(v.name); setActiveImageIdx(0); }}
-                        className={`p-1 rounded-lg border transition-all flex items-center justify-center ${
-                          selectedColor === v.name ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-500/10" : "border-neutral-800 bg-neutral-950 hover:border-neutral-700"
-                        }`}
-                      >
-                        <img src={v.image} alt="" className="w-10 h-10 object-cover rounded-md" />
-                      </button>
-                    ))}
+                {product.variants && product.variants.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm text-neutral-400 mb-2">Color Family: <span className="text-white font-bold">{selectedColor}</span></h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.variants.map((v) => (
+                        <button
+                          key={v.name}
+                          onClick={() => { setSelectedColor(v.name); setActiveImageIdx(0); }}
+                          className={`p-1 rounded-lg border transition-all flex items-center justify-center ${
+                            selectedColor === v.name ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-500/10" : "border-neutral-800 bg-neutral-950 hover:border-neutral-700"
+                          }`}
+                        >
+                          <img src={v.image || product.images[0]} alt="" className="w-10 h-10 object-cover rounded-md" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Size */}
-                <div className="mt-6">
-                  <h3 className="text-sm text-neutral-400 mb-2">Size: <span className="text-white font-bold">{selectedSize}</span></h3>
-                  <div className="flex gap-2">
-                    {product.sizes.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`w-12 h-12 text-sm font-bold rounded-lg border transition-all ${
-                          selectedSize === size ? "border-amber-500 bg-amber-500 text-black shadow-lg shadow-amber-500/20" : "border-neutral-800 bg-neutral-950 text-neutral-300 hover:border-neutral-700"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
+                {product.sizes && product.sizes.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm text-neutral-400 mb-2">Size: <span className="text-white font-bold">{selectedSize}</span></h3>
+                    <div className="flex gap-2">
+                      {product.sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`w-12 h-12 text-sm font-bold rounded-lg border transition-all ${
+                            selectedSize === size ? "border-amber-500 bg-amber-500 text-black shadow-lg shadow-amber-500/20" : "border-neutral-800 bg-neutral-950 text-neutral-300 hover:border-neutral-700"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Quantity */}
                 <div className="mt-6">
                   <h3 className="text-sm text-neutral-400 mb-2">পরিমাণ (Quantity)</h3>
                   <div className="flex items-center w-32 bg-neutral-950 border border-neutral-800 rounded-lg p-1">
-                    <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="w-8 h-8 flex items-center justify-center text-lg font-bold text-neutral-400 hover:bg-neutral-800 rounded transition-all">-</button>
+                    <button 
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))} 
+                      disabled={isOutOfStock}
+                      className="w-8 h-8 flex items-center justify-center text-lg font-bold text-neutral-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-40"
+                    >
+                      -
+                    </button>
                     <span className="flex-1 text-center text-sm font-bold">{engToBdNum(quantity)}</span>
-                    <button onClick={() => setQuantity((q) => q + 1)} className="w-8 h-8 flex items-center justify-center text-lg font-bold text-neutral-400 hover:bg-neutral-800 rounded transition-all">+</button>
+                    <button 
+                      onClick={() => setQuantity((q) => Math.min(currentStock, q + 1))} 
+                      disabled={isOutOfStock || quantity >= currentStock}
+                      className="w-8 h-8 flex items-center justify-center text-lg font-bold text-neutral-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-40"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </div>
 
+              {/* 🔹 অর্ডার বাটন (স্টক আউট থাকলে ডিজেবল থাকবে) */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]"
+                  disabled={isOutOfStock}
+                  className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed text-black font-extrabold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]"
                 >
-                  Buy Now (অর্ডার করুন)
+                  {isOutOfStock ? "Out of Stock" : "Buy Now (অর্ডার করুন)"}
                 </button>
-                <button className="w-full bg-neutral-800 hover:bg-neutral-700 text-amber-500 border border-neutral-700 font-bold py-3.5 rounded-xl transition-all">
+                <button 
+                  disabled={isOutOfStock}
+                  className="w-full bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed text-amber-500 border border-neutral-700 font-bold py-3.5 rounded-xl transition-all"
+                >
                   Add to Cart
                 </button>
               </div>
@@ -212,7 +267,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
               <div>
                 <strong>অপশন:</strong> কালার: <span className="text-amber-500 font-bold">{selectedColor}</span> | সাইজ: <span className="text-amber-500 font-bold">{selectedSize}</span> | পরিমাণ: <span className="text-amber-500 font-bold">{engToBdNum(quantity)}টি</span>
               </div>
-              <div className="md:text-right font-bold text-amber-500 text-base">সর্বমোট মূল্য: {formatBDT(product.price * quantity)}</div>
+              <div className="md:text-right font-bold text-amber-500 text-base">সর্বমোট মূল্য: {formatBDT(currentPrice * quantity)}</div>
             </div>
 
             <form onSubmit={handleOrderSubmit} className="space-y-6">
@@ -321,7 +376,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                         {paymentMethod === "bkash" ? BKASH_NUMBER : NAGAD_NUMBER}
                       </strong> (
                       {paymentMethod === "bkash" ? "বিকাশ" : "নগদ"} — Send Money) এ{" "}
-                      <strong className="text-amber-500">{formatBDT(product.price * quantity)}</strong> সেন্ড মানি করে
+                      <strong className="text-amber-500">{formatBDT(currentPrice * quantity)}</strong> সেন্ড মানি করে
                       নিচে ট্রানজেকশন আইডি (TrxID) দিন।
                     </p>
                     <div>
@@ -348,7 +403,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
               <div className="flex justify-end pt-4 border-t border-neutral-800">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isOutOfStock}
                   className="w-full md:w-56 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed text-black font-extrabold py-3.5 px-6 rounded-xl shadow-lg transition-all text-center tracking-wide"
                 >
                   {isSubmitting ? "অর্ডার সেভ হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
