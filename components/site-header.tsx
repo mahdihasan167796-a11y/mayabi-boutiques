@@ -23,7 +23,12 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
   const [allProducts, setAllProducts] = useState<Product[]>(products);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // যদি সরাসরি প্রোপসে প্রোডাক্ট না আসে তবে এপিআই থেকে লোড করে নেওয়া
+  // 🚫 এডমিন প্যানেল হলে হেডার পুরোপুরি হাইড হয়ে যাবে
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
+  // যদি সরাসরি প্রোপসে প্রোডাক্ট না আসে তবে এপিআই থেকে লোড করে নেওয়া
   useEffect(() => {
     if (products.length > 0) {
       setAllProducts(products);
@@ -38,7 +43,7 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
     }
   }, [products]);
 
-  // কাস্টমার যা টাইপ করবে তা দিয়ে নাম ও ক্যাটাগরি ফিল্টার করা
+  // কাস্টমার যা টাইপ করবে তা দিয়ে নাম ও ক্যাটাগরি ফিল্টার করা
   const filteredProducts = searchQuery.trim() === ""
     ? []
     : allProducts.filter((product) =>
@@ -46,7 +51,7 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
         product.category_slug.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-  // সার্চ বারের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ হয়ে যাওয়া
+  // সার্চ বারের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ হয়ে যাওয়া
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -80,7 +85,7 @@ export function SiteHeader({ products = [] }: { products?: Product[] }) {
             <span>🚚 ক্যাশ অন ডেলিভারি</span>
           </div>
 
-          {/* হোমে ফিরে যাওয়ার বাটন */}
+          {/* হোমে ফিরে যাওয়ার বাটন */}
           <Link
             href="/"
             className="text-xs sm:text-sm font-bold text-[#c9a054] hover:text-black bg-[#181817] hover:bg-[#c9a054] border border-[#c9a054]/40 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 shrink-0"
