@@ -34,16 +34,17 @@ interface OrderRow {
   address_label: string;
   payment_method: "cod" | "bkash" | "nagad";
   transaction_id: string | null;
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled" | "returned";
 }
 
-const STATUS_OPTIONS: OrderRow["status"][] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+const STATUS_OPTIONS: OrderRow["status"][] = ["pending", "confirmed", "shipped", "delivered", "cancelled", "returned"];
 const STATUS_LABELS: Record<OrderRow["status"], string> = {
   pending: "Pending",
   confirmed: "Confirmed",
   shipped: "Shipped",
   delivered: "Delivered",
   cancelled: "Cancelled",
+  returned: "Returned",
 };
 const PAYMENT_LABELS: Record<OrderRow["payment_method"], string> = {
   cod: "ক্যাশ অন ডেলিভারি",
@@ -71,6 +72,16 @@ export function AdminDashboard({
     router.refresh();
   };
 
+  // 📊 অ্যানালিটিক্স হিসেবসমূহ
+  const totalSales = orders
+    .filter((o) => o.status === "delivered" || o.status === "confirmed")
+    .reduce((sum, o) => sum + (o.total_price || 0), 0);
+
+  const totalOrdersCount = orders.length;
+  const pendingOrdersCount = orders.filter((o) => o.status === "pending").length;
+  const deliveredOrdersCount = orders.filter((o) => o.status === "delivered").length;
+  const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 border-b border-[#c9a054]/20 pb-6">
@@ -84,6 +95,34 @@ export function AdminDashboard({
         >
           লগআউট
         </button>
+      </div>
+
+      {/* 📈 ড্যাশবোর্ড সামারি অ্যানালিটিক্স কার্ডস */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
+          <p className="text-[11px] font-bold text-gray-400 uppercase">💰 মোট বিক্রি</p>
+          <p className="text-lg sm:text-xl font-black text-[#c9a054] mt-2">{formatBDT(totalSales)}</p>
+        </div>
+
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
+          <p className="text-[11px] font-bold text-gray-400 uppercase">🛒 মোট অর্ডার</p>
+          <p className="text-lg sm:text-xl font-black text-white mt-2">{totalOrdersCount} টি</p>
+        </div>
+
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
+          <p className="text-[11px] font-bold text-amber-500/90 uppercase">⏳ পেন্ডিং অর্ডার</p>
+          <p className="text-lg sm:text-xl font-black text-amber-400 mt-2">{pendingOrdersCount} টি</p>
+        </div>
+
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
+          <p className="text-[11px] font-bold text-emerald-500/90 uppercase">🚚 ডেলিভারড অর্ডার</p>
+          <p className="text-lg sm:text-xl font-black text-emerald-400 mt-2">{deliveredOrdersCount} টি</p>
+        </div>
+
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between col-span-2 sm:col-span-1">
+          <p className="text-[11px] font-bold text-rose-500/90 uppercase">🔄 রিটার্ন অর্ডার</p>
+          <p className="text-lg sm:text-xl font-black text-rose-400 mt-2">{returnedOrdersCount} টি</p>
+        </div>
       </div>
 
       <div className="flex gap-3 mb-8 flex-wrap">
@@ -299,7 +338,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
 
             {/* কম্বো ২ */}
             <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
-              <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
+              <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
               <div>
                 <label className="text-[11px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
                 <input
@@ -333,7 +372,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
             </div>
           </div>
         ) : (
-          /* অফার অফ থাকলে সাধারণ টেক্সট এরিয়া দেখাবে */
+          /* অফার অফ থাকলে সাধারণ টেক্সট এরিয়া দেখাবে */
           <div>
             <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">
               অফার না থাকলে যে বার্তাটি দেখানো হবে:
@@ -493,20 +532,19 @@ function ProductsTab({
         </div>
 
         <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">ক্যাটাগরি *</label>
-            <select
-              value={form.categorySlug}
-              onChange={(e) => setForm({ ...form, categorySlug: e.target.value })}
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
-            >
-              {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>{c.name}</option>
-              ))}
-              
-              <option value="hero-section">✨ হিরো সেকশন পরিবর্তন</option>
-              <option value="featured-collection">✨ ফিচারড কালেকশন ব্যানার</option>
-            </select>
-          </div>
+          <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">ক্যাটাগরি *</label>
+          <select
+            value={form.categorySlug}
+            onChange={(e) => setForm({ ...form, categorySlug: e.target.value })}
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+          >
+            {categories.map((c) => (
+              <option key={c.slug} value={c.slug}>{c.name}</option>
+            ))}
+            <option value="hero-section">✨ হিরো সেকশন পরিবর্তন</option>
+            <option value="featured-collection">✨ ফিচারড কালেকশন ব্যানার</option>
+          </select>
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
