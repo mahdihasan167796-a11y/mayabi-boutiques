@@ -211,7 +211,7 @@ function OrdersTab({
         setEditingNoteId(null);
       }
     } catch {
-      alert("নোট সেভ করা যায়নি");
+      alert("নোট সেভ করা যায়নি");
     }
   };
 
@@ -224,7 +224,7 @@ function OrdersTab({
         setOrders((prev) => prev.filter((o) => o.id !== id));
       }
     } catch {
-      alert("অর্ডার মোছা সম্ভব হয়নি");
+      alert("অর্ডার মোছা সম্ভব হয়নি");
     }
   };
 
@@ -315,7 +315,7 @@ function OrdersTab({
 
           <div class="footer">
             <p>আমাদের সাথে কেনাকাটা করার জন্য আপনাকে অশেষ ধন্যবাদ!</p>
-            <p style="font-size: 10px; color: #999;">প্রিন্টের সময়: ${new Date().toLocaleString("bn-BD")}</p>
+            <p style="font-size: 10px; color: #999;">প্রিন্টের সময়: ${new Date().toLocaleString("bn-BD")}</p>
           </div>
         </div>
         <script>
@@ -335,7 +335,7 @@ function OrdersTab({
       <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
-          placeholder="কাস্টমারের নাম, ফোন বা ঠিকানা দিয়ে সার্চ করুন..."
+          placeholder="কাস্টমারের নাম, ফোন বা ঠিকানা দিয়ে সার্চ করুন..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full md:w-80 bg-[#070706] border border-[#c9a054]/20 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -364,7 +364,7 @@ function OrdersTab({
       </div>
 
       {filteredOrders.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-16">কোনো অর্ডার পাওয়া যায়নি।</p>
+        <p className="text-sm text-gray-500 text-center py-16">কোনো অর্ডার পাওয়া যায়নি।</p>
       ) : (
         filteredOrders.map((order) => (
           <div key={order.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 grid md:grid-cols-4 gap-4 items-start">
@@ -420,7 +420,7 @@ function OrdersTab({
               </div>
             </div>
 
-            {/* পেমেন্ট ও সময় */}
+            {/* পেমেন্ট ও সময় */}
             <div className="space-y-1">
               <p className="text-sm font-black text-[#c9a054]">{formatBDT(order.total_price)}</p>
               <p className="text-xs text-gray-400">{PAYMENT_LABELS[order.payment_method]}</p>
