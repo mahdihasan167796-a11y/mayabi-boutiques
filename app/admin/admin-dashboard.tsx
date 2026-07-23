@@ -609,3 +609,4 @@ export function ProductsTab({
     </div>
   );
 }
+export default AdminDashboard;
