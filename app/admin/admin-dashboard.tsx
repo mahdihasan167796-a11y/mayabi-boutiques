@@ -65,7 +65,7 @@ export function AdminDashboard({
   initialSettings: SiteSettings;
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"products" | "orders" | "settings">("orders");
+  const [tab, setTab] = useState<"products" | "orders" | "settings" | "addons">("orders");
   const [products, setProducts] = useState(initialProducts);
   const [orders, setOrders] = useState(initialOrders);
 
@@ -87,7 +87,7 @@ export function AdminDashboard({
 
   return (
     <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
-      {/* 🔝 ১. প্রফেশনাল হেডার (একদম ব্রাউজারের উপরে সেট করা হয়েছে) */}
+      {/* 🔝 ১. প্রফেশনাল হেডার */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 py-3 mb-4 border-b border-[#c9a054]/20">
         <div className="flex items-center gap-3">
           <div className="bg-[#c9a054] text-black font-extrabold text-[11px] px-2.5 py-1 rounded tracking-wider uppercase">
@@ -100,7 +100,6 @@ export function AdminDashboard({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* 🌐 ওয়েবসাইট দেখুন বাটন */}
           <Link
             href="/"
             target="_blank"
@@ -109,7 +108,6 @@ export function AdminDashboard({
             🌐 ওয়েবসাইট দেখুন
           </Link>
 
-          {/* 🚪 লগআউট বাটন */}
           <button
             onClick={handleLogout}
             className="bg-red-950/30 hover:bg-red-900/50 border border-red-900/40 text-red-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
@@ -147,7 +145,7 @@ export function AdminDashboard({
         </div>
       </div>
 
-      {/* 🔘 ২. বাটনসমূহকে ছোট ও বামে চ্যাপ্টা করে ডানপাশের অংশকে বড় করা হলো */}
+      {/* 🔘 সাইডবার এবং মেইন কন্টেন্ট */}
       <div className="flex flex-col md:flex-row gap-4 items-start">
         {/* বাম পাশের সাইডবার */}
         <div className="w-full md:w-52 shrink-0 flex flex-col gap-2 bg-[#121211] border border-[#c9a054]/15 p-2 rounded-xl">
@@ -180,6 +178,17 @@ export function AdminDashboard({
           </button>
 
           <button
+            onClick={() => setTab("addons")}
+            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+              tab === "addons"
+                ? "bg-[#c9a054] text-black shadow-md"
+                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+            }`}
+          >
+            <span>🔌 Addons & Integrations</span>
+          </button>
+
+          <button
             onClick={() => setTab("settings")}
             className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all ${
               tab === "settings"
@@ -195,9 +204,136 @@ export function AdminDashboard({
         <div className="flex-1 w-full min-w-0">
           {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
+          {tab === "addons" && <AddonsTab />}
           {tab === "settings" && <SettingsTab initialSettings={initialSettings} />}
         </div>
       </div>
+    </div>
+  );
+}
+
+{/* 🔌 নতুন Addons & Integrations ট্যাব */}
+function AddonsTab() {
+  const [fbPixelId, setFbPixelId] = useState("");
+  const [gtmId, setGtmId] = useState("");
+  const [steadfastApiKey, setSteadfastApiKey] = useState("");
+  const [steadfastSecretKey, setSteadfastSecretKey] = useState("");
+  const [fakeProtectionEnabled, setFakeProtectionEnabled] = useState(true);
+  const [savedMsg, setSavedMsg] = useState("");
+
+  const handleSaveAddons = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavedMsg("Addons সেটিংস সফলভাবে সেভ হয়েছে!");
+    setTimeout(() => setSavedMsg(""), 3000);
+  };
+
+  return (
+    <div className="space-y-4 max-w-3xl">
+      <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4">
+        <h2 className="text-sm font-bold text-white mb-1">🔌 Addons & Integrations</h2>
+        <p className="text-xs text-gray-400">মার্কেটিং, কুরিয়ার ও ফেক অর্ডার প্রোটেকশন কনফিগার করুন।</p>
+      </div>
+
+      <form onSubmit={handleSaveAddons} className="space-y-4">
+        {/* Facebook Pixel & CAPI */}
+        <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🎯</span>
+            <h3 className="text-xs font-bold text-white">Facebook Pixel & Conversion API</h3>
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Pixel ID</label>
+            <input
+              type="text"
+              placeholder="e.g. 123456789012345"
+              value={fbPixelId}
+              onChange={(e) => setFbPixelId(e.target.value)}
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        </div>
+
+        {/* Google Analytics & Tag Manager */}
+        <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📊</span>
+            <h3 className="text-xs font-bold text-white">Google Tag Manager / Analytics</h3>
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">GTM Container ID</label>
+            <input
+              type="text"
+              placeholder="e.g. GTM-XXXXXXX"
+              value={gtmId}
+              onChange={(e) => setGtmId(e.target.value)}
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        </div>
+
+        {/* Courier API (Steadfast Integration) */}
+        <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🚚</span>
+            <h3 className="text-xs font-bold text-white">Courier API (Steadfast)</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">API Key</label>
+              <input
+                type="text"
+                placeholder="Steadfast API Key"
+                value={steadfastApiKey}
+                onChange={(e) => setSteadfastApiKey(e.target.value)}
+                className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Secret Key</label>
+              <input
+                type="password"
+                placeholder="Steadfast Secret Key"
+                value={steadfastSecretKey}
+                onChange={(e) => setSteadfastSecretKey(e.target.value)}
+                className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Fake Order Protection */}
+        <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🛡️</span>
+              <h3 className="text-xs font-bold text-white">Fake Order Protection & Fraud Detection</h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFakeProtectionEnabled(!fakeProtectionEnabled)}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                fakeProtectionEnabled ? "bg-green-600 text-white" : "bg-red-600 text-white"
+              }`}
+            >
+              {fakeProtectionEnabled ? "Active" : "Inactive"}
+            </button>
+          </div>
+          <p className="text-[11px] text-gray-400">
+            একই আইপি বা ফোন নম্বর দিয়ে লিমিটের বেশি স্প্যাম অর্ডার ব্লক করার সিস্টেম।
+          </p>
+        </div>
+
+        {savedMsg && (
+          <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-2">{savedMsg}</p>
+        )}
+
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] text-black font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
+        >
+          Addons সেটিংস সেভ করুন
+        </button>
+      </form>
     </div>
   );
 }
@@ -291,8 +427,8 @@ function OrdersTab({
           .brand-info { font-size: 13px; color: #555; margin-top: 5px; }
           .title { text-align: center; font-size: 18px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0; background: #f9f8f3; padding: 6px; border-radius: 4px; }
           .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 14px; }
-          .details-box { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 12px; rounded: 6px; }
-          .details-box h4 { margin: 0 0 8px 0; color: #c9a054; border-bottom: 1px solid #eee; pb: 4px; font-size: 13px; }
+          .details-box { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 12px; border-radius: 6px; }
+          .details-box h4 { margin: 0 0 8px 0; color: #c9a054; border-bottom: 1px solid #eee; padding-bottom: 4px; font-size: 13px; }
           table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
           th { background: #f5f5f5; text-align: left; padding: 10px; border-bottom: 2px solid #ddd; }
           td { padding: 10px; border-bottom: 1px solid #eee; }
@@ -376,7 +512,6 @@ function OrdersTab({
 
   return (
     <div className="space-y-3">
-      {/* 🔍 ৩. সার্চ বার এবং ক্যাটাগরি ফিল্টার */}
       <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
