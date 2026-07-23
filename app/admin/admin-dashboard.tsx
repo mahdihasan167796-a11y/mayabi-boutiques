@@ -87,7 +87,7 @@ export function AdminDashboard({
 
   return (
     <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
-      {/* 🔝 ১. প্রফেশনাল হেডার (একদম ব্রাউজারের উপরে সেট করা হয়েছে) */}
+      {/* 🔝 ১. প্রফেশনাল হেডার (একদম ব্রাউজারের উপরে সেট করা হয়েছে) */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 py-3 mb-4 border-b border-[#c9a054]/20">
         <div className="flex items-center gap-3">
           <div className="bg-[#c9a054] text-black font-extrabold text-[11px] px-2.5 py-1 rounded tracking-wider uppercase">
@@ -147,9 +147,9 @@ export function AdminDashboard({
         </div>
       </div>
 
-      {/* 🔘 ২. বাটনসমূহকে ছোট ও বামে চ্যাপ্টা করে ডানপাশের অংশকে বড় করা হলো */}
+      {/* 🔘 ২. বাটনসমূহকে ছোট ও বামে চ্যাপ্টা করে ডানপাশের অংশকে বড় করা হলো */}
       <div className="flex flex-col md:flex-row gap-4 items-start">
-        {/* বাম পাশের সাইডবার (প্রস্থ কমিয়ে ছোট করা হয়েছে) */}
+        {/* বাম পাশের সাইডবার */}
         <div className="w-full md:w-52 shrink-0 flex flex-col gap-2 bg-[#121211] border border-[#c9a054]/15 p-2 rounded-xl">
           <button
             onClick={() => setTab("orders")}
@@ -191,7 +191,7 @@ export function AdminDashboard({
           </button>
         </div>
 
-        {/* ডান পাশের মূল কন্টেন্ট এলাকা (এখন অনেক বেশি ফ্লেক্সিবল ও চওড়া) */}
+        {/* ডান পাশের মূল কন্টেন্ট এলাকা */}
         <div className="flex-1 w-full min-w-0">
           {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
@@ -376,7 +376,7 @@ function OrdersTab({
 
   return (
     <div className="space-y-3">
-      {/* 🔍 ৩. সার্চ বার এবং ক্যাটাগরি ফিল্টার (স্কোলবার দাগ রিমুভ করা হয়েছে) */}
+      {/* 🔍 ৩. সার্চ বার এবং ক্যাটাগরি ফিল্টার */}
       <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
@@ -386,7 +386,6 @@ function OrdersTab({
           className="w-full md:w-80 bg-[#070706] border border-[#c9a054]/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#c9a054]"
         />
 
-        {/* [overflow-x-auto select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]] - নিচে স্ক্রোলবার হাইড করে দাগ মুছে দেওয়া হলো */}
         <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto pb-0 justify-start md:justify-end select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <button
             onClick={() => setStatusFilter("all")}
@@ -520,9 +519,14 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
     combo1OldPrice: (initialSettings as any).combo1OldPrice || "৬০০০",
     combo1Features: (initialSettings as any).combo1Features || "১টি কাস্টম ফিটেড থ্রি-পিস\n১টি প্রিমিয়াম ওরনা\nফ্রি হোম ডেলিভারি",
     combo2Title: (initialSettings as any).combo2Title || "ব্রাইডাল মেগা সেট",
-    combo2Price: (initialSettings as any).combo2Price || "৬৮০০",
+    combo2Price: (initialSettings as any).combo2Price || "৬৮োর",
     combo2OldPrice: (initialSettings as any).combo2OldPrice || "৯৫০০",
     combo2Features: (initialSettings as any).combo2Features || "২টি প্রিমিয়াম ড্রেস সেট\n১টি এক্সক্লুসিভ স্কার্ফ\nভিআইপি গিফট বক্স\nফ্রি হোম ডেলিভারি",
+    facebookUrl: (initialSettings as any).facebookUrl || "",
+    instagramUrl: (initialSettings as any).instagramUrl || "",
+    tiktokUrl: (initialSettings as any).tiktokUrl || "",
+    messengerUrl: (initialSettings as any).messengerUrl || "",
+    phoneNumber: (initialSettings as any).phoneNumber || "",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -662,52 +666,50 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
         )}
       </div>
 
-      <div>
+      <div className="space-y-3">
         <h3 className="text-xs font-bold text-white border-b border-[#c9a054]/10 pb-2 mb-3">
           ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
         </h3>
 
-        <div className="space-y-3">
-          <div>
-            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Facebook পেজ লিংক</label>
-            <input
-              type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
-              placeholder="https://facebook.com/yourpage"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Instagram প্রোফাইল লিংক</label>
-            <input
-              type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
-              placeholder="https://instagram.com/yourprofile"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">TikTok প্রোফাইল লিংক</label>
-            <input
-              type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
-              placeholder="https://tiktok.com/@yourprofile"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Messenger লিংক</label>
-            <input
-              type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
-              placeholder="https://m.me/yourpage"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">যোগাযোগের ফোন নাম্বার</label>
-            <input
-              type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
-              placeholder="০১৭০০-০০০০০০"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Facebook পেজ লিংক</label>
+          <input
+            type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
+            placeholder="https://facebook.com/yourpage"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Instagram প্রোফাইল লিংক</label>
+          <input
+            type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
+            placeholder="https://instagram.com/yourprofile"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">TikTok প্রোফাইল লিংক</label>
+          <input
+            type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
+            placeholder="https://tiktok.com/@yourprofile"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Messenger লিংক</label>
+          <input
+            type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
+            placeholder="https://m.me/yourpage"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">যোগাযোগের ফোন নাম্বার</label>
+          <input
+            type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
+            placeholder="০১৭০০-০০০০০০"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
         </div>
       </div>
 
@@ -731,7 +733,13 @@ function ProductsTab({
   products: ProductRow[];
   setProducts: React.Dispatch<React.SetStateAction<ProductRow[]>>;
 }) {
-  const [form, setForm] = useState({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
+  const [form, setForm] = useState({
+    name: "",
+    categorySlug: categories[0]?.slug || "",
+    price: "",
+    oldPrice: "",
+  });
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -755,19 +763,21 @@ function ProductsTab({
       if (form.oldPrice) fd.append("oldPrice", form.oldPrice);
       fd.append("image", imageFile);
 
-      const res = await fetch("/api/admin/products", { method: "POST", body: fd });
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        body: fd,
+      });
+
       const result = await res.json();
-
-      if (!res.ok || !result.ok) {
-        setError(result.error || "প্রোডাক্ট যোগ করা যায়নি।");
-        return;
+      if (res.ok && result.product) {
+        setProducts((prev) => [result.product, ...prev]);
+        setForm({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
+        setImageFile(null);
+        (document.getElementById("product-image-input") as HTMLInputElement | null)?.value &&
+          ((document.getElementById("product-image-input") as HTMLInputElement).value = "");
+      } else {
+        setError(result.error || "প্রোডাক্ট যোগ করা সম্ভব হয়নি।");
       }
-
-      setProducts((prev) => [result.product, ...prev]);
-      setForm({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
-      setImageFile(null);
-      (document.getElementById("product-image-input") as HTMLInputElement | null)?.value &&
-        ((document.getElementById("product-image-input") as HTMLInputElement).value = "");
     } catch {
       setError("নেটওয়ার্ক সমস্যা হয়েছে, আবার চেষ্টা করুন।");
     } finally {
@@ -852,7 +862,7 @@ function ProductsTab({
 
         <button
           type="submit" disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all"
+          className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
         >
           {isSubmitting ? "যোগ করা হচ্ছে..." : "প্রোডাক্ট যোগ করুন"}
         </button>
@@ -864,7 +874,7 @@ function ProductsTab({
         )}
         {products.map((p) => (
           <div key={p.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex items-center gap-3">
-            <img src={p.images?.[0]} alt={p.name} className="w-14 h-14 rounded-lg object-cover border border-gray-800" />
+            <img src={p.images?.[0] || "/placeholder.jpg"} alt={p.name} className="w-14 h-14 rounded-lg object-cover border border-gray-800" />
             <div className="flex-1 min-w-0">
               <p className="text-xs sm:text-sm font-bold text-white truncate">{p.name}</p>
               <p className="text-[11px] text-gray-500">{categories.find((c) => c.slug === p.category_slug)?.name ?? p.category_slug}</p>
@@ -873,7 +883,7 @@ function ProductsTab({
             <button
               onClick={() => handleDelete(p.id)}
               disabled={deletingId === p.id}
-              className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-2.5 py-1.5 rounded-lg font-bold transition-all disabled:opacity-50"
+              className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-2.5 py-1.5 rounded-lg font-bold transition-all disabled:opacity-50 cursor-pointer"
             >
               {deletingId === p.id ? "..." : "ডিলিট"}
             </button>
