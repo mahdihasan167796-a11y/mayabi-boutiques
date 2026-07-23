@@ -86,25 +86,25 @@ export function AdminDashboard({
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pt-0 pb-8">
-      {/* 🔝 ১. প্রফেশনাল হেডার (উপরে খালি অংশ রিমুভ করা হয়েছে) */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 mb-6 border-b border-[#c9a054]/20">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
+      {/* 🔝 ১. প্রফেশনাল হেডার (একদম ব্রাউজারের উপরে সেট করা হয়েছে) */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 py-3 mb-4 border-b border-[#c9a054]/20">
         <div className="flex items-center gap-3">
-          <div className="bg-[#c9a054] text-black font-extrabold text-xs px-2.5 py-1 rounded tracking-wider uppercase">
+          <div className="bg-[#c9a054] text-black font-extrabold text-[11px] px-2.5 py-1 rounded tracking-wider uppercase">
             MAYABI BOUTIQUES
           </div>
           <div>
-            <span className="text-[#c9a054] font-bold text-[10px] uppercase tracking-widest block">ADMIN PANEL</span>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+            <span className="text-[#c9a054] font-bold text-[9px] uppercase tracking-widest block">ADMIN PANEL</span>
+            <h1 className="text-lg sm:text-xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* 🌐 ওয়েবসাইট দেখুন বাটন */}
           <Link
             href="/"
             target="_blank"
-            className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+            className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
           >
             🌐 ওয়েবসাইট দেখুন
           </Link>
@@ -112,7 +112,7 @@ export function AdminDashboard({
           {/* 🚪 লগআউট বাটন */}
           <button
             onClick={handleLogout}
-            className="bg-red-950/30 hover:bg-red-900/50 border border-red-900/40 text-red-300 px-4 py-2 rounded-lg text-xs font-bold transition-all"
+            className="bg-red-950/30 hover:bg-red-900/50 border border-red-900/40 text-red-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
           >
             লগআউট
           </button>
@@ -120,68 +120,68 @@ export function AdminDashboard({
       </div>
 
       {/* 📊 ড্যাশবোর্ড সামারি কার্ডস */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
-          <p className="text-[11px] font-bold text-gray-400 uppercase">💰 মোট বিক্রি</p>
-          <p className="text-lg sm:text-xl font-black text-[#c9a054] mt-2">{formatBDT(totalSales)}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-5">
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-gray-400 uppercase">💰 মোট বিক্রি</p>
+          <p className="text-base sm:text-lg font-black text-[#c9a054] mt-1">{formatBDT(totalSales)}</p>
         </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
-          <p className="text-[11px] font-bold text-gray-400 uppercase">🛒 মোট অর্ডার</p>
-          <p className="text-lg sm:text-xl font-black text-white mt-2">{totalOrdersCount} টি</p>
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-gray-400 uppercase">🛒 মোট অর্ডার</p>
+          <p className="text-base sm:text-lg font-black text-white mt-1">{totalOrdersCount} টি</p>
         </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
-          <p className="text-[11px] font-bold text-amber-500/90 uppercase">⏳ পেন্ডিং অর্ডার</p>
-          <p className="text-lg sm:text-xl font-black text-amber-400 mt-2">{pendingOrdersCount} টি</p>
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-amber-500/90 uppercase">⏳ পেন্ডিং অর্ডার</p>
+          <p className="text-base sm:text-lg font-black text-amber-400 mt-1">{pendingOrdersCount} টি</p>
         </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
-          <p className="text-[11px] font-bold text-emerald-500/90 uppercase">🚚 ডেলিভারড অর্ডার</p>
-          <p className="text-lg sm:text-xl font-black text-emerald-400 mt-2">{deliveredOrdersCount} টি</p>
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
+          <p className="text-[10px] font-bold text-emerald-500/90 uppercase">🚚 ডেলিভারড অর্ডার</p>
+          <p className="text-base sm:text-lg font-black text-emerald-400 mt-1">{deliveredOrdersCount} টি</p>
         </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between col-span-2 sm:col-span-1">
-          <p className="text-[11px] font-bold text-rose-500/90 uppercase">🔄 রিটার্ন/ক্যানসেল</p>
-          <p className="text-lg sm:text-xl font-black text-rose-400 mt-2">{returnedOrdersCount} টি</p>
+        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between col-span-2 sm:col-span-1">
+          <p className="text-[10px] font-bold text-rose-500/90 uppercase">🔄 রিটার্ন/ক্যানসেল</p>
+          <p className="text-base sm:text-lg font-black text-rose-400 mt-1">{returnedOrdersCount} টি</p>
         </div>
       </div>
 
-      {/* 🔘 ২. বাটনসমূহকে বাম পাশে লম্বালম্বি (Vertical Row) সাজানো */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
-        {/* বাম পাশের সাইডবার বাটনসমূহ */}
-        <div className="md:col-span-1 flex flex-col gap-2.5 bg-[#121211] border border-[#c9a054]/15 p-3 rounded-xl">
+      {/* 🔘 ২. বাটনসমূহকে ছোট ও বামে চ্যাপ্টা করে ডানপাশের অংশকে বড় করা হলো */}
+      <div className="flex flex-col md:flex-row gap-4 items-start">
+        {/* বাম পাশের সাইডবার (প্রস্থ কমিয়ে ছোট করা হয়েছে) */}
+        <div className="w-full md:w-52 shrink-0 flex flex-col gap-2 bg-[#121211] border border-[#c9a054]/15 p-2 rounded-xl">
           <button
             onClick={() => setTab("orders")}
-            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
               tab === "orders"
                 ? "bg-[#c9a054] text-black shadow-md"
                 : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
             }`}
           >
             <span>📦 অর্ডার সমূহ</span>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full ${tab === "orders" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tab === "orders" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
               {orders.length}
             </span>
           </button>
 
           <button
             onClick={() => setTab("products")}
-            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
               tab === "products"
                 ? "bg-[#c9a054] text-black shadow-md"
                 : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
             }`}
           >
             <span>🛍️ প্রোডাক্ট সমূহ</span>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full ${tab === "products" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tab === "products" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
               {products.length}
             </span>
           </button>
 
           <button
             onClick={() => setTab("settings")}
-            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all ${
+            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all ${
               tab === "settings"
                 ? "bg-[#c9a054] text-black shadow-md"
                 : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
@@ -191,8 +191,8 @@ export function AdminDashboard({
           </button>
         </div>
 
-        {/* ডান পাশের মূল কন্টেন্ট এলাকা */}
-        <div className="md:col-span-3">
+        {/* ডান পাশের মূল কন্টেন্ট এলাকা (এখন অনেক বেশি ফ্লেক্সিবল ও চওড়া) */}
+        <div className="flex-1 w-full min-w-0">
           {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
           {tab === "settings" && <SettingsTab initialSettings={initialSettings} />}
@@ -375,20 +375,22 @@ function OrdersTab({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 flex flex-col md:flex-row gap-3 justify-between items-center">
+    <div className="space-y-3">
+      {/* 🔍 ৩. সার্চ বার এবং ক্যাটাগরি ফিল্টার (স্কোলবার দাগ রিমুভ করা হয়েছে) */}
+      <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
           placeholder="কাস্টমারের নাম, ফোন বা ঠিকানা দিয়ে সার্চ করুন..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full md:w-80 bg-[#070706] border border-[#c9a054]/20 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          className="w-full md:w-80 bg-[#070706] border border-[#c9a054]/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#c9a054]"
         />
 
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+        {/* [overflow-x-auto select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]] - নিচে স্ক্রোলবার হাইড করে দাগ মুছে দেওয়া হলো */}
+        <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto pb-0 justify-start md:justify-end select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === "all" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400"}`}
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === "all" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400"}`}
           >
             সব ({orders.length})
           </button>
@@ -398,7 +400,7 @@ function OrdersTab({
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === st ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400"}`}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === st ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400"}`}
               >
                 {STATUS_LABELS[st]} ({count})
               </button>
@@ -411,13 +413,13 @@ function OrdersTab({
         <p className="text-sm text-gray-500 text-center py-16">কোনো অর্ডার পাওয়া যায়নি।</p>
       ) : (
         filteredOrders.map((order) => (
-          <div key={order.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 grid md:grid-cols-4 gap-4 items-start">
+          <div key={order.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 grid md:grid-cols-4 gap-3 items-start">
             <div className="md:col-span-2 space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] bg-[#c9a054]/10 text-[#c9a054] px-2 py-0.5 rounded font-mono font-bold">
                   #{order.id.slice(0, 8)}
                 </span>
-                <p className="text-sm font-bold text-white">{order.product_name}</p>
+                <p className="text-xs sm:text-sm font-bold text-white">{order.product_name}</p>
               </div>
 
               <p className="text-xs text-gray-300">
@@ -431,7 +433,7 @@ function OrdersTab({
                 {order.city}, {order.region} ({order.address_label})
               </p>
 
-              <div className="pt-2">
+              <div className="pt-1">
                 {editingNoteId === order.id ? (
                   <div className="flex gap-2 items-center">
                     <input
@@ -475,7 +477,7 @@ function OrdersTab({
                 value={order.status}
                 disabled={updatingId === order.id}
                 onChange={(e) => updateStatus(order.id, e.target.value as OrderRow["status"])}
-                className="w-full bg-[#070706] border border-[#c9a054]/30 rounded-lg px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-[#c9a054]"
+                className="w-full bg-[#070706] border border-[#c9a054]/30 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-[#c9a054]"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>
@@ -487,7 +489,7 @@ function OrdersTab({
               <div className="flex gap-2 w-full justify-end">
                 <button
                   onClick={() => printInvoice(order)}
-                  className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                  className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
                 >
                   🖨️ মেমো প্রিন্ট
                 </button>
@@ -555,9 +557,9 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
   };
 
   return (
-    <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-6 space-y-6">
+    <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 space-y-5">
       <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-4">
-        <h3 className="text-sm font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
+        <h3 className="text-xs font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
           🎁 কম্বো অফার কন্ট্রোল
         </h3>
 
@@ -566,7 +568,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
           <button
             type="button"
             onClick={() => setForm({ ...form, isOfferActive: !form.isOfferActive })}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
               form.isOfferActive ? "bg-green-600 text-white" : "bg-red-600 text-white"
             }`}
           >
@@ -575,11 +577,11 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
         </div>
 
         {form.isOfferActive ? (
-          <div className="space-y-6 pt-3 border-t border-[#c9a054]/10">
+          <div className="space-y-4 pt-2 border-t border-[#c9a054]/10">
             <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
               <h4 className="text-xs font-bold text-[#c9a054]">📦 প্রথম কম্বো প্যাকেজ</h4>
               <div>
-                <label className="text-[11px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
                 <input
                   type="text" value={form.combo1Title} onChange={handleChange("combo1Title")}
                   className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -587,14 +589,14 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
                   <input
                     type="text" value={form.combo1Price} onChange={handleChange("combo1Price")}
                     className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
                   <input
                     type="text" value={form.combo1OldPrice} onChange={handleChange("combo1OldPrice")}
                     className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -602,7 +604,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
                 </div>
               </div>
               <div>
-                <label className="text-[11px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
                 <textarea
                   rows={3} value={form.combo1Features} onChange={handleChange("combo1Features")}
                   className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -613,7 +615,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
             <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
               <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
               <div>
-                <label className="text-[11px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
                 <input
                   type="text" value={form.combo2Title} onChange={handleChange("combo2Title")}
                   className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -621,14 +623,14 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
                   <input
                     type="text" value={form.combo2Price} onChange={handleChange("combo2Price")}
                     className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
                   <input
                     type="text" value={form.combo2OldPrice} onChange={handleChange("combo2OldPrice")}
                     className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -636,7 +638,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
                 </div>
               </div>
               <div>
-                <label className="text-[11px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
                 <textarea
                   rows={3} value={form.combo2Features} onChange={handleChange("combo2Features")}
                   className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
@@ -646,7 +648,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
           </div>
         ) : (
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1">
               অফার না থাকলে যে বার্তাটি দেখানো হবে:
             </label>
             <textarea
@@ -654,67 +656,67 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
               value={form.noOfferMessage}
               onChange={handleChange("noOfferMessage")}
               placeholder="অফার না থাকলে কি লিখা থাকবে..."
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
         )}
       </div>
 
       <div>
-        <h3 className="text-sm font-bold text-white border-b border-[#c9a054]/10 pb-3 mb-3">
+        <h3 className="text-xs font-bold text-white border-b border-[#c9a054]/10 pb-2 mb-3">
           ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Facebook পেজ লিংক</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Facebook পেজ লিংক</label>
             <input
               type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
               placeholder="https://facebook.com/yourpage"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Instagram প্রোফাইল লিংক</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Instagram প্রোফাইল লিংক</label>
             <input
               type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
               placeholder="https://instagram.com/yourprofile"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">TikTok প্রোফাইল লিংক</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">TikTok প্রোফাইল লিংক</label>
             <input
               type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
               placeholder="https://tiktok.com/@yourprofile"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">Messenger লিংক</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Messenger লিংক</label>
             <input
               type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
               placeholder="https://m.me/yourpage"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">যোগাযোগের ফোন নাম্বার</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">যোগাযোগের ফোন নাম্বার</label>
             <input
               type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
               placeholder="০১৭০০-০০০০০০"
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
         </div>
       </div>
 
-      {message && <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-2">{message}</p>}
-      {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-3 py-2">{error}</p>}
+      {message && <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-1.5">{message}</p>}
+      {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-3 py-1.5">{error}</p>}
 
       <button
         type="submit" disabled={isSaving}
-        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-3 rounded-xl transition-all cursor-pointer"
+        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
       >
         {isSaving ? "সেভ হচ্ছে..." : "সেটিংস সেভ করুন"}
       </button>
@@ -788,25 +790,25 @@ function ProductsTab({
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      <form onSubmit={handleAddProduct} className="lg:col-span-1 bg-[#121211] border border-[#c9a054]/15 rounded-xl p-6 space-y-4 h-fit">
-        <h3 className="text-sm font-bold text-white border-b border-[#c9a054]/10 pb-3">নতুন প্রোডাক্ট যোগ করুন</h3>
+    <div className="grid lg:grid-cols-3 gap-6">
+      <form onSubmit={handleAddProduct} className="lg:col-span-1 bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3 h-fit">
+        <h3 className="text-xs font-bold text-white border-b border-[#c9a054]/10 pb-2">নতুন প্রোডাক্ট যোগ করুন</h3>
 
         <div>
-          <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">প্রোডাক্টের নাম *</label>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">প্রোডাক্টের নাম *</label>
           <input
             type="text" required value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
           />
         </div>
 
         <div>
-          <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">ক্যাটাগরি *</label>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">ক্যাটাগরি *</label>
           <select
             value={form.categorySlug}
             onChange={(e) => setForm({ ...form, categorySlug: e.target.value })}
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
           >
             {categories.map((c) => (
               <option key={c.slug} value={c.slug}>{c.name}</option>
@@ -816,62 +818,62 @@ function ProductsTab({
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">দাম (৳) *</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">দাম (৳) *</label>
             <input
               type="number" required min={0} value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">পুরাতন দাম</label>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">পুরাতন দাম</label>
             <input
               type="number" min={0} value={form.oldPrice}
               onChange={(e) => setForm({ ...form, oldPrice: e.target.value })}
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#c9a054]"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
               placeholder="ঐচ্ছিক"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-bold text-gray-400 uppercase block mb-1.5">প্রোডাক্ট ছবি *</label>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">প্রোডাক্ট ছবি *</label>
           <input
             id="product-image-input"
             type="file" accept="image/*" required
             onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-            className="w-full text-xs text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#c9a054] file:text-black file:text-xs file:font-bold"
+            className="w-full text-xs text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#c9a054] file:text-black file:text-xs file:font-bold"
           />
         </div>
 
-        {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-3 py-2">{error}</p>}
+        {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-2.5 py-1.5">{error}</p>}
 
         <button
           type="submit" disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-3 rounded-xl transition-all"
+          className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all"
         >
           {isSubmitting ? "যোগ করা হচ্ছে..." : "প্রোডাক্ট যোগ করুন"}
         </button>
       </form>
 
-      <div className="lg:col-span-2 space-y-3">
+      <div className="lg:col-span-2 space-y-2.5">
         {products.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-16">এখনো কোনো প্রোডাক্ট যোগ করা হয়নি।</p>
         )}
         {products.map((p) => (
-          <div key={p.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 flex items-center gap-4">
-            <img src={p.images?.[0]} alt={p.name} className="w-16 h-16 rounded-lg object-cover border border-gray-800" />
+          <div key={p.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex items-center gap-3">
+            <img src={p.images?.[0]} alt={p.name} className="w-14 h-14 rounded-lg object-cover border border-gray-800" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{p.name}</p>
-              <p className="text-xs text-gray-500">{categories.find((c) => c.slug === p.category_slug)?.name ?? p.category_slug}</p>
+              <p className="text-xs sm:text-sm font-bold text-white truncate">{p.name}</p>
+              <p className="text-[11px] text-gray-500">{categories.find((c) => c.slug === p.category_slug)?.name ?? p.category_slug}</p>
               <p className="text-xs font-black text-[#c9a054]">{formatBDT(p.price)}</p>
             </div>
             <button
               onClick={() => handleDelete(p.id)}
               disabled={deletingId === p.id}
-              className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-3 py-2 rounded-lg font-bold transition-all disabled:opacity-50"
+              className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-2.5 py-1.5 rounded-lg font-bold transition-all disabled:opacity-50"
             >
               {deletingId === p.id ? "..." : "ডিলিট"}
             </button>
