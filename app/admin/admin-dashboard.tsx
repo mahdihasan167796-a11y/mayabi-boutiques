@@ -212,7 +212,274 @@ export function AdminDashboard({
   );
 }
 
-{/* 🔌 নতুন Addons & Integrations ট্যাব */}
+{/* ⚙️ আপডেটেড SettingsTab (ডেলিভারি চার্জ সেটিংস সহ) */}
+function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
+  const [form, setForm] = useState({
+    ...initialSettings,
+    deliveryDhaka: (initialSettings as any).deliveryDhaka || "80",
+    deliveryOutside: (initialSettings as any).deliveryOutside || "150",
+    freeDeliveryMinAmount: (initialSettings as any).freeDeliveryMinAmount || "2000",
+    isOfferActive: (initialSettings as any).isOfferActive ?? true,
+    noOfferMessage: (initialSettings as any).noOfferMessage || "বর্তমানে কোনো বিশেষ অফার চালু নেই। নতুন অফারের জন্য আমাদের সাথেই থাকুন!",
+    combo1Title: (initialSettings as any).combo1Title || "মেহেফিল কম্বো",
+    combo1Price: (initialSettings as any).combo1Price || "৪৫০০",
+    combo1OldPrice: (initialSettings as any).combo1OldPrice || "৬০০০",
+    combo1Features: (initialSettings as any).combo1Features || "১টি কাস্টম ফিটেড থ্রি-পিস\n১টি প্রিমিয়াম ওরনা\nফ্রি হোম ডেলিভারি",
+    combo2Title: (initialSettings as any).combo2Title || "ব্রাইডাল মেগা সেট",
+    combo2Price: (initialSettings as any).combo2Price || "৬৮০০",
+    combo2OldPrice: (initialSettings as any).combo2OldPrice || "৯৫০০",
+    combo2Features: (initialSettings as any).combo2Features || "২টি প্রিমিয়াম ড্রেস সেট\n১টি এক্সক্লুসিভ স্কার্ফ\nভিআইপি গিফট বক্স\nফ্রি হোম ডেলিভারি",
+    facebookUrl: (initialSettings as any).facebookUrl || "",
+    instagramUrl: (initialSettings as any).instagramUrl || "",
+    tiktokUrl: (initialSettings as any).tiktokUrl || "",
+    messengerUrl: (initialSettings as any).messengerUrl || "",
+    phoneNumber: (initialSettings as any).phoneNumber || "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [field]: e.target.value });
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.ok) {
+        setError(result.error || "সেটিংস সেভ করা যায়নি।");
+        return;
+      }
+      setMessage("সেটিংস সফলভাবে সেভ হয়েছে।");
+    } catch {
+      setError("নেটওয়ার্ক সমস্যা হয়েছে, আবার চেষ্টা করুন।");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSave} className="max-w-2xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 space-y-5">
+      
+      {/* 🚚 ৫. ডেলিভারি চার্জ ও ডেলিভারি এরিয়া সেটিংস */}
+      <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-3">
+        <h3 className="text-xs font-bold text-[#c9a054] flex items-center gap-1.5 border-b border-[#c9a054]/10 pb-2">
+          🚚 ডেলিভারি চার্জ সেটিংস
+        </h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 block mb-1">ঢাকার ভিতরে চার্জ (৳)</label>
+            <input
+              type="number"
+              value={form.deliveryDhaka}
+              onChange={handleChange("deliveryDhaka")}
+              placeholder="80"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 block mb-1">ঢাকার বাইরে চার্জ (৳)</label>
+            <input
+              type="number"
+              value={form.deliveryOutside}
+              onChange={handleChange("deliveryOutside")}
+              placeholder="150"
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 block mb-1">ফ্রি ডেলিভারি মিনিমাম অর্ডার পরিমাণ (৳)</label>
+          <input
+            type="number"
+            value={form.freeDeliveryMinAmount}
+            onChange={handleChange("freeDeliveryMinAmount")}
+            placeholder="2000"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+          <p className="text-[10px] text-gray-500 mt-1">* কাস্টমার এই টাকার বেশি অর্ডার করলে অটোমেটিক ফ্রি ডেলিভারি পাবে।</p>
+        </div>
+      </div>
+
+      {/* 🎁 কম্বো অফার সেটিংস */}
+      <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-4">
+        <h3 className="text-xs font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
+          🎁 কম্বো অফার কন্ট্রোল
+        </h3>
+
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-gray-300">অফার স্ট্যাটাস (On/Off):</label>
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, isOfferActive: !form.isOfferActive })}
+            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+              form.isOfferActive ? "bg-green-600 text-white" : "bg-red-600 text-white"
+            }`}
+          >
+            {form.isOfferActive ? "অফার চালু আছে (Active)" : "অফার বন্ধ আছে (Inactive)"}
+          </button>
+        </div>
+
+        {form.isOfferActive ? (
+          <div className="space-y-4 pt-2 border-t border-[#c9a054]/10">
+            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
+              <h4 className="text-xs font-bold text-[#c9a054]">📦 প্রথম কম্বো প্যাকেজ</h4>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <input
+                  type="text" value={form.combo1Title} onChange={handleChange("combo1Title")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo1Price} onChange={handleChange("combo1Price")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo1OldPrice} onChange={handleChange("combo1OldPrice")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <textarea
+                  rows={3} value={form.combo1Features} onChange={handleChange("combo1Features")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
+              <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
+                <input
+                  type="text" value={form.combo2Title} onChange={handleChange("combo2Title")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo2Price} onChange={handleChange("combo2Price")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
+                  <input
+                    type="text" value={form.combo2OldPrice} onChange={handleChange("combo2OldPrice")}
+                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
+                <textarea
+                  rows={3} value={form.combo2Features} onChange={handleChange("combo2Features")}
+                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase block mb-1">
+              অফার না থাকলে যে বার্তাটি দেখানো হবে:
+            </label>
+            <textarea
+              rows={2}
+              value={form.noOfferMessage}
+              onChange={handleChange("noOfferMessage")}
+              placeholder="অফার না থাকলে কি লিখা থাকবে..."
+              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* 🔗 সোশ্যাল ও কন্টাক্ট ইনফো */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-white border-b border-[#c9a054]/10 pb-2 mb-3">
+          ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
+        </h3>
+
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Facebook পেজ লিংক</label>
+          <input
+            type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
+            placeholder="https://facebook.com/yourpage"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Instagram প্রোফাইল লিংক</label>
+          <input
+            type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
+            placeholder="https://instagram.com/yourprofile"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">TikTok প্রোফাইল লিংক</label>
+          <input
+            type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
+            placeholder="https://tiktok.com/@yourprofile"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Messenger লিংক</label>
+          <input
+            type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
+            placeholder="https://m.me/yourpage"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">যোগাযোগের ফোন নাম্বার</label>
+          <input
+            type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
+            placeholder="০১৭০০-০০০০০০"
+            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+          />
+        </div>
+      </div>
+
+      {message && <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-1.5">{message}</p>}
+      {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-3 py-1.5">{error}</p>}
+
+      <button
+        type="submit" disabled={isSaving}
+        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
+      >
+        {isSaving ? "সেভ হচ্ছে..." : "সেটিংস সেভ করুন"}
+      </button>
+    </form>
+  );
+}
+
+{/* 🔌 Addons & Integrations ট্যাব */}
 function AddonsTab() {
   const [fbPixelId, setFbPixelId] = useState("");
   const [gtmId, setGtmId] = useState("");
@@ -235,7 +502,6 @@ function AddonsTab() {
       </div>
 
       <form onSubmit={handleSaveAddons} className="space-y-4">
-        {/* Facebook Pixel & CAPI */}
         <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
           <div className="flex items-center gap-2">
             <span className="text-lg">🎯</span>
@@ -253,7 +519,6 @@ function AddonsTab() {
           </div>
         </div>
 
-        {/* Google Analytics & Tag Manager */}
         <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
           <div className="flex items-center gap-2">
             <span className="text-lg">📊</span>
@@ -271,7 +536,6 @@ function AddonsTab() {
           </div>
         </div>
 
-        {/* Courier API (Steadfast Integration) */}
         <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
           <div className="flex items-center gap-2">
             <span className="text-lg">🚚</span>
@@ -301,7 +565,6 @@ function AddonsTab() {
           </div>
         </div>
 
-        {/* Fake Order Protection */}
         <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -641,223 +904,6 @@ function OrdersTab({
         ))
       )}
     </div>
-  );
-}
-
-function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
-  const [form, setForm] = useState({
-    ...initialSettings,
-    isOfferActive: (initialSettings as any).isOfferActive ?? true,
-    noOfferMessage: (initialSettings as any).noOfferMessage || "বর্তমানে কোনো বিশেষ অফার চালু নেই। নতুন অফারের জন্য আমাদের সাথেই থাকুন!",
-    combo1Title: (initialSettings as any).combo1Title || "মেহেফিল কম্বো",
-    combo1Price: (initialSettings as any).combo1Price || "৪৫০০",
-    combo1OldPrice: (initialSettings as any).combo1OldPrice || "৬০০০",
-    combo1Features: (initialSettings as any).combo1Features || "১টি কাস্টম ফিটেড থ্রি-পিস\n১টি প্রিমিয়াম ওরনা\nফ্রি হোম ডেলিভারি",
-    combo2Title: (initialSettings as any).combo2Title || "ব্রাইডাল মেগা সেট",
-    combo2Price: (initialSettings as any).combo2Price || "৬৮োর",
-    combo2OldPrice: (initialSettings as any).combo2OldPrice || "৯৫০০",
-    combo2Features: (initialSettings as any).combo2Features || "২টি প্রিমিয়াম ড্রেস সেট\n১টি এক্সক্লুসিভ স্কার্ফ\nভিআইপি গিফট বক্স\nফ্রি হোম ডেলিভারি",
-    facebookUrl: (initialSettings as any).facebookUrl || "",
-    instagramUrl: (initialSettings as any).instagramUrl || "",
-    tiktokUrl: (initialSettings as any).tiktokUrl || "",
-    messengerUrl: (initialSettings as any).messengerUrl || "",
-    phoneNumber: (initialSettings as any).phoneNumber || "",
-  });
-  const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [field]: e.target.value });
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-    setIsSaving(true);
-    try {
-      const res = await fetch("/api/admin/settings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const result = await res.json();
-      if (!res.ok || !result.ok) {
-        setError(result.error || "সেটিংস সেভ করা যায়নি।");
-        return;
-      }
-      setMessage("সেটিংস সফলভাবে সেভ হয়েছে।");
-    } catch {
-      setError("নেটওয়ার্ক সমস্যা হয়েছে, আবার চেষ্টা করুন।");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 space-y-5">
-      <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-4">
-        <h3 className="text-xs font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
-          🎁 কম্বো অফার কন্ট্রোল
-        </h3>
-
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-gray-300">অফার স্ট্যাটাস (On/Off):</label>
-          <button
-            type="button"
-            onClick={() => setForm({ ...form, isOfferActive: !form.isOfferActive })}
-            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-              form.isOfferActive ? "bg-green-600 text-white" : "bg-red-600 text-white"
-            }`}
-          >
-            {form.isOfferActive ? "অফার চালু আছে (Active)" : "অফার বন্ধ আছে (Inactive)"}
-          </button>
-        </div>
-
-        {form.isOfferActive ? (
-          <div className="space-y-4 pt-2 border-t border-[#c9a054]/10">
-            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
-              <h4 className="text-xs font-bold text-[#c9a054]">📦 প্রথম কম্বো প্যাকেজ</h4>
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
-                <input
-                  type="text" value={form.combo1Title} onChange={handleChange("combo1Title")}
-                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
-                  <input
-                    type="text" value={form.combo1Price} onChange={handleChange("combo1Price")}
-                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
-                  <input
-                    type="text" value={form.combo1OldPrice} onChange={handleChange("combo1OldPrice")}
-                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
-                <textarea
-                  rows={3} value={form.combo1Features} onChange={handleChange("combo1Features")}
-                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
-              <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1">শিরোনাম</label>
-                <input
-                  type="text" value={form.combo2Title} onChange={handleChange("combo2Title")}
-                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] font-bold text-gray-400 block mb-1">অফার মূল্য (৳)</label>
-                  <input
-                    type="text" value={form.combo2Price} onChange={handleChange("combo2Price")}
-                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-400 block mb-1">আগের মূল্য (৳)</label>
-                  <input
-                    type="text" value={form.combo2OldPrice} onChange={handleChange("combo2OldPrice")}
-                    className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1">ফিচারসমূহ (প্রতি লাইনে একটি)</label>
-                <textarea
-                  rows={3} value={form.combo2Features} onChange={handleChange("combo2Features")}
-                  className="w-full bg-[#181817] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <label className="text-xs font-bold text-gray-400 uppercase block mb-1">
-              অফার না থাকলে যে বার্তাটি দেখানো হবে:
-            </label>
-            <textarea
-              rows={2}
-              value={form.noOfferMessage}
-              onChange={handleChange("noOfferMessage")}
-              placeholder="অফার না থাকলে কি লিখা থাকবে..."
-              className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="text-xs font-bold text-white border-b border-[#c9a054]/10 pb-2 mb-3">
-          ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
-        </h3>
-
-        <div>
-          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Facebook পেজ লিংক</label>
-          <input
-            type="url" value={form.facebookUrl} onChange={handleChange("facebookUrl")}
-            placeholder="https://facebook.com/yourpage"
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Instagram প্রোফাইল লিংক</label>
-          <input
-            type="url" value={form.instagramUrl} onChange={handleChange("instagramUrl")}
-            placeholder="https://instagram.com/yourprofile"
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">TikTok প্রোফাইল লিংক</label>
-          <input
-            type="url" value={form.tiktokUrl} onChange={handleChange("tiktokUrl")}
-            placeholder="https://tiktok.com/@yourprofile"
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">Messenger লিংক</label>
-          <input
-            type="url" value={form.messengerUrl} onChange={handleChange("messengerUrl")}
-            placeholder="https://m.me/yourpage"
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">যোগাযোগের ফোন নাম্বার</label>
-          <input
-            type="text" value={form.phoneNumber} onChange={handleChange("phoneNumber")}
-            placeholder="০১৭০০-০০০০০০"
-            className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
-          />
-        </div>
-      </div>
-
-      {message && <p className="text-xs text-green-400 bg-green-950/30 border border-green-900 rounded-lg px-3 py-1.5">{message}</p>}
-      {error && <p className="text-xs text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-3 py-1.5">{error}</p>}
-
-      <button
-        type="submit" disabled={isSaving}
-        className="w-full bg-gradient-to-r from-[#c9a054] to-[#967233] disabled:opacity-60 text-black font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
-      >
-        {isSaving ? "সেভ হচ্ছে..." : "সেটিংস সেভ করুন"}
-      </button>
-    </form>
   );
 }
 
