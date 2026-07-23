@@ -11,10 +11,13 @@ export default async function AdminPage() {
 
   return (
     <AdminDashboard
-      products={products ?? []}
-      orders={orders ?? []}
+      initialProducts={products || []}
+      initialOrders={orders || []}
+      initialSettings={settings}
+      products={products || []}
+      orders={orders || []}
       settings={settings}
-      {...({} as any)} 
+      {...({} as any)}
     />
   );
 }
