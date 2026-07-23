@@ -86,27 +86,27 @@ export function AdminDashboard({
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pt-2 pb-8">
-      {/* 🔝 ১. প্রফেশনাল হেডার ও নেভবার */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b border-[#c9a054]/20 pb-4">
+    <div className="max-w-7xl mx-auto px-4 pt-0 pb-8">
+      {/* 🔝 ১. প্রফেশনাল হেডার (উপরে খালি অংশ রিমুভ করা হয়েছে) */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 mb-6 border-b border-[#c9a054]/20">
         <div className="flex items-center gap-3">
           <div className="bg-[#c9a054] text-black font-extrabold text-xs px-2.5 py-1 rounded tracking-wider uppercase">
             MAYABI BOUTIQUES
           </div>
           <div>
             <span className="text-[#c9a054] font-bold text-[10px] uppercase tracking-widest block">ADMIN PANEL</span>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* 🌐 ওয়েবসাইট দেখুন বাটন */}
+          {/* 🌐 ওয়েবসাইট দেখুন বাটন */}
           <Link
             href="/"
             target="_blank"
             className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
           >
-            🌐 ওয়েবসাইট দেখুন
+            🌐 ওয়েবসাইট দেখুন
           </Link>
 
           {/* 🚪 লগআউট বাটন */}
@@ -147,31 +147,57 @@ export function AdminDashboard({
         </div>
       </div>
 
-      {/* 🔘 ৩. বাম পাশে ট্যাব বাটনসমূহ */}
-      <div className="flex gap-3 mb-6 flex-wrap justify-start">
-        <button
-          onClick={() => setTab("orders")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${tab === "orders" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400 border border-[#c9a054]/15"}`}
-        >
-          অর্ডার সমূহ ({orders.length})
-        </button>
-        <button
-          onClick={() => setTab("products")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${tab === "products" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400 border border-[#c9a054]/15"}`}
-        >
-          প্রোডাক্ট সমূহ ({products.length})
-        </button>
-        <button
-          onClick={() => setTab("settings")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${tab === "settings" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400 border border-[#c9a054]/15"}`}
-        >
-          সেটিংস
-        </button>
-      </div>
+      {/* 🔘 ২. বাটনসমূহকে বাম পাশে লম্বালম্বি (Vertical Row) সাজানো */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+        {/* বাম পাশের সাইডবার বাটনসমূহ */}
+        <div className="md:col-span-1 flex flex-col gap-2.5 bg-[#121211] border border-[#c9a054]/15 p-3 rounded-xl">
+          <button
+            onClick={() => setTab("orders")}
+            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+              tab === "orders"
+                ? "bg-[#c9a054] text-black shadow-md"
+                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+            }`}
+          >
+            <span>📦 অর্ডার সমূহ</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${tab === "orders" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
+              {orders.length}
+            </span>
+          </button>
 
-      {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
-      {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
-      {tab === "settings" && <SettingsTab initialSettings={initialSettings} />}
+          <button
+            onClick={() => setTab("products")}
+            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+              tab === "products"
+                ? "bg-[#c9a054] text-black shadow-md"
+                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+            }`}
+          >
+            <span>🛍️ প্রোডাক্ট সমূহ</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${tab === "products" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
+              {products.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setTab("settings")}
+            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all ${
+              tab === "settings"
+                ? "bg-[#c9a054] text-black shadow-md"
+                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+            }`}
+          >
+            ⚙️ সেটিংস
+          </button>
+        </div>
+
+        {/* ডান পাশের মূল কন্টেন্ট এলাকা */}
+        <div className="md:col-span-3">
+          {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
+          {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
+          {tab === "settings" && <SettingsTab initialSettings={initialSettings} />}
+        </div>
+      </div>
     </div>
   );
 }
@@ -696,7 +722,6 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
   );
 }
 
-// 📦 ৪. আপনার মূল ProductsTab অপরিবর্তিত
 function ProductsTab({
   products,
   setProducts,
@@ -704,7 +729,7 @@ function ProductsTab({
   products: ProductRow[];
   setProducts: React.Dispatch<React.SetStateAction<ProductRow[]>>;
 }) {
-  const [form, setForm] = useState({ name: "", categorySlug: categories[0].slug, price: "", oldPrice: "" });
+  const [form, setForm] = useState({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -737,7 +762,7 @@ function ProductsTab({
       }
 
       setProducts((prev) => [result.product, ...prev]);
-      setForm({ name: "", categorySlug: categories[0].slug, price: "", oldPrice: "" });
+      setForm({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
       setImageFile(null);
       (document.getElementById("product-image-input") as HTMLInputElement | null)?.value &&
         ((document.getElementById("product-image-input") as HTMLInputElement).value = "");
