@@ -86,16 +86,17 @@ export function AdminDashboard({
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
-      {/* 🔝 ১. প্রফেশনাল হেডার (একদম ব্রাউজারের উপরে সেট করা হয়েছে) */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 py-3 mb-4 border-b border-[#c9a054]/20">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 mt-0 pb-8">
+      {/* 🔝 ১. বড় হেডলাইন ও একদম উপর থেকে শুরু হওয়া হেডার */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2 pb-3 mb-4 border-b border-[#c9a054]/20">
         <div className="flex items-center gap-3">
           <div className="bg-[#c9a054] text-black font-extrabold text-[11px] px-2.5 py-1 rounded tracking-wider uppercase">
             MAYABI BOUTIQUES
           </div>
           <div>
-            <span className="text-[#c9a054] font-bold text-[9px] uppercase tracking-widest block">ADMIN PANEL</span>
-            <h1 className="text-lg sm:text-xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+            <span className="text-[#c9a054] font-bold text-[10px] uppercase tracking-widest block">ADMIN PANEL</span>
+            {/* 🔴 এখানে হেডলাইনটি বড় করা হয়েছে (text-2xl sm:text-3xl) */}
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-wide">নিয়ন্ত্রণ প্যানেল</h1>
           </div>
         </div>
 
@@ -147,9 +148,9 @@ export function AdminDashboard({
         </div>
       </div>
 
-      {/* 🔘 ২. বাটনসমূহকে ছোট ও বামে চ্যাপ্টা করে ডানপাশের অংশকে বড় করা হলো */}
+      {/* 🔘 ২. লেআউট ও কন্টেন্ট সেকশন */}
       <div className="flex flex-col md:flex-row gap-4 items-start">
-        {/* বাম পাশের সাইডবার (প্রস্থ কমিয়ে ছোট করা হয়েছে) */}
+        {/* বাম পাশের সাইডবার */}
         <div className="w-full md:w-52 shrink-0 flex flex-col gap-2 bg-[#121211] border border-[#c9a054]/15 p-2 rounded-xl">
           <button
             onClick={() => setTab("orders")}
@@ -191,7 +192,7 @@ export function AdminDashboard({
           </button>
         </div>
 
-        {/* ডান পাশের মূল কন্টেন্ট এলাকা (এখন অনেক বেশি ফ্লেক্সিবল ও চওড়া) */}
+        {/* ডান পাশের মূল কন্টেন্ট এলাকা */}
         <div className="flex-1 w-full min-w-0">
           {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} />}
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
@@ -291,8 +292,8 @@ function OrdersTab({
           .brand-info { font-size: 13px; color: #555; margin-top: 5px; }
           .title { text-align: center; font-size: 18px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0; background: #f9f8f3; padding: 6px; border-radius: 4px; }
           .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 14px; }
-          .details-box { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 12px; rounded: 6px; }
-          .details-box h4 { margin: 0 0 8px 0; color: #c9a054; border-bottom: 1px solid #eee; pb: 4px; font-size: 13px; }
+          .details-box { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 12px; border-radius: 6px; }
+          .details-box h4 { margin: 0 0 8px 0; color: #c9a054; border-bottom: 1px solid #eee; padding-bottom: 4px; font-size: 13px; }
           table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
           th { background: #f5f5f5; text-align: left; padding: 10px; border-bottom: 2px solid #ddd; }
           td { padding: 10px; border-bottom: 1px solid #eee; }
@@ -376,7 +377,7 @@ function OrdersTab({
 
   return (
     <div className="space-y-3">
-      {/* 🔍 ৩. সার্চ বার এবং ক্যাটাগরি ফিল্টার (স্কোলবার দাগ রিমুভ করা হয়েছে) */}
+      {/* 🔍 সার্চ বার ও ফিল্টার */}
       <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-3 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
@@ -386,7 +387,6 @@ function OrdersTab({
           className="w-full md:w-80 bg-[#070706] border border-[#c9a054]/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#c9a054]"
         />
 
-        {/* [overflow-x-auto select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]] - নিচে স্ক্রোলবার হাইড করে দাগ মুছে দেওয়া হলো */}
         <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto pb-0 justify-start md:justify-end select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <button
             onClick={() => setStatusFilter("all")}
@@ -520,7 +520,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
     combo1OldPrice: (initialSettings as any).combo1OldPrice || "৬০০০",
     combo1Features: (initialSettings as any).combo1Features || "১টি কাস্টম ফিটেড থ্রি-পিস\n১টি প্রিমিয়াম ওরনা\nফ্রি হোম ডেলিভারি",
     combo2Title: (initialSettings as any).combo2Title || "ব্রাইডাল মেগা সেট",
-    combo2Price: (initialSettings as any).combo2Price || "৬৮০০",
+    combo2Price: (initialSettings as any).combo2Price || "৬৮োর",
     combo2OldPrice: (initialSettings as any).combo2OldPrice || "৯৫০০",
     combo2Features: (initialSettings as any).combo2Features || "২টি প্রিমিয়াম ড্রেস সেট\n১টি এক্সক্লুসিভ স্কার্ফ\nভিআইপি গিফট বক্স\nফ্রি হোম ডেলিভারি",
   });
