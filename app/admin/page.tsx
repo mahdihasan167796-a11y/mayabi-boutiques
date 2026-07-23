@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSiteSettings } from "@/lib/settings";
-import AdminDashboard from "./admin-dashboard";
+import * as AdminModule from "./admin-dashboard";
 
 export default async function AdminPage() {
   const [{ data: products }, { data: orders }, settings] = await Promise.all([
@@ -9,8 +9,13 @@ export default async function AdminPage() {
     getSiteSettings(),
   ]);
 
+  const ComponentToRender =
+    (AdminModule as any).default ||
+    (AdminModule as any).AdminDashboard ||
+    (AdminModule as any).ProductsTab;
+
   return (
-    <AdminDashboard
+    <ComponentToRender
       initialProducts={products ?? []}
       initialOrders={orders ?? []}
       initialSettings={settings}
