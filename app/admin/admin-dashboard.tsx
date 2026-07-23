@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { categories } from "@/lib/categories";
 import { formatBDT } from "@/lib/utils";
 import type { SiteSettings } from "@/lib/settings";
@@ -85,22 +86,41 @@ export function AdminDashboard({
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 border-b border-[#c9a054]/20 pb-6">
-        <div>
-          <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-1">ADMIN PANEL</span>
-          <h1 className="text-2xl font-extrabold text-white">মায়াবী বুটিকস — নিয়ন্ত্রণ প্যানেল</h1>
+    <div className="max-w-7xl mx-auto px-4 pt-2 pb-8">
+      {/* 🔝 ১. প্রফেশনাল হেডার ও নেভবার */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b border-[#c9a054]/20 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="bg-[#c9a054] text-black font-extrabold text-xs px-2.5 py-1 rounded tracking-wider uppercase">
+            MAYABI BOUTIQUES
+          </div>
+          <div>
+            <span className="text-[#c9a054] font-bold text-[10px] uppercase tracking-widest block">ADMIN PANEL</span>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+          </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="bg-[#1c1c1a] hover:bg-red-900/40 border border-red-900/40 text-red-300 px-5 py-2 rounded-lg text-xs font-bold transition-all"
-        >
-          লগআউট
-        </button>
+
+        <div className="flex items-center gap-3">
+          {/* 🌐 ওয়েবসাইট দেখুন বাটন */}
+          <Link
+            href="/"
+            target="_blank"
+            className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+          >
+            🌐 ওয়েবসাইট দেখুন
+          </Link>
+
+          {/* 🚪 লগআউট বাটন */}
+          <button
+            onClick={handleLogout}
+            className="bg-red-950/30 hover:bg-red-900/50 border border-red-900/40 text-red-300 px-4 py-2 rounded-lg text-xs font-bold transition-all"
+          >
+            লগআউট
+          </button>
+        </div>
       </div>
 
-      {/* ড্যাশবোর্ড সামারি কার্ডস */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+      {/* 📊 ড্যাশবোর্ড সামারি কার্ডস */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
         <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-4 flex flex-col justify-between">
           <p className="text-[11px] font-bold text-gray-400 uppercase">💰 মোট বিক্রি</p>
           <p className="text-lg sm:text-xl font-black text-[#c9a054] mt-2">{formatBDT(totalSales)}</p>
@@ -127,7 +147,8 @@ export function AdminDashboard({
         </div>
       </div>
 
-      <div className="flex gap-3 mb-8 flex-wrap">
+      {/* 🔘 ৩. বাম পাশে ট্যাব বাটনসমূহ */}
+      <div className="flex gap-3 mb-6 flex-wrap justify-start">
         <button
           onClick={() => setTab("orders")}
           className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${tab === "orders" ? "bg-[#c9a054] text-black" : "bg-[#181817] text-gray-400 border border-[#c9a054]/15"}`}
@@ -168,7 +189,6 @@ function OrdersTab({
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [noteInput, setNoteInput] = useState<string>("");
 
-  // ফিল্টার করা অর্ডারসমূহ
   const filteredOrders = orders.filter((o) => {
     const matchesSearch =
       o.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -228,7 +248,6 @@ function OrdersTab({
     }
   };
 
-  // 🖨️ ক্যাশ মেমো প্রিন্ট করার ফাংশন
   const printInvoice = (order: OrderRow) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -331,7 +350,6 @@ function OrdersTab({
 
   return (
     <div className="space-y-4">
-      {/* 🔍 সার্চ ও ফিল্টার বার */}
       <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 flex flex-col md:flex-row gap-3 justify-between items-center">
         <input
           type="text"
@@ -368,8 +386,6 @@ function OrdersTab({
       ) : (
         filteredOrders.map((order) => (
           <div key={order.id} className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-5 grid md:grid-cols-4 gap-4 items-start">
-            
-            {/* কাস্টমার ও প্রোডাক্ট তথ্য */}
             <div className="md:col-span-2 space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] bg-[#c9a054]/10 text-[#c9a054] px-2 py-0.5 rounded font-mono font-bold">
@@ -389,7 +405,6 @@ function OrdersTab({
                 {order.city}, {order.region} ({order.address_label})
               </p>
 
-              {/* নোট সেকশন */}
               <div className="pt-2">
                 {editingNoteId === order.id ? (
                   <div className="flex gap-2 items-center">
@@ -420,7 +435,6 @@ function OrdersTab({
               </div>
             </div>
 
-            {/* পেমেন্ট ও সময় */}
             <div className="space-y-1">
               <p className="text-sm font-black text-[#c9a054]">{formatBDT(order.total_price)}</p>
               <p className="text-xs text-gray-400">{PAYMENT_LABELS[order.payment_method]}</p>
@@ -430,7 +444,6 @@ function OrdersTab({
               <p className="text-[10px] text-gray-500">{new Date(order.created_at).toLocaleString("bn-BD")}</p>
             </div>
 
-            {/* অ্যাকশন বাটনসমূহ (স্ট্যাটাস, প্রিন্ট, ডিলিট) */}
             <div className="flex flex-col items-end gap-2">
               <select
                 value={order.status}
@@ -462,7 +475,6 @@ function OrdersTab({
                 </button>
               </div>
             </div>
-
           </div>
         ))
       )}
@@ -518,8 +530,6 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
 
   return (
     <form onSubmit={handleSave} className="max-w-xl bg-[#121211] border border-[#c9a054]/15 rounded-xl p-6 space-y-6">
-      
-      {/* স্পেশাল অফার কন্ট্রোল সেকশন */}
       <div className="bg-[#181817] border border-[#c9a054]/30 rounded-xl p-4 space-y-4">
         <h3 className="text-sm font-bold text-[#c9a054] flex items-center justify-between border-b border-[#c9a054]/10 pb-2">
           🎁 কম্বো অফার কন্ট্রোল
@@ -540,7 +550,6 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
 
         {form.isOfferActive ? (
           <div className="space-y-6 pt-3 border-t border-[#c9a054]/10">
-            {/* কম্বো ১ */}
             <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
               <h4 className="text-xs font-bold text-[#c9a054]">📦 প্রথম কম্বো প্যাকেজ</h4>
               <div>
@@ -575,7 +584,6 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
               </div>
             </div>
 
-            {/* কম্বো ২ */}
             <div className="space-y-3 bg-[#0d0d0c] p-3 rounded-lg border border-[#c9a054]/20">
               <h4 className="text-xs font-bold text-[#c9a054]">📦 দ্বিতীয় কম্বো প্যাকেজ</h4>
               <div>
@@ -626,7 +634,6 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
         )}
       </div>
 
-      {/* সোশ্যাল ও কন্টাক্ট সেকশন */}
       <div>
         <h3 className="text-sm font-bold text-white border-b border-[#c9a054]/10 pb-3 mb-3">
           ফুটার সোশ্যাল লিংক ও যোগাযোগ নাম্বার
@@ -689,6 +696,7 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
   );
 }
 
+// 📦 ৪. আপনার মূল ProductsTab অপরিবর্তিত
 function ProductsTab({
   products,
   setProducts,
