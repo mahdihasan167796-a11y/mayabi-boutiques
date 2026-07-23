@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSiteSettings } from "@/lib/settings";
-import AdminDashboard from "./admin-dashboard";
+import { AdminDashboard } from "./admin-dashboard";
 
 export default async function AdminPage() {
   const [{ data: products }, { data: orders }, settings] = await Promise.all([
@@ -11,13 +11,9 @@ export default async function AdminPage() {
 
   return (
     <AdminDashboard
-      initialProducts={products || []}
-      initialOrders={orders || []}
+      initialProducts={products ?? []}
+      initialOrders={orders ?? []}
       initialSettings={settings}
-      products={products || []}
-      orders={orders || []}
-      settings={settings}
-      {...({} as any)}
     />
   );
 }
