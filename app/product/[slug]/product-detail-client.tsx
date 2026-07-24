@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Product } from "@/lib/products";
 import { engToBdNum, formatBDT } from "@/lib/utils";
 
-// ভ্যারিয়েন্ট টাইপ ডিফাইন (যদি আলাদা দাম বা স্টক থাকে)
 type VariantType = {
   name: string;
   image?: string;
@@ -40,14 +39,13 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const BKASH_NUMBER = process.env.NEXT_PUBLIC_BKASH_NUMBER || "01700-000000";
   const NAGAD_NUMBER = process.env.NEXT_PUBLIC_NAGAD_NUMBER || "01700-000000";
 
-  // 🔹 নিখুঁত স্টক হিসাব লজিক:
-  // প্রথমে সিলেক্ট করা ভ্যারিয়েন্টের স্টক দেখবে। ভ্যারিয়েন্টে স্টক নির্দিষ্ট না থাকলে মূল প্রোডাক্টের (product.stock) স্টক নেবে।
   const currentVariant = (product.variants as VariantType[])?.find((v) => v.name === selectedColor);
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
 
-  // 🎯 সঠিক স্টক মান নির্ণয়
-  const currentStock = currentVariant?.stock !== undefined ? currentVariant.stock : (product.stock ?? 0);
+  // 🎯 বুলেটপ্রুফ স্টক চেক (যদি stock প্রপার্টি না থাকে বা ০ থাকে, সরাসরি ০ ধরবে):
+  const rawStock = currentVariant?.stock ?? product.stock;
+  const currentStock = typeof rawStock === "number" ? rawStock : 0;
   const isOutOfStock = currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -155,7 +153,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
                 <hr className="my-4 border-neutral-800" />
 
-                {/* 🔹 প্রাইস ও স্টক স্ট্যাটাস */}
+                {/* প্রাইস ও স্টক স্ট্যাটাস */}
                 <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800">
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-extrabold text-amber-500">{formatBDT(currentPrice)}</span>
@@ -240,7 +238,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                 </div>
               </div>
 
-              {/* 🔹 অর্ডার বাটন */}
+              {/* অর্ডার বাটন */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <button
                   onClick={() => setCurrentStep(1)}
