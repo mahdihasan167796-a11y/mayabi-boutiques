@@ -40,11 +40,14 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const BKASH_NUMBER = process.env.NEXT_PUBLIC_BKASH_NUMBER || "01700-000000";
   const NAGAD_NUMBER = process.env.NEXT_PUBLIC_NAGAD_NUMBER || "01700-000000";
 
-  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা (Default fallback correct logic)
+  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা (0 স্টক ফিক্স করা হলো)
   const currentVariant = (product.variants as VariantType[])?.find((v) => v.name === selectedColor);
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
-  const currentStock = currentVariant?.stock ?? product.stock ?? 0;
+  
+  // 🎯 ফিক্সড স্টক লজিক: 0 স্টককে যেন সঠিক হিসাব করতে পারে
+  const rawStock = currentVariant?.stock !== undefined ? currentVariant.stock : product.stock;
+  const currentStock = rawStock !== undefined ? rawStock : 0;
   const isOutOfStock = currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -178,7 +181,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                       {product.variants.map((v) => (
                         <button
                           key={v.name}
-                         onClick={() => { setSelectedColor(v.name ?? ""); setActiveImageIdx(0); }}
+                          onClick={() => { setSelectedColor(v.name ?? ""); setActiveImageIdx(0); }}
                           className={`p-1 rounded-lg border transition-all flex items-center justify-center ${
                             selectedColor === v.name ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-500/10" : "border-neutral-800 bg-neutral-950 hover:border-neutral-700"
                           }`}
