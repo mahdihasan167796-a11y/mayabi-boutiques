@@ -954,8 +954,8 @@ function ProductsTab({
         setProducts((prev) => [result.product, ...prev]);
         setForm({ name: "", categorySlug: categories[0]?.slug || "", price: "", oldPrice: "" });
         setImageFile(null);
-        (document.getElementById("product-image-input") as HTMLInputElement | null)?.value &&
-          ((document.getElementById("product-image-input") as HTMLInputElement).value = "");
+        const fileInput = document.getElementById("product-image-input") as HTMLInputElement | null;
+        if (fileInput) fileInput.value = "";
       } else {
         setError(result.error || "প্রোডাক্ট যোগ করা সম্ভব হয়নি।");
       }
@@ -992,6 +992,7 @@ function ProductsTab({
             type="text" required value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             className="w-full bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054]"
+            placeholder="প্রোডাক্টের নাম লিখুন"
           />
         </div>
 
@@ -1054,71 +1055,52 @@ function ProductsTab({
       <div className="lg:col-span-2 space-y-3">
         <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4">
           <h3 className="text-xs font-bold text-white mb-4">
-            🛍️ প্রোডাক্ট লিস্ট ({products.length})
+            প্রোডাক্ট লিস্ট ({products.length})
           </h3>
 
-          {products.length === 0 ? (
-            <p className="text-xs text-gray-500 text-center py-8">
-              এখনো কোনো প্রোডাক্ট যোগ করা হয়নি।
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {products.map((p: any) => {
-                const totalStock =
-                  p.variants && p.variants.length > 0
-                    ? p.variants.reduce((sum: number, v: any) => sum + (Number(v.stock) || 0), 0)
-                    : p.stock ?? 0;
+          <div className="space-y-3">
+            {products.map((p: any) => {
+              const totalStock = Number(p.stock ?? 0) + (
+                p.variants?.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0) || 0
+              );
+              const productStock = Number(totalStock);
+              const isOutOfStock = productStock <= 0;
 
-                const minAlert = p.minStockAlert ?? p.min_stock_alert ?? 3;
-
-                return (
-                  <div
-                    key={p.id}
-                    className="bg-[#070706] border border-[#c9a054]/15 rounded-xl p-3 flex items-center gap-3"
-                  >
-                    <img
-                      src={p.images?.[0] || "/placeholder.jpg"}
-                      alt={p.name}
-                      className="w-14 h-14 rounded-lg object-cover border border-[#c9a054]/20 shrink-0"
-                    />
-
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm font-bold text-white truncate">{p.name}</p>
+              return (
+                <div key={p.id} className="p-3 bg-[#18181b] rounded-lg border border-zinc-800 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img src={p.images?.[0]} alt={p.name} className="w-12 h-12 object-cover rounded" />
+                    <div>
+                      <h4 className="font-semibold text-sm text-white">{p.name}</h4>
                       <p className="text-[11px] text-gray-500">
-                        {categories.find((c) => c.slug === (p.category_slug || p.categorySlug))?.name ??
-                          (p.category_slug || p.categorySlug)}
+                        {categories.find((c) => c.slug === (p.category_slug || p.categorySlug))?.name ?? (p.category_slug || p.categorySlug)}
                       </p>
                       <p className="text-xs font-black text-[#c9a054]">{formatBDT(p.price)}</p>
-
                       <div className="mt-1">
-                        {totalStock === 0 ? (
-                          <span className="text-[10px] bg-red-900/40 text-red-400 border border-red-800/50 px-2 py-0.5 rounded font-medium">
+                        {isOutOfStock ? (
+                          <span className="text-xs bg-red-900/40 text-red-500 font-bold px-2 py-0.5 rounded border border-red-800/50">
                             Out of Stock
                           </span>
-                        ) : totalStock <= minAlert ? (
-                          <span className="text-[10px] bg-yellow-900/40 text-yellow-400 border border-yellow-800/50 px-2 py-0.5 rounded font-medium">
-                            Low Stock ({totalStock})
-                          </span>
                         ) : (
-                          <span className="text-[10px] bg-emerald-900/40 text-emerald-400 border border-emerald-800/50 px-2 py-0.5 rounded font-medium">
-                            Stock: {totalStock}
+                          <span className="text-xs text-green-400 font-semibold">
+                            স্টক: {productStock}টি
                           </span>
                         )}
                       </div>
                     </div>
-
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      disabled={deletingId === p.id}
-                      className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-2.5 py-1.5 rounded-lg shrink-0 disabled:opacity-50"
-                    >
-                      {deletingId === p.id ? "..." : "ডিলিট"}
-                    </button>
                   </div>
-                );
-              })}
-            </div>
-          )}
+
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    disabled={deletingId === p.id}
+                    className="text-xs text-red-300 hover:text-red-400 bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-3 py-1.5 rounded transition-colors"
+                  >
+                    {deletingId === p.id ? "..." : "ডিলিট"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
