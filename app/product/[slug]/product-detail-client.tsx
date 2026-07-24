@@ -43,18 +43,12 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
 
-  // 🎯 ১০০% বুলেটপ্রুফ স্টক চেক (ভ্যারিয়েন্ট বা মেইন প্রোডাক্ট যেকোনো একটা ০ হলেই স্টক শেষ দেখাবে)
-  const variantStock = currentVariant?.stock;
-  const mainStock = product.stock;
+  // 🎯 সঠিক ও নিখুঁত স্টক হিসাব (ভ্যারিয়েন্টে স্টক থাকলে সেট করবে, না থাকলে মেইন স্টক চেক করবে)
+  const currentStock = currentVariant && typeof currentVariant.stock === "number"
+    ? currentVariant.stock
+    : Number(product.stock ?? 0);
   
-  // ১. ভ্যারিয়েন্ট স্টক ডিফাইন করা থাকলে আগে তা চেক করবে, না থাকলে মেইন স্টক চেক করবে
-  const rawStock = typeof variantStock === "number" ? variantStock : mainStock;
-  
-  // ২. যদি কোনো কারণে সংখ্যা না থাকে বা NaN হয়, ০ ধরবে
-  const currentStock = typeof rawStock === "number" && !isNaN(rawStock) ? rawStock : 0;
-  
-  // ৩. স্টক ০ বা তার কম হলেই Out of Stock
-  const isOutOfStock = currentStock <= 0;
+  const isOutOfStock = isNaN(currentStock) || currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
