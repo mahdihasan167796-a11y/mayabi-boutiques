@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { categories } from "@/lib/categories";
@@ -65,7 +65,7 @@ export function AdminDashboard({
   initialSettings: SiteSettings;
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"products" | "orders" | "settings" | "addons">("orders");
+  const [tab, setTab] = useState<"products" | "orders" | "settings" | "addons" | "customers">("orders");
   const [products, setProducts] = useState(initialProducts);
   const [orders, setOrders] = useState(initialOrders);
 
@@ -163,6 +163,16 @@ export function AdminDashboard({
             </span>
           </button>
 
+<button
+  onClick={() => setTab("customers")}
+  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+    tab === "customers"
+      ? "bg-[#c9a054] text-black shadow-md"
+      : "bg-[#18181b] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+  }`}
+>
+  <span>কাস্টমার লিস্ট (CRM)</span>
+</button>
           <button
             onClick={() => setTab("products")}
             className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
@@ -206,6 +216,7 @@ export function AdminDashboard({
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
           {tab === "addons" && <AddonsTab />}
           {tab === "settings" && <SettingsTab initialSettings={initialSettings} />}
+{tab === "customers" && <CustomersTab />}
         </div>
       </div>
     </div>
@@ -1102,6 +1113,116 @@ function ProductsTab({
             })}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+// 🎯 CRM / Customer List কম্পোনেন্ট
+function CustomersTab() {
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const res = await fetch('/api/admin/orders');
+        const data = await res.json();
+        const orders = Array.isArray(data) ? data : data.orders || [];
+        
+        const customerMap: { [key: string]: any } = {};
+
+        orders.forEach((order: any) => {
+          // আপনার ডাটাবেজের ফিল্ডের নাম অনুযায়ী (phone / customerPhone ইত্যাদি)
+          const phone = order.phone || order.customerPhone || 'N/A';
+          const name = order.customer_name || order.customerName || order.name || 'অপরিচিত কাস্টমার';
+          const totalAmount = Number(order.total_amount || order.totalAmount || order.total || 0);
+
+          if (!customerMap[phone]) {
+            customerMap[phone] = {
+              name,
+              phone,
+              orderCount: 0,
+              totalSpent: 0,
+            };
+          }
+
+          customerMap[phone].orderCount += 1;
+          customerMap[phone].totalSpent += totalAmount;
+        });
+
+        setCustomers(Object.values(customerMap));
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCustomers();
+  }, []);
+
+  const filteredCustomers = customers.filter(
+    (c) =>
+      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.phone.includes(searchTerm)
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h3 className="text-xs font-bold text-white">
+          কাস্টমার ডেটাবেস / CRM ({filteredCustomers.length})
+        </h3>
+        <input
+          type="text"
+          placeholder="নাম বা ফোন নম্বর দিয়ে খুঁজুন..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="bg-[#070706] border border-[#c9a054]/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#c9a054] w-full sm:w-64"
+        />
+      </div>
+
+      <div className="bg-[#121211] border border-[#c9a054]/15 rounded-xl overflow-hidden">
+        {loading ? (
+          <p className="text-center text-xs text-gray-400 p-6">লোড হচ্ছে...</p>
+        ) : filteredCustomers.length === 0 ? (
+          <p className="text-center text-xs text-gray-400 p-6">কোনো কাস্টমার পাওয়া যায়নি।</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#c9a054]/10 text-[11px] text-gray-400 uppercase bg-[#070706]">
+                  <th className="p-3">কাস্টমারের নাম</th>
+                  <th className="p-3">ফোন নম্বর</th>
+                  <th className="p-3 text-center">মোট অর্ডার</th>
+                  <th className="p-3 text-right">মোট পারচেজ (৳)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800 text-xs">
+                {filteredCustomers.map((c, index) => (
+                  <tr key={index} className="hover:bg-[#18181b] transition-colors">
+                    <td className="p-3 font-semibold text-white">{c.name}</td>
+                    <td className="p-3 text-gray-300">{c.phone}</td>
+                    <td className="p-3 text-center">
+                      <span className="bg-zinc-800 text-gray-300 px-2 py-0.5 rounded-full font-bold text-[10px]">
+                        {c.orderCount} বার
+                      </span>
+                    </td>
+                    <td className="p-3 text-right font-black text-[#c9a054]">
+                      ৳{c.totalSpent.toLocaleString()}
+                      {c.orderCount > 1 && (
+                        <span className="ml-2 text-[9px] bg-emerald-900/40 text-emerald-400 border border-emerald-800/50 px-1.5 py-0.5 rounded">
+                          রিপিট কাস্টমার
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

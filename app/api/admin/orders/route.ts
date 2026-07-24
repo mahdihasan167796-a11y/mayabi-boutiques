@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// ১. আপনার আগের GET ফাংশন (যা সম্পূর্ণ অপরিবর্তিত রাখা হয়েছে)
+// ১. আপনার আগের GET ফাংশন (CRM কাস্টমার লিস্ট এবং অর্ডার ফেচ করার জন্য)
 export async function GET() {
   try {
     const { data, error } = await supabaseAdmin
@@ -22,7 +22,7 @@ export async function GET() {
   }
 }
 
-// 🚨 ২. স্টক অটো-ডিক্রিমেন্ট সহ নতুন POST ফাংশন (অর্ডার তৈরি করার সময়)
+// 🚨 ২. স্টক অটো-ডিক্রিমেন্ট সহ নতুন POST ফাংশন (অর্ডার তৈরি করার সময়)
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     // ক) স্টক ভ্যালিডেশন ও স্টক বিয়োগ করার লজিক
     if (items && Array.isArray(items)) {
       for (const item of items) {
-        // প্রোডাক্টের বর্তমান তথ্য নিয়ে আসা
+        // প্রোডাক্টের বর্তমান তথ্য নিয়ে আসা
         const { data: product } = await supabaseAdmin
           .from("products")
           .select("stock, variants")
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         if (product) {
           const qtyToDeduct = Number(item.quantity || 1);
 
-          // যদি ভ্যারিয়েন্ট (সাইজ/কালার) থাকে
+          // যদি ভ্যারিয়েন্ট (সাইজ/কালার) থাকে
           if (product.variants && Array.isArray(product.variants) && item.variant_id) {
             const updatedVariants = product.variants.map((v: any) => {
               if (v.id === item.variant_id || v.size === item.size) {
