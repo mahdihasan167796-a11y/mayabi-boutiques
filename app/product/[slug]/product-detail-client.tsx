@@ -40,14 +40,14 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const BKASH_NUMBER = process.env.NEXT_PUBLIC_BKASH_NUMBER || "01700-000000";
   const NAGAD_NUMBER = process.env.NEXT_PUBLIC_NAGAD_NUMBER || "01700-000000";
 
-  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা (0 স্টক ফিক্স করা হলো)
+  // 🔹 নিখুঁত স্টক হিসাব লজিক:
+  // প্রথমে সিলেক্ট করা ভ্যারিয়েন্টের স্টক দেখবে। ভ্যারিয়েন্টে স্টক নির্দিষ্ট না থাকলে মূল প্রোডাক্টের (product.stock) স্টক নেবে।
   const currentVariant = (product.variants as VariantType[])?.find((v) => v.name === selectedColor);
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
-  
-  // 🎯 ফিক্সড স্টক লজিক: 0 স্টককে যেন সঠিক হিসাব করতে পারে
-  const rawStock = currentVariant?.stock !== undefined ? currentVariant.stock : product.stock;
-  const currentStock = rawStock !== undefined ? rawStock : 0;
+
+  // 🎯 সঠিক স্টক মান নির্ণয়
+  const currentStock = currentVariant?.stock !== undefined ? currentVariant.stock : (product.stock ?? 0);
   const isOutOfStock = currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -155,7 +155,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
                 <hr className="my-4 border-neutral-800" />
 
-                {/* 🔹 প্রাইস ডিসপ্লে */}
+                {/* 🔹 প্রাইস ও স্টক স্ট্যাটাস */}
                 <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800">
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-extrabold text-amber-500">{formatBDT(currentPrice)}</span>
@@ -169,7 +169,11 @@ export function ProductDetailClient({ product }: { product: Product }) {
                     )}
                   </div>
                   <p className="text-xs text-neutral-400 mt-2">
-                    স্টক অবস্থা: {isOutOfStock ? <span className="text-red-500 font-bold">স্টক শেষ</span> : <span className="text-green-400 font-bold">স্টকে আছে ({engToBdNum(currentStock)}টি)</span>}
+                    স্টক অবস্থা: {isOutOfStock ? (
+                      <span className="text-red-500 font-bold">স্টক শেষ (Out of Stock)</span>
+                    ) : (
+                      <span className="text-green-400 font-bold">স্টকে আছে ({engToBdNum(currentStock)}টি)</span>
+                    )}
                   </p>
                 </div>
 
@@ -236,7 +240,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                 </div>
               </div>
 
-              {/* 🔹 অর্ডার বাটন (স্টক না থাকলে ডিজেবল থাকবে) */}
+              {/* 🔹 অর্ডার বাটন */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <button
                   onClick={() => setCurrentStep(1)}
