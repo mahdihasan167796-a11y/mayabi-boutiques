@@ -1,6 +1,5 @@
-// প্রোডাক্ট ডাটা এখন Supabase-এর `products` টেবিল থেকে আসে (আগে এখানে হার্ডকোডেড
-// ডামি ডাটা ছিল)। এই ফাইলটি শুধুমাত্র সার্ভার কম্পোনেন্ট / API রুট থেকে ইমপোর্ট
-// করা উচিত, যেহেতু এটি `supabaseAdmin` ব্যবহার করে।
+// প্রোডাক্ট ডাটা এখন Supabase-এর `products` টেবিল থেকে আসে।
+// এই ফাইলটি শুধুমাত্র সার্ভার কম্পোনেন্ট / API রুট থেকে ইমপোর্ট করা উচিত।
 
 import { supabaseAdmin } from "./supabase";
 
@@ -11,7 +10,7 @@ export interface ProductVariant {
   color?: string;   // 👈 কালার ট্র্যাকিং
   price?: number;
   oldPrice?: number;
-  stock: number;    // 👈 প্রতিটি ভ্যারিয়েন্টের নির্দিষ্ট স্টক
+  stock: number;    // 👈 প্রতিটি ভ্যারিয়েন্টের নির্দিষ্ট স্টক
 }
 
 export interface Product {
@@ -21,8 +20,8 @@ export interface Product {
   categorySlug: string;
   price: number;
   oldPrice: number;
-  stock?: number; // 👈 ওভারঅল স্টক (যদি প্রয়োজন হয়)
-  minStockAlert?: number; // 👈 লো-স্টক নোটিফিকেশন থ্রেশহোল্ড
+  stock: number; // 👈 বাধ্যতামূলক সংখ্যা (০ বা তার বেশি)
+  minStockAlert: number;
   images: string[];
   variants: ProductVariant[];
   sizes: string[];
@@ -32,17 +31,27 @@ export interface Product {
 
 // ডাটাবেজের snake_case রো-কে অ্যাপে ব্যবহৃত camelCase Product অবজেক্টে রূপান্তর করে
 function mapRow(row: any): Product {
+  // ১. ওভারঅল স্টক বের করা (যদি ডেটাবেজে null/undefined থাকে তবে default 0)
+  const parsedStock = row.stock !== null && row.stock !== undefined ? Number(row.stock) : 0;
+
+  // ২. ভ্যারিয়েন্ট সমূহের স্টক ঠিক করা
+  const rawVariants = Array.isArray(row.variants) ? row.variants : [];
+  const formattedVariants: ProductVariant[] = rawVariants.map((v: any) => ({
+    ...v,
+    stock: v?.stock !== null && v?.stock !== undefined ? Number(v.stock) : parsedStock,
+  }));
+
   return {
     id: row.id,
     slug: row.slug,
     name: row.name,
     categorySlug: row.category_slug,
-    price: Number(row.price),
-    oldPrice: Number(row.old_price ?? row.price),
-    stock: row.stock != null ? Number(row.stock) : undefined, // 👈 ডাটাবেজ থেকে স্টক ম্যাপ করা হলো
-    minStockAlert: row.min_stock_alert != null ? Number(row.min_stock_alert) : 3, // 👈 মিনিমাম স্টক অ্যালার্ট ম্যাপ করা হলো
+    price: Number(row.price ?? 0),
+    oldPrice: Number(row.old_price ?? row.price ?? 0),
+    stock: parsedStock, // ✅ এখন 0 হলে নিখুঁতভাবে 0-ই থাকবে
+    minStockAlert: row.min_stock_alert != null ? Number(row.min_stock_alert) : 3,
     images: row.images ?? [],
-    variants: row.variants ?? [],
+    variants: formattedVariants,
     sizes: row.sizes ?? [],
     rating: row.rating ?? "221",
     questions: row.questions ?? "86",
