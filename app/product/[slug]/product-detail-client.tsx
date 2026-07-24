@@ -23,6 +23,9 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
+  // রিয়েল-টাইম স্টক আপডেটের জন্য লোকাল স্টেট
+  const [localStock, setLocalStock] = useState<number>(Number(product.stock ?? 0));
+
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
@@ -43,10 +46,10 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
 
-  // 🎯 সঠিক ও নিখুঁত স্টক হিসাব (ভ্যারিয়েন্টে স্টক থাকলে সেট করবে, না থাকলে মেইন স্টক চেক করবে)
+  // 🎯 সঠিক ও নিখুঁত স্টক হিসাব (ভ্যারিয়েন্টে স্টক থাকলে সেট করবে, না থাকলে লোকাল মেইন স্টক চেক করবে)
   const currentStock = currentVariant && typeof currentVariant.stock === "number"
     ? currentVariant.stock
-    : Number(product.stock ?? 0);
+    : localStock;
   
   const isOutOfStock = isNaN(currentStock) || currentStock <= 0;
 
@@ -75,23 +78,23 @@ export function ProductDetailClient({ product }: { product: Product }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId: product.id,
-          productName: product.name,
-          categorySlug: product.categorySlug,
+          product_id: product.id,
+          product_name: product.name,
+          category_slug: product.categorySlug,
           color: selectedColor,
           size: selectedSize,
-          quantity,
-          unitPrice: currentPrice,
-          totalPrice: currentPrice * quantity,
-          customerName: formData.fullName,
+          quantity: quantity,
+          unit_price: currentPrice,
+          total_price: currentPrice * quantity,
+          customer_name: formData.fullName,
           phone: formData.phoneNumber,
           region: formData.region,
           city: formData.city,
           area: formData.area,
           address: formData.address,
-          addressLabel: formData.label,
-          paymentMethod,
-          transactionId: paymentMethod !== "cod" ? transactionId.trim() : undefined,
+          address_label: formData.label,
+          payment_method: paymentMethod,
+          transaction_id: paymentMethod !== "cod" ? transactionId.trim() : undefined,
         }),
       });
 
@@ -102,6 +105,8 @@ export function ProductDetailClient({ product }: { product: Product }) {
         return;
       }
 
+      // অর্ডার সফল হলে স্থানীয় স্টক সংখ্যা তাৎক্ষণিক কমিয়ে দেওয়া
+      setLocalStock((prev) => Math.max(0, prev - quantity));
       setShowThankYou(true);
     } catch {
       setSubmitError("ইন্টারনেট সংযোগে সমস্যা হয়েছে, একটু পরে আবার চেষ্টা করুন।");

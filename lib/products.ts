@@ -34,33 +34,42 @@ function mapRow(row: any): Product {
   // ১. ওভারঅল স্টক বের করা (যদি ডেটাবেজে null/undefined থাকে তবে default 0)
   const parsedStock = row.stock !== null && row.stock !== undefined ? Number(row.stock) : 0;
 
-  // ২. ভ্যারিয়েন্ট সমূহের স্টক ঠিক করা
+  // ২. ভ্যারিয়েন্ট সমূহের ডাটা ও স্টক প্রসেসিং
   const rawVariants = Array.isArray(row.variants) ? row.variants : [];
   const formattedVariants: ProductVariant[] = rawVariants.map((v: any) => {
-    // যদি ভ্যারিয়েন্টে নির্দিষ্ট স্টক ডিফাইন করা থাকে (এমনকি 0 হলেও), তবে সেটাই নেবে
+    // ভ্যারিয়েন্টে নির্দিষ্ট স্টক ডিফাইন করা আছে কিনা তা চেক করা (০ হলেও ডিফাইন হিসেবে গণ্য হবে)
     const hasVariantStock = v?.stock !== null && v?.stock !== undefined;
     const variantStock = hasVariantStock ? Number(v.stock) : parsedStock;
 
+    // Price and oldPrice mapping for variants safely
+    const variantPrice = v?.price !== undefined && v?.price !== null ? Number(v.price) : undefined;
+    const variantOldPrice = v?.oldPrice ?? v?.old_price;
+
     return {
-      ...v,
+      name: v?.name ?? v?.color ?? "",
+      image: v?.image ?? "",
+      size: v?.size ?? "",
+      color: v?.color ?? "",
+      price: variantPrice,
+      oldPrice: variantOldPrice !== undefined && variantOldPrice !== null ? Number(variantOldPrice) : undefined,
       stock: isNaN(variantStock) ? 0 : variantStock,
     };
   });
 
   return {
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    categorySlug: row.category_slug,
+    id: String(row.id ?? ""),
+    slug: String(row.slug ?? ""),
+    name: String(row.name ?? ""),
+    categorySlug: String(row.category_slug ?? ""),
     price: Number(row.price ?? 0),
     oldPrice: Number(row.old_price ?? row.price ?? 0),
     stock: isNaN(parsedStock) ? 0 : parsedStock, // ✅ নিখুঁত সংখ্যা নিশ্চিত
-    minStockAlert: row.min_stock_alert != null ? Number(row.min_stock_alert) : 3,
-    images: row.images ?? [],
+    minStockAlert: row.min_stock_alert !== null && row.min_stock_alert !== undefined ? Number(row.min_stock_alert) : 3,
+    images: Array.isArray(row.images) ? row.images : [],
     variants: formattedVariants,
-    sizes: row.sizes ?? [],
-    rating: row.rating ?? "221",
-    questions: row.questions ?? "86",
+    sizes: Array.isArray(row.sizes) ? row.sizes : [],
+    rating: String(row.rating ?? "221"),
+    questions: String(row.questions ?? "86"),
   };
 }
 
