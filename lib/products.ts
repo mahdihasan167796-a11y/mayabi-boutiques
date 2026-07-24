@@ -36,10 +36,16 @@ function mapRow(row: any): Product {
 
   // ২. ভ্যারিয়েন্ট সমূহের স্টক ঠিক করা
   const rawVariants = Array.isArray(row.variants) ? row.variants : [];
-  const formattedVariants: ProductVariant[] = rawVariants.map((v: any) => ({
-    ...v,
-    stock: v?.stock !== null && v?.stock !== undefined ? Number(v.stock) : parsedStock,
-  }));
+  const formattedVariants: ProductVariant[] = rawVariants.map((v: any) => {
+    // যদি ভ্যারিয়েন্টে নির্দিষ্ট স্টক ডিফাইন করা থাকে (এমনকি 0 হলেও), তবে সেটাই নেবে
+    const hasVariantStock = v?.stock !== null && v?.stock !== undefined;
+    const variantStock = hasVariantStock ? Number(v.stock) : parsedStock;
+
+    return {
+      ...v,
+      stock: isNaN(variantStock) ? 0 : variantStock,
+    };
+  });
 
   return {
     id: row.id,
@@ -48,7 +54,7 @@ function mapRow(row: any): Product {
     categorySlug: row.category_slug,
     price: Number(row.price ?? 0),
     oldPrice: Number(row.old_price ?? row.price ?? 0),
-    stock: parsedStock, // ✅ এখন 0 হলে নিখুঁতভাবে 0-ই থাকবে
+    stock: isNaN(parsedStock) ? 0 : parsedStock, // ✅ নিখুঁত সংখ্যা নিশ্চিত
     minStockAlert: row.min_stock_alert != null ? Number(row.min_stock_alert) : 3,
     images: row.images ?? [],
     variants: formattedVariants,
