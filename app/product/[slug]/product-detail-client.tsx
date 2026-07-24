@@ -18,8 +18,8 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const [selectedColor, setSelectedColor] = useState(product.variants[0]?.name ?? "");
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] ?? "");
+  const [selectedColor, setSelectedColor] = useState(product.variants?.[0]?.name ?? "");
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
@@ -43,9 +43,17 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
 
-  // 🎯 বুলেটপ্রুফ স্টক চেক (যদি stock প্রপার্টি না থাকে বা ০ থাকে, সরাসরি ০ ধরবে):
-  const rawStock = currentVariant?.stock ?? product.stock;
-  const currentStock = typeof rawStock === "number" ? rawStock : 0;
+  // 🎯 ১০০% বুলেটপ্রুফ স্টক চেক (ভ্যারিয়েন্ট বা মেইন প্রোডাক্ট যেকোনো একটা ০ হলেই স্টক শেষ দেখাবে)
+  const variantStock = currentVariant?.stock;
+  const mainStock = product.stock;
+  
+  // ১. ভ্যারিয়েন্ট স্টক ডিফাইন করা থাকলে আগে তা চেক করবে, না থাকলে মেইন স্টক চেক করবে
+  const rawStock = typeof variantStock === "number" ? variantStock : mainStock;
+  
+  // ২. যদি কোনো কারণে সংখ্যা না থাকে বা NaN হয়, ০ ধরবে
+  const currentStock = typeof rawStock === "number" && !isNaN(rawStock) ? rawStock : 0;
+  
+  // ৩. স্টক ০ বা তার কম হলেই Out of Stock
   const isOutOfStock = currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
