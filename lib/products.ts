@@ -5,11 +5,13 @@
 import { supabaseAdmin } from "./supabase";
 
 export interface ProductVariant {
-  name: string;
-  image: string;
+  name?: string;
+  image?: string;
+  size?: string;    // 👈 সাইজ ট্র্যাকিং
+  color?: string;   // 👈 কালার ট্র্যাকিং
   price?: number;
   oldPrice?: number;
-  stock?: number;
+  stock: number;    // 👈 প্রতিটি ভ্যারিয়েন্টের নির্দিষ্ট স্টক
 }
 
 export interface Product {
@@ -19,7 +21,8 @@ export interface Product {
   categorySlug: string;
   price: number;
   oldPrice: number;
-  stock?: number; // 👈 টাইপস্ক্রিপ্ট এরর সমাধানের জন্য যোগ করা হলো
+  stock?: number; // 👈 ওভারঅল স্টক (যদি প্রয়োজন হয়)
+  minStockAlert?: number; // 👈 লো-স্টক নোটিফিকেশন থ্রেশহোল্ড
   images: string[];
   variants: ProductVariant[];
   sizes: string[];
@@ -37,6 +40,7 @@ function mapRow(row: any): Product {
     price: Number(row.price),
     oldPrice: Number(row.old_price ?? row.price),
     stock: row.stock != null ? Number(row.stock) : undefined, // 👈 ডাটাবেজ থেকে স্টক ম্যাপ করা হলো
+    minStockAlert: row.min_stock_alert != null ? Number(row.min_stock_alert) : 3, // 👈 মিনিমাম স্টক অ্যালার্ট ম্যাপ করা হলো
     images: row.images ?? [],
     variants: row.variants ?? [],
     sizes: row.sizes ?? [],
