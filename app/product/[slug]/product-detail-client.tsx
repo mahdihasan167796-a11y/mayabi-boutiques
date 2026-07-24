@@ -40,11 +40,11 @@ export function ProductDetailClient({ product }: { product: Product }) {
   const BKASH_NUMBER = process.env.NEXT_PUBLIC_BKASH_NUMBER || "01700-000000";
   const NAGAD_NUMBER = process.env.NEXT_PUBLIC_NAGAD_NUMBER || "01700-000000";
 
-  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা
+  // 🔹 সিলেক্ট করা ভ্যারিয়েন্ট অনুযায়ী ডাইনামিক প্রাইস ও স্টক গণনা (Default fallback correct logic)
   const currentVariant = (product.variants as VariantType[])?.find((v) => v.name === selectedColor);
   const currentPrice = currentVariant?.price ?? product.price;
   const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
-  const currentStock = currentVariant?.stock ?? product.stock ?? 10;
+  const currentStock = currentVariant?.stock ?? product.stock ?? 0;
   const isOutOfStock = currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -152,7 +152,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
                 <hr className="my-4 border-neutral-800" />
 
-                {/* 🔹 প্রাইস ডিসপ্লে (ভ্যারিয়েন্ট সিলেক্ট করলে প্রাইস চেঞ্জ হবে) */}
+                {/* 🔹 প্রাইস ডিসপ্লে */}
                 <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800">
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-extrabold text-amber-500">{formatBDT(currentPrice)}</span>
@@ -178,7 +178,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                       {product.variants.map((v) => (
                         <button
                           key={v.name}
-                          onClick={() => { setSelectedColor(v.name); setActiveImageIdx(0); }}
+                         onClick={() => { setSelectedColor(v.name ?? ""); setActiveImageIdx(0); }}
                           className={`p-1 rounded-lg border transition-all flex items-center justify-center ${
                             selectedColor === v.name ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-500/10" : "border-neutral-800 bg-neutral-950 hover:border-neutral-700"
                           }`}
@@ -233,7 +233,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
                 </div>
               </div>
 
-              {/* 🔹 অর্ডার বাটন (স্টক আউট থাকলে ডিজেবল থাকবে) */}
+              {/* 🔹 অর্ডার বাটন (স্টক না থাকলে ডিজেবল থাকবে) */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <button
                   onClick={() => setCurrentStep(1)}
@@ -243,10 +243,11 @@ export function ProductDetailClient({ product }: { product: Product }) {
                   {isOutOfStock ? "Out of Stock" : "Buy Now (অর্ডার করুন)"}
                 </button>
                 <button 
+                  onClick={() => setCurrentStep(1)}
                   disabled={isOutOfStock}
                   className="w-full bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed text-amber-500 border border-neutral-700 font-bold py-3.5 rounded-xl transition-all"
                 >
-                  Add to Cart
+                  {isOutOfStock ? "স্টক শেষ" : "Add to Cart"}
                 </button>
               </div>
             </div>
