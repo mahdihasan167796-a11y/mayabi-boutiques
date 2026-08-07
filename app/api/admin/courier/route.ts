@@ -1,9 +1,7 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-
-export const dynamic = "force-dynamic";
 
 // ১. Pathao Access Token জেনারেট করার হেল্পার ফাংশন
 async function getPathaoToken() {
