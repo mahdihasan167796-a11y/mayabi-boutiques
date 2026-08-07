@@ -102,7 +102,7 @@ export default function HomePage() {
                   <h3 className="font-bold text-sm sm:text-base text-white group-hover:text-[#c9a054]">{col.name}</h3>
                   <p className="text-[10px] text-gray-500 mt-1">এখনি অর্ডার করতে ক্লিক করুন →</p>
                 </div>
-              </Link> 
+              </Link>  
             ))}
           </div>
         </div>
