@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSiteSettings } from "@/lib/settings";
 import { AdminDashboard } from "./admin-dashboard";
