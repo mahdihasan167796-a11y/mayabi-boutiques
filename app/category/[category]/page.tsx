@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { notFound } from "next/navigation";
 import { getCategory } from "@/lib/categories";
 import { getProductsByCategory } from "@/lib/products";
