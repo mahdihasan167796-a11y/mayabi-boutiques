@@ -5,7 +5,7 @@ import { formatBDT } from "@/lib/utils";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
-  href={`/product/${product.id}`}
+  href={`/product/${product.slug}`}
       className="bg-[#121211] rounded-2xl overflow-hidden border border-[#c9a054]/15 p-4 flex flex-col justify-between group cursor-pointer shadow-xl transition-all duration-300 hover:border-[#c9a054]/50 hover:-translate-y-1.5"
     >
       <div className="h-56 w-full overflow-hidden rounded-xl bg-black relative mb-4">
