@@ -325,7 +325,7 @@ function ProductsTab({
       if (!res.ok || !result.ok) {
         setError(result.error || "প্রোডাক্ট যোগ করা যায়নি।");
         return;
-      }
+      } 
 
       setProducts((prev) => [result.product, ...prev]);
       setForm({ name: "", categorySlug: categories[0].slug, price: "", oldPrice: "" });
