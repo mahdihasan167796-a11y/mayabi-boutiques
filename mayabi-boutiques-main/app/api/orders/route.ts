@@ -22,7 +22,7 @@ export async function GET() {
   }
 }
 
-// ২. POST ফাংশন (items কলাম ছাড়া সরাসরি সেভ)
+// ২. POST ফাংশন
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -30,9 +30,9 @@ export async function POST(req: Request) {
     const customer_name = body.customer_name || body.customerName || body.fullName || "";
     const phone = body.phone || body.phoneNumber || "";
     const address = body.address || "";
-    const total_amount = body.total_price || body.total_amount || 0;
+    const amount = body.total_price || body.total_amount || 0;
 
-    // সরাসরি ডাটাবেজে অর্ডার ইনসার্ট (items কলাম বাদ দিয়ে)
+    // সরাসরি ডাটাবেজে অর্ডার ইনসার্ট
     const { data: newOrder, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert([
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
           customer_name,
           phone,
           address,
-          total_amount,
+          total_price: amount,
           payment_method: body.payment_method || "cod",
           transaction_id: body.transaction_id || null,
           region: body.region || null,
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: orderError.message }, { status: 500 });
     }
 
-    // কাস্টমারকে অটোমেটিক SMS পাঠানো
+    // অটোমেটিক SMS
     if (newOrder && phone) {
       try {
         const orderIdShort = String(newOrder.id || "").slice(0, 6).toUpperCase();
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             phone: phone,
-            message: `সম্মানিত ${customer_name || "গ্রাহক"},\nমায়াবী বুটিকস-এ আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে।\n\nঅর্ডার আইডি: #${orderIdShort}\nসর্বমোট: ৳${total_amount || 0}\n\nআমাদের সাথে থাকার জন্য ধন্যবাদ!`,
+            message: `সম্মানিত ${customer_name || "গ্রাহক"},\nমায়াবী বুটিকস-এ আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে।\n\nঅর্ডার আইডি: #${orderIdShort}\nসর্বমোট: ৳${amount || 0}\n\nআমাদের সাথে থাকার জন্য ধন্যবাদ!`,
           }),
         });
       } catch (smsErr) {
