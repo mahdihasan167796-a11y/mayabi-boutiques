@@ -30,9 +30,11 @@ export async function POST(req: Request) {
     const customer_name = body.customer_name || body.customerName || body.fullName || "";
     const phone = body.phone || body.phoneNumber || "";
     const address = body.address || "";
-    const amount = body.total_price || body.total_amount || 0;
+    const total_price = Number(body.total_price || body.total_amount || 0);
+    const unit_price = Number(body.unit_price || total_price || 0);
+    const quantity = Number(body.quantity || 1);
 
-    // সরাসরি ডাটাবেজে অর্ডার ইনসার্ট
+    // সরাসরি ডাটাবেজে অর্ডার ইনসার্ট (সব সম্ভাব্য কলাম দিয়ে)
     const { data: newOrder, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert([
@@ -40,7 +42,13 @@ export async function POST(req: Request) {
           customer_name,
           phone,
           address,
-          total_price: amount,
+          unit_price,
+          quantity,
+          total_price,
+          product_id: body.product_id ? String(body.product_id) : null,
+          product_name: body.product_name || "প্রোডাক্ট",
+          color: body.color || null,
+          size: body.size || null,
           payment_method: body.payment_method || "cod",
           transaction_id: body.transaction_id || null,
           region: body.region || null,
@@ -68,7 +76,7 @@ export async function POST(req: Request) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             phone: phone,
-            message: `সম্মানিত ${customer_name || "গ্রাহক"},\nমায়াবী বুটিকস-এ আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে।\n\nঅর্ডার আইডি: #${orderIdShort}\nসর্বমোট: ৳${amount || 0}\n\nআমাদের সাথে থাকার জন্য ধন্যবাদ!`,
+            message: `সম্মানিত ${customer_name || "গ্রাহক"},\nমায়াবী বুটিকস-এ আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে।\n\nঅর্ডার আইডি: #${orderIdShort}\nসর্বমোট: ৳${total_price || 0}\n\nআমাদের সাথে থাকার জন্য ধন্যবাদ!`,
           }),
         });
       } catch (smsErr) {
