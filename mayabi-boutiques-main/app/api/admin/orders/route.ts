@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// ১. GET ফাংশন (অর্ডার ফেচ করার জন্য)
+// ১. GET ফাংশন (CRM কাস্টমার লিস্ট এবং অর্ডার ফেচ করার জন্য)
 export async function GET() {
   try {
     const { data, error } = await supabaseAdmin
@@ -22,122 +22,96 @@ export async function GET() {
   }
 }
 
-// ২. POST ফাংশন (অর্ডার তৈরি এবং স্টক হ্যান্ডলিং)
+// ২. POST ফাংশন (অর্ডার তৈরি এবং সেফটি স্টক হ্যান্ডলিং)
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // ক) ফ্রন্টএন্ড থেকে অ্যারাই আকারে পাঠালেও ধরবে, সিঙ্গেল ডাটা পাঠালেও ধরবে
+    // ক) ফ্রন্টএন্ড ডাটা প্রসেসিং
     const customer_name = body.customer_name || body.customerName || "";
     const phone = body.phone || body.phoneNumber || "";
     const address = body.address || "";
     const total_amount = body.total_price || body.total_amount || 0;
 
-    // আইটেম ফরম্যাট এক্সেস করা (সিঙ্গেল আইটেমকে অ্যারাই করে নেওয়া)
     let orderItems: any[] = [];
     if (body.items && Array.isArray(body.items)) {
       orderItems = body.items;
-    } else if (body.product_id || body.slug || body.id) {
+    } else if (body.product_id || body.slug || body.id || body.product_name) {
       orderItems = [body];
     }
 
-    if (orderItems.length === 0) {
-      return NextResponse.json(
-        { ok: false, error: "প্রোডাক্ট ডাটা পাওয়া যায়নি।" },
-        { status: 400 }
-      );
-    }
-
-    // খ) স্টক ভ্যালিডেশন ও স্টক বিয়োগ করার লজিক (ID এবং SLUG উভয় সাপোর্ট সহ)
+    // খ) সেফটি স্টক এডজাস্টমেন্ট (প্রোডাক্ট না পেলেও এরর থ্রো করবে না)
     for (const item of orderItems) {
-      const targetId = item.product_id || item.id;
-      const rawSlug = item.slug || item.product_slug;
-      
-      // বাংলা স্লাগ ডিকোড করা
-      let targetSlug = rawSlug ? String(rawSlug) : "";
       try {
-        if (targetSlug) targetSlug = decodeURIComponent(targetSlug);
-      } catch {
-        // decode না হলে আসলটাই থাকবে
-      }
+        const targetId = item.product_id || item.id;
+        const rawSlug = item.slug || item.product_slug;
+        let targetSlug = rawSlug ? String(rawSlug) : "";
+        try {
+          if (targetSlug) targetSlug = decodeURIComponent(targetSlug);
+        } catch {}
 
-      let product = null;
+        let product = null;
 
-      // প্রথমে ID দিয়ে খোঁজা
-      if (targetId) {
-        const { data } = await supabaseAdmin
-          .from("products")
-          .select("*")
-          .eq("id", targetId)
-          .maybeSingle();
-        product = data;
-      }
+        // ID দিয়ে খোঁজার চেষ্টা
+        if (targetId) {
+          const { data } = await supabaseAdmin
+            .from("products")
+            .select("*")
+            .eq("id", targetId)
+            .maybeSingle();
+          product = data;
+        }
 
-      // না পেলে SLUG দিয়ে খোঁজা (Decoded slug)
-      if (!product && targetSlug) {
-        const { data } = await supabaseAdmin
-          .from("products")
-          .select("*")
-          .eq("slug", targetSlug)
-          .maybeSingle();
-        product = data;
-      }
+        // Decoded Slug দিয়ে চেষ্টা
+        if (!product && targetSlug) {
+          const { data } = await supabaseAdmin
+            .from("products")
+            .select("*")
+            .eq("slug", targetSlug)
+            .maybeSingle();
+          product = data;
+        }
 
-      // তাও না পেলে Raw Slug দিয়ে খোঁজা
-      if (!product && rawSlug) {
-        const { data } = await supabaseAdmin
-          .from("products")
-          .select("*")
-          .eq("slug", rawSlug)
-          .maybeSingle();
-        product = data;
-      }
+        // Raw Slug দিয়ে চেষ্টা
+        if (!product && rawSlug) {
+          const { data } = await supabaseAdmin
+            .from("products")
+            .select("*")
+            .eq("slug", rawSlug)
+            .maybeSingle();
+          product = data;
+        }
 
-      // তাও না পেলে প্রোডাক্টের নাম দিয়ে খোঁজা (ফালব্যাক)
-      if (!product && item.product_name) {
-        const { data } = await supabaseAdmin
-          .from("products")
-          .select("*")
-          .eq("name", item.product_name)
-          .maybeSingle();
-        product = data;
-      }
+        // প্রোডাক্ট ডাটাবেজে পাওয়া গেলে স্টক কমিয়ে দেবে
+        if (product) {
+          const qtyToDeduct = Number(item.quantity || 1);
 
-      // যদি প্রোডাক্টটি ডাটাবেজে একেবারেই না থাকে
-      if (!product) {
-        return NextResponse.json(
-          { ok: false, error: "প্রোডাক্ট ডাটাবেজে পাওয়া যায়নি।" },
-          { status: 400 }
-        );
-      }
+          if (product.variants && Array.isArray(product.variants) && item.variant_id) {
+            const updatedVariants = product.variants.map((v: any) => {
+              if (v.id === item.variant_id || v.size === item.size) {
+                const currentStock = Number(v.stock) || 0;
+                return { ...v, stock: Math.max(0, currentStock - qtyToDeduct) };
+              }
+              return v;
+            });
 
-      // স্টক কমানোর লজিক
-      const qtyToDeduct = Number(item.quantity || 1);
+            await supabaseAdmin
+              .from("products")
+              .update({ variants: updatedVariants })
+              .eq("id", product.id);
+          } else if (product.stock !== undefined && product.stock !== null) {
+            const currentStock = Number(product.stock) || 0;
+            const newStock = Math.max(0, currentStock - qtyToDeduct);
 
-      // যদি ভ্যারিয়েন্ট (সাইজ/কালার) থাকে
-      if (product.variants && Array.isArray(product.variants) && item.variant_id) {
-        const updatedVariants = product.variants.map((v: any) => {
-          if (v.id === item.variant_id || v.size === item.size) {
-            const currentStock = Number(v.stock) || 0;
-            return { ...v, stock: Math.max(0, currentStock - qtyToDeduct) };
+            await supabaseAdmin
+              .from("products")
+              .update({ stock: newStock })
+              .eq("id", product.id);
           }
-          return v;
-        });
-
-        await supabaseAdmin
-          .from("products")
-          .update({ variants: updatedVariants })
-          .eq("id", product.id);
-      } 
-      // সাধারণ স্টক কমানো
-      else if (product.stock !== undefined && product.stock !== null) {
-        const currentStock = Number(product.stock) || 0;
-        const newStock = Math.max(0, currentStock - qtyToDeduct);
-
-        await supabaseAdmin
-          .from("products")
-          .update({ stock: newStock })
-          .eq("id", product.id);
+        }
+      } catch (stockErr) {
+        // স্টক আপডেটে কোনো এরর আসলেও অর্ডার সাবমিট বন্ধ হবে না
+        console.error("Stock update skipped:", stockErr);
       }
     }
 
