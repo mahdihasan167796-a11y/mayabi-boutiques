@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const address = body.address || "";
     const total_amount = body.total_price || body.total_amount || 0;
 
-    // আইটেম ফরম্যাট এক্সেস করা (সিঙ্গেল আইটেমকে অ্যারাই করে নেওয়া)
+    // আইটেম ফরম্যাট এক্সেস করা (সিঙ্গেল আইটেমকে অ্যারাই করে নেওয়া)
     let orderItems: any[] = [];
     if (body.items && Array.isArray(body.items)) {
       orderItems = body.items;
@@ -43,19 +43,27 @@ export async function POST(req: Request) {
 
     if (orderItems.length === 0) {
       return NextResponse.json(
-        { ok: false, error: "প্রোডাক্ট ডাটা পাওয়া যায়নি।" },
+        { ok: false, error: "প্রোডাক্ট ডাটা পাওয়া যায়নি।" },
         { status: 400 }
       );
     }
 
-    // খ) স্টক ভ্যালিডেশন ও স্টক বিয়োগ করার লজিক (ID এবং SLUG উভয় সাপোর্ট সহ)
+    // খ) স্টক ভ্যালিডেশন ও স্টক বিয়োগ করার লজিক (ID এবং SLUG উভয় সাপোর্ট সহ)
     for (const item of orderItems) {
       const targetId = item.product_id || item.id;
-      const targetSlug = item.slug || item.product_slug;
+      const rawSlug = item.slug || item.product_slug;
+      
+      // বাংলা স্লাগ ডিকোড করা
+      let targetSlug = rawSlug ? String(rawSlug) : "";
+      try {
+        if (targetSlug) targetSlug = decodeURIComponent(targetSlug);
+      } catch {
+        // decode না হলে আসলটাই থাকবে
+      }
 
       let product = null;
 
-      // প্রথমে ID দিয়ে খোঁজা
+      // প্রথমে ID দিয়ে খোঁজা
       if (targetId) {
         const { data } = await supabaseAdmin
           .from("products")
@@ -65,7 +73,7 @@ export async function POST(req: Request) {
         product = data;
       }
 
-      // না পেলে SLUG দিয়ে খোঁজা
+      // না পেলে SLUG দিয়ে খোঁজা (Decoded slug)
       if (!product && targetSlug) {
         const { data } = await supabaseAdmin
           .from("products")
@@ -75,10 +83,30 @@ export async function POST(req: Request) {
         product = data;
       }
 
+      // তাও না পেলে Raw Slug দিয়ে খোঁজা
+      if (!product && rawSlug) {
+        const { data } = await supabaseAdmin
+          .from("products")
+          .select("*")
+          .eq("slug", rawSlug)
+          .maybeSingle();
+        product = data;
+      }
+
+      // তাও না পেলে প্রোডাক্টের নাম দিয়ে খোঁজা (ফালব্যাক)
+      if (!product && item.product_name) {
+        const { data } = await supabaseAdmin
+          .from("products")
+          .select("*")
+          .eq("name", item.product_name)
+          .maybeSingle();
+        product = data;
+      }
+
       // যদি প্রোডাক্টটি ডাটাবেজে একেবারেই না থাকে
       if (!product) {
         return NextResponse.json(
-          { ok: false, error: "প্রোডাক্ট ডাটাবেজে পাওয়া যায়নি।" },
+          { ok: false, error: "প্রোডাক্ট ডাটাবেজে পাওয়া যায়নি।" },
           { status: 400 }
         );
       }
