@@ -116,9 +116,10 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          product_id: product.id,
+          product_id: String(product.id),
+          product_slug: product.slug || product.id,
           product_name: product.name,
-          category_slug: product.categorySlug,
+          category_slug: product.categorySlug || product.category_slug || "general",
           color: selectedColor,
           size: selectedSize,
           quantity: quantity,
