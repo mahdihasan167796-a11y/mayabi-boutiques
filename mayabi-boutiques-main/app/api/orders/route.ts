@@ -1,87 +1,114 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-export async function POST(request: Request) {
+// ১. GET ফাংশন
+export async function GET() {
   try {
-    const body = await request.json();
+    const { data, error } = await supabaseAdmin
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    const productId = body.product_id;
-    const requestedQuantity = Number(body.quantity) || 1;
-
-    // ১. প্রোডাক্টের বর্তমান স্টক চেক করা (যদি product_id থাকে)
-    if (productId) {
-      const { data: product, error: productError } = await supabase
-        .from("products")
-        .select("stock")
-        .eq("id", productId)
-        .single();
-
-      if (productError || !product) {
-        return NextResponse.json(
-          { ok: false, error: "প্রোডাক্ট ডাটাবেজে পাওয়া যায়নি।" },
-          { status: 404 }
-        );
-      }
-
-      // স্টক পর্যাপ্ত না থাকলে অর্ডার ব্লক করা
-      if (product.stock < requestedQuantity) {
-        return NextResponse.json(
-          { ok: false, error: "দুঃখিত, পণ্যটি স্টক আউট হয়ে গেছে বা পর্যাপ্ত স্টক নেই।" },
-          { status: 400 }
-        );
-      }
+    if (error) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
-    // ২. অর্ডার ডাটাবেজে ইনসার্ট করা (আপনার মূল অবজেক্ট অনুযায়ী)
-    const { data, error } = await supabase
+    return NextResponse.json({ ok: true, orders: data });
+  } catch {
+    return NextResponse.json({ ok: false, error: "সার্ভার এরর" }, { status: 500 });
+  }
+}
+
+// ২. POST ফাংশন (প্রোডাক্ট ভ্যালিডেশন ছাড়াই অর্ডার সেভ হবে)
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const customer_name = body.customer_name || body.customerName || body.fullName || "";
+    const phone = body.phone || body.phoneNumber || "";
+    const address = body.address || "";
+    const total_amount = body.total_price || body.total_amount || 0;
+
+    let orderItems: any[] = [];
+    if (body.items && Array.isArray(body.items)) {
+      orderItems = body.items;
+    } else {
+      orderItems = [body];
+    }
+
+    // ব্যাকগ্রাউন্ডে স্টক কমানোর চেষ্টা (এরর আসলেও অর্ডার আটকাবে না)
+    try {
+      const item = orderItems[0];
+      const targetId = item?.product_id || item?.id;
+      if (targetId) {
+        const { data: product } = await supabaseAdmin
+          .from("products")
+          .select("*")
+          .eq("id", targetId)
+          .maybeSingle();
+
+        if (product && product.stock) {
+          const qty = Number(item.quantity || 1);
+          await supabaseAdmin
+            .from("products")
+            .update({ stock: Math.max(0, Number(product.stock) - qty) })
+            .eq("id", product.id);
+        }
+      }
+    } catch (e) {
+      console.log("Stock update bypassed:", e);
+    }
+
+    // সরাসরি ডাটাবেজে অর্ডার ইনসার্ট
+    const { data: newOrder, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert([
         {
-          product_id: body.product_id || null,
-          product_name: body.product_name || null,
-          category_slug: body.category_slug || null,
-          color: body.color || null,
-          size: body.size || null,
-          quantity: requestedQuantity,
-          unit_price: body.unit_price || 0,
-          total_price: body.total_price || 0,
-          customer_name: body.customer_name || "",
-          phone: body.phone || "",
+          customer_name,
+          phone,
+          address,
+          items: orderItems,
+          total_amount,
+          payment_method: body.payment_method || "cod",
+          transaction_id: body.transaction_id || null,
           region: body.region || null,
           city: body.city || null,
           area: body.area || null,
-          address: body.address || "",
-          address_label: body.address_label || null,
-          payment_method: body.payment_method || "COD",
-          transaction_id: body.transaction_id || null,
           status: "pending",
         },
       ])
-      .select();
+      .select()
+      .single();
 
-    if (error) {
-      console.error("Order Insert Error:", error);
-      return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+    if (orderError) {
+      return NextResponse.json({ ok: false, error: orderError.message }, { status: 500 });
     }
 
-    // ৩. অর্ডার সফল হলে ডাটাবেজ থেকে অটোমেটিক স্টক কমিয়ে দেওয়া
-    if (productId) {
-      const { error: rpcError } = await supabase.rpc("decrement_product_stock", {
-        product_id: productId,
-        quantity_to_reduce: requestedQuantity,
-      });
+    // অটোমেটিক SMS পাঠানো
+    if (newOrder && phone) {
+      try {
+        const orderIdShort = String(newOrder.id || "").slice(0, 6).toUpperCase();
+        const host = req.headers.get("host") || "";
+        const protocol = host.includes("localhost") ? "http" : "https";
 
-      if (rpcError) {
-        console.error("Stock Decrement Error:", rpcError);
-        // নোট: অর্ডার কিন্তু সফল হয়েছে, শুধু স্টক ডিক্রিমেন্টে সমস্যা হলে লগ করবে
+        await fetch(`${protocol}://${host}/api/admin/send-sms`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: phone,
+            message: `সম্মানিত ${customer_name || "গ্রাহক"},\nমায়াবী বুটিকস-এ আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে।\n\nঅর্ডার আইডি: #${orderIdShort}\nসর্বমোট: ৳${total_amount || 0}\n\nআমাদের সাথে থাকার জন্য ধন্যবাদ!`,
+          }),
+        });
+      } catch (smsErr) {
+        console.error("SMS error:", smsErr);
       }
     }
 
-    return NextResponse.json({ ok: true, order: data[0] });
-  } catch (err) {
-    console.error("Order API Exception:", err);
-    return NextResponse.json({ ok: false, error: "সার্ভার এরর" }, { status: 500 });
+    return NextResponse.json({ ok: true, order: newOrder }, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json({ ok: false, error: error?.message || "সার্ভার এরর" }, { status: 500 });
   }
 }
