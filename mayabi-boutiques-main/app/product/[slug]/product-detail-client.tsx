@@ -154,10 +154,10 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   };
 
   return (
-    <div className="px-4 md:px-8 pt-2 pb-6 flex flex-col items-center justify-start font-sans relative">
+    <div className="px-4 md:px-8 pt-0 pb-6 flex flex-col items-center justify-start font-sans relative">
       <div className="max-w-6xl w-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden">
         {currentStep === 0 && (
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="pt-2 px-6 pb-6 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="overflow-hidden rounded-xl bg-neutral-800 border border-neutral-700 aspect-square flex items-center justify-center relative">
                 <img src={product.images[activeImageIdx]} alt={product.name} className="w-full h-full object-cover" />
