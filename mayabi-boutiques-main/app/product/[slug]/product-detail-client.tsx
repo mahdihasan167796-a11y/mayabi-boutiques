@@ -26,22 +26,22 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   const [quantity, setQuantity] = useState(1);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   
-  // রিভিউ ফর্মের জন্য স্টেট
-const [reviewName, setReviewName] = useState("");
-const [reviewLocation, setReviewLocation] = useState("");
-const [reviewRating, setReviewRating] = useState(5);
-const [reviewComment, setReviewComment] = useState("");
-const [reviewLoading, setReviewLoading] = useState(false);
-const [reviewSuccess, setReviewSuccess] = useState("");
-const [showWriteReview, setShowWriteReview] = useState(false);
-const [showReviewsList, setShowReviewsList] = useState(false);
+ // রিভিউ ফর্মের জন্য স্টেট
+  const [reviewName, setReviewName] = useState("");
+  const [reviewLocation, setReviewLocation] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState("");
+  const [showWriteReview, setShowWriteReview] = useState(false);
+  const [showReviewsList, setShowReviewsList] = useState(false);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setReviewLoading(true);
     setReviewSuccess("");
 
-    const { error } = await supabase.from("safeReviews").insert([
+    const { error } = await supabase.from("reviews").insert([
       {
         product_id: product.id,
         customer_name: reviewName,
@@ -57,9 +57,10 @@ const [showReviewsList, setShowReviewsList] = useState(false);
     if (error) {
       alert("রিভিউ সাবমিট করতে সমস্যা হয়েছে: " + error.message);
     } else {
-      setReviewSuccess("ধন্যবাদ! আপনার রিভিউটি সফলভাবে জমা হয়েছে।");
+      setReviewSuccess("আপনার রিভিউটি সফলভাবে পাঠানো হয়েছে! এডমিন অনুমোদনের পর এটি প্রকাশিত হবে।");
       setReviewName("");
       setReviewLocation("");
+      setReviewRating(5);
       setReviewComment("");
     }
   };
