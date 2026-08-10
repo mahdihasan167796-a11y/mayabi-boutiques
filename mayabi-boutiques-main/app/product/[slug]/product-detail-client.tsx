@@ -154,7 +154,7 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   };
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-8 flex flex-col items-center justify-start font-sans relative">
+    <div className="px-4 md:px-8 pt-2 pb-6 flex flex-col items-center justify-start font-sans relative">
       <div className="max-w-6xl w-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden">
         {currentStep === 0 && (
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
