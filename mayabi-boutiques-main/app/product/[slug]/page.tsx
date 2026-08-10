@@ -18,18 +18,19 @@ export default async function ProductPage({
   if (!product) notFound();
 
   let formattedReviews = [];
-  try {
-    const { data: productReviews, error } = await supabase
-      .from("reviews")
-      .select("*")
-      .eq("product_id", product.id);
+    try {
+      const { data: productReviews, error } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("product_id", product.id)
+        .eq("show_on_home", true); // শুধুমাত্র এডমিন অনুমোদিত রিভিউগুলো দেখাবে
 
-    if (!error && productReviews) {
-      formattedReviews = productReviews;
+      if (!error && productReviews) {
+        formattedReviews = productReviews;
+      }
+    } catch (err) {
+      console.error("Review fetch error:", err);
     }
-  } catch (err) {
-    console.error("Review fetch error:", err);
-  }
 
   return (
     <div className="-mt-20 md:-mt-24">
