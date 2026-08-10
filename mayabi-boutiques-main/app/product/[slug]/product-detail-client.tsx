@@ -457,6 +457,8 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
         )}
       </div>
 
+  {currentStep === 0 && (
+        <>
       {/* কাস্টমার রিভিউ ফর্ম */}
       <div className="max-w-4xl w-full mx-auto mt-12 p-6 bg-[#111110] rounded-2xl border border-[#c9a054]/20 text-white">
         <h3 className="text-2xl font-bold mb-6 text-[#c9a054]">এই প্রোডাক্ট সম্পর্কে আপনার মতামত জানান</h3>
@@ -544,10 +546,12 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
               </div>
               <p className="text-gray-300 text-sm">{rev.comment || rev.review}</p>
               <span className="text-gray-500 text-xs mt-1 block">{rev.city || rev.location || ""}</span>
-            </div>
-          ))
-        )}
-      </div>
+           </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
 
       {showThankYou && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md transition-all duration-300">
