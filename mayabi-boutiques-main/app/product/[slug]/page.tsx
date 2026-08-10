@@ -31,5 +31,9 @@ export default async function ProductPage({
     console.error("Review fetch error:", err);
   }
 
-  return <ProductDetailClient product={product} reviews={formattedReviews} />;
+  return (
+    <div className="-mt-12 md:-mt-16">
+      <ProductDetailClient product={product} reviews={formattedReviews} />
+    </div>
+  );
 }
