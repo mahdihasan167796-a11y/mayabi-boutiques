@@ -24,8 +24,18 @@ export const categories: Category[] = [
 ];
 
 export const featuredCategorySlugs = [
-  "three-piece", "saree", "borka", "panjabi",
-  "kurti-gown", "couple-dress", "shirt", "kids",
+  "one-piece",
+  "two-piece",
+  "three-piece",
+  "couple-dress",
+  "boutique-print",
+  "kurti-gown",
+  "saree",
+  "borka",
+  "panjabi",
+  "shirt",
+  "t-shirt",
+  "kids",
 ];
 
 export function getCategory(slug: string): Category | undefined {
