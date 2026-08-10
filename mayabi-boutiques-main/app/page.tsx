@@ -16,7 +16,7 @@ let { data: dbReviews } = await supabase
   .from("reviews")
   .select("*")
   .eq("show_on_home", true)
-  .limit(3);
+  .order("created_at", { ascending: false });
 // যদি ডেটাবেজে কোনো রিভিউ না থাকে, তবে ডিফল্ট এই রিভিউগুলো দেখাবে
 const defaultReviews = [
   { 
@@ -185,20 +185,22 @@ const reviews = (dbReviews && dbReviews.length > 0) ? dbReviews : defaultReviews
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white">আমাদের ধন্য গ্রাহকদের মন্তব্য</h2>
           <div className="w-16 h-0.5 bg-[#c9a054] mx-auto mt-3" />
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {reviews.map((rev) => (
+     <div className="grid md:grid-cols-3 gap-8">
+          {reviews.map((rev: any) => (
             <div
-              key={rev.name}
+              key={rev.id || rev.name || Math.random()}
               className="bg-[#111110] p-8 rounded-2xl border border-[#c9a054]/15 relative shadow-xl transition-all duration-300 hover:border-[#c9a054]/50 hover:-translate-y-2 flex flex-col justify-between group"
             >
               <span className="absolute top-4 right-6 text-6xl text-[#c9a054]/5 font-serif select-none">&ldquo;</span>
               <div className="space-y-4">
-                <div className="flex text-[#c9a054] text-sm tracking-wide">★★★★★</div>
+                <div className="flex text-[#c9a054] text-sm tracking-wide">
+                  {"★".repeat(rev.rating || 5)}
+                </div>
                 <p className="text-xs sm:text-sm italic text-[#b5af9f] leading-relaxed">&ldquo;{rev.comment}&rdquo;</p>
               </div>
               <div className="flex items-center gap-3 mt-6 pt-4 border-t border-[#c9a054]/10">
                 <div className="w-10 h-10 rounded-full bg-[#1c1c1a] border border-[#c9a054]/40 flex items-center justify-center text-sm font-bold text-[#c9a054]">
-                  {rev.name[0]}
+                  {rev.name ? rev.name[0] : "C"}
                 </div>
                 <div>
                   <h4 className="font-bold text-white text-xs sm:text-sm flex items-center gap-1.5">
