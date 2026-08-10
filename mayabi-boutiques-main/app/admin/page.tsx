@@ -7,7 +7,7 @@ export default async function AdminPage() {
     supabaseAdmin.from("products").select("*").order("created_at", { ascending: false }),
     supabaseAdmin.from("orders").select("*").order("created_at", { ascending: false }),
     getSiteSettings(),
-    supabaseAdmin.from("reviews").select("*, products(name)").order("created_at", { ascending: false }),
+    supabaseAdmin.from("reviews").select("*").order("created_at", { ascending: false }),
   ]);
 
   return (

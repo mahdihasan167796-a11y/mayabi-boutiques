@@ -57,7 +57,7 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
     if (error) {
       alert("রিভিউ সাবমিট করতে সমস্যা হয়েছে: " + error.message);
     } else {
-      setReviewSuccess("আপনার রিভিউটি সফলভাবে পাঠানো হয়েছে! এডমিন অনুমোদনের পর এটি প্রকাশিত হবে।");
+      setReviewSuccess("আপনার রিভিউটি সফলভাবে পাঠানো হয়েছে!");
       setReviewName("");
       setReviewLocation("");
       setReviewRating(5);
