@@ -27,12 +27,14 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   
   // রিভিউ ফর্মের জন্য স্টেট
-  const [reviewName, setReviewName] = useState("");
-  const [reviewLocation, setReviewLocation] = useState("");
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState("");
-  const [reviewLoading, setReviewLoading] = useState(false);
-  const [reviewSuccess, setReviewSuccess] = useState("");
+const [reviewName, setReviewName] = useState("");
+const [reviewLocation, setReviewLocation] = useState("");
+const [reviewRating, setReviewRating] = useState(5);
+const [reviewComment, setReviewComment] = useState("");
+const [reviewLoading, setReviewLoading] = useState(false);
+const [reviewSuccess, setReviewSuccess] = useState("");
+const [showWriteReview, setShowWriteReview] = useState(false);
+const [showReviewsList, setShowReviewsList] = useState(false);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -458,99 +460,124 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
       </div>
 
   {currentStep === 0 && (
-        <>
-      {/* কাস্টমার রিভিউ ফর্ম */}
-      <div className="max-w-4xl w-full mx-auto mt-12 p-6 bg-[#111110] rounded-2xl border border-[#c9a054]/20 text-white">
-        <h3 className="text-2xl font-bold mb-6 text-[#c9a054]">এই প্রোডাক্ট সম্পর্কে আপনার মতামত জানান</h3>
-        
-        {reviewSuccess && (
-          <div className="mb-4 p-3 bg-green-500/20 border border-green-500 text-green-300 rounded-lg text-sm">
-            {reviewSuccess}
-          </div>
-        )}
-
-        <form onSubmit={handleReviewSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">আপনার নাম</label>
-              <input
-                type="text"
-                required
-                value={reviewName}
-                onChange={(e) => setReviewName(e.target.value)}
-                placeholder="যেমন: ফারজানা রহমান"
-                className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">আপনার এলাকা / শহর</label>
-              <input
-                type="text"
-                required
-                value={reviewLocation}
-                onChange={(e) => setReviewLocation(e.target.value)}
-                placeholder="যেমন: ঢাকা"
-                className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">রেটিং (১ থেকে ৫)</label>
-            <select
-              value={reviewRating}
-              onChange={(e) => setReviewRating(Number(e.target.value))}
-              className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
+        <div className="max-w-4xl w-full mx-auto mt-10 space-y-4">
+          {/* ১. মতামত জানান ড্রপডাউন বাটন */}
+          <div className="bg-[#111110] rounded-xl border border-[#c9a054]/20 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowWriteReview(!showWriteReview)}
+              className="w-full p-4 flex justify-between items-center text-left text-[#c9a054] font-bold text-lg hover:bg-[#1a1a18] transition duration-200 cursor-pointer"
             >
-              <option value={5}>⭐⭐⭐⭐⭐ (৫ স্টার)</option>
-              <option value={4}>⭐⭐⭐⭐ (৪ স্টার)</option>
-              <option value={3}>⭐⭐⭐ (৩ স্টার)</option>
-              <option value={2}>⭐⭐ (২ স্টার)</option>
-              <option value={1}>⭐ (১ স্টার)</option>
-            </select>
-          </div>
+              <span>✍️ এই প্রোডাক্ট সম্পর্কে আপনার মতামত জানান</span>
+              <span className="text-xl">{showWriteReview ? "▲" : "▼"}</span>
+            </button>
 
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">আপনার মন্তব্য / রিভিউ</label>
-            <textarea
-              required
-              rows={4}
-              value={reviewComment}
-              onChange={(e) => setReviewComment(e.target.value)}
-              placeholder="প্রোডাক্টটি কেমন লেগেছে বিস্তারিত লিখুন..."
-              className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
-            ></textarea>
-          </div>
+            {/* ড্রপডাউন ফরম কন্টেন্ট */}
+            {showWriteReview && (
+              <div className="p-6 border-t border-[#c9a054]/20 text-white">
+                {reviewSuccess && (
+                  <div className="mb-4 p-3 bg-green-500/20 border border-green-500 text-green-300 rounded-lg text-sm">
+                    {reviewSuccess}
+                  </div>
+                )}
 
-          <button
-            type="submit"
-            disabled={reviewLoading}
-            className="w-full bg-[#c9a054] text-black font-bold py-3 rounded-lg hover:bg-[#b08b44] transition duration-200 cursor-pointer"
-          >
-            {reviewLoading ? "সাবমিট হচ্ছে..." : "রিভিউ জমা দিন"}
-          </button>
-        </form>
-      </div>
+                <form onSubmit={handleReviewSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">আপনার নাম</label>
+                      <input
+                        type="text"
+                        required
+                        value={reviewName}
+                        onChange={(e) => setReviewName(e.target.value)}
+                        placeholder="যেমন: ফারজানা রহমান"
+                        className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">আপনার এলাকা / শহর</label>
+                      <input
+                        type="text"
+                        required
+                        value={reviewLocation}
+                        onChange={(e) => setReviewLocation(e.target.value)}
+                        placeholder="যেমন: ঢাকা"
+                        className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
+                      />
+                    </div>
+                  </div>
 
-      {/* গ্রাহকদের রিভিউ তালিকা */}
-      <div className="max-w-4xl w-full mx-auto mt-8 space-y-4">
-        <h3 className="text-xl font-bold text-white">গ্রাহকদের রিভিউ</h3>
-        {safeReviews.length === 0 ? (
-          <p className="text-gray-400 text-sm">এই প্রোডাক্টে এখনো কোনো রিভিউ নেই।</p>
-        ) : (
-          safeReviews.map((rev: any, index: number) => (
-            <div key={index} className="bg-[#111110] p-4 rounded-xl border border-[#c9a054]/20 text-white">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">{rev.name || rev.customer_name || "গ্রাহক"}</span>
-                <span className="text-amber-400 text-xs">{"★".repeat(Number(rev.rating) || 5)}</span>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">রেটিং (১ থেকে ৫)</label>
+                    <select
+                      value={reviewRating}
+                      onChange={(e) => setReviewRating(Number(e.target.value))}
+                      className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
+                    >
+                      <option value={5}>⭐⭐⭐⭐⭐ (৫ স্টার)</option>
+                      <option value={4}>⭐⭐⭐⭐ (৪ স্টার)</option>
+                      <option value={3}>⭐⭐⭐ (৩ স্টার)</option>
+                      <option value={2}>⭐⭐ (২ স্টার)</option>
+                      <option value={1}>⭐ (১ স্টার)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">আপনার মন্তব্য / রিভিউ</label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="প্রোডাক্টটি কেমন লেগেছে বিস্তারিত লিখুন..."
+                      className="w-full bg-[#1c1c1a] border border-[#c9a054]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#c9a054]"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={reviewLoading}
+                    className="w-full bg-[#c9a054] text-black font-bold py-3 rounded-lg hover:bg-[#b08b44] transition duration-200 cursor-pointer disabled:opacity-50"
+                  >
+                    {reviewLoading ? "সাবমিট হচ্ছে..." : "রিভিউ জমা দিন"}
+                  </button>
+                </form>
               </div>
-              <p className="text-gray-300 text-sm">{rev.comment || rev.review}</p>
-              <span className="text-gray-500 text-xs mt-1 block">{rev.city || rev.location || ""}</span>
-           </div>
-              ))
             )}
           </div>
-        </>
+
+          {/* ২. গ্রাহকদের রিভিউ তালিকা ড্রপডাউন বাটন */}
+          <div className="bg-[#111110] rounded-xl border border-[#c9a054]/20 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowReviewsList(!showReviewsList)}
+              className="w-full p-4 flex justify-between items-center text-left text-white font-bold text-lg hover:bg-[#1a1a18] transition duration-200 cursor-pointer"
+            >
+              <span>⭐ গ্রাহকদের রিভিউ ({safeReviews.length})</span>
+              <span className="text-xl">{showReviewsList ? "▲" : "▼"}</span>
+            </button>
+
+            {/* ড্রপডাউন রিভিউ কন্টেন্ট */}
+            {showReviewsList && (
+              <div className="p-6 border-t border-[#c9a054]/20 space-y-4">
+                {safeReviews.length === 0 ? (
+                  <p className="text-gray-400 text-sm">এই প্রোডাক্টে এখনো কোনো রিভিউ নেই।</p>
+                ) : (
+                  safeReviews.map((rev: any, index: number) => (
+                    <div key={index} className="bg-[#1c1c1a] p-4 rounded-xl border border-[#c9a054]/20 text-white">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-bold text-sm">{rev.name || rev.customer_name || "গ্রাহক"}</span>
+                        <span className="text-amber-400 text-xs">{"★".repeat(Number(rev.rating) || 5)}</span>
+                      </div>
+                      <p className="text-gray-300 text-sm">{rev.comment || rev.review}</p>
+                      <span className="text-gray-500 text-xs mt-1 block">{rev.city || rev.location || ""}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
       {showThankYou && (
