@@ -32,7 +32,7 @@ export default async function ProductPage({
   }
 
   return (
-    <div className="-mt-12 md:-mt-16">
+    <div className="-mt-20 md:-mt-24">
       <ProductDetailClient product={product} reviews={formattedReviews} />
     </div>
   );
