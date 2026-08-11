@@ -592,50 +592,51 @@ export default function ProductDetailClient({
         </div>
       )}
 
-      {/* ৩. আপনাদের পছন্দের আরও কিছু কালেকশন (Related Products) */}
-      {currentStep === 0 && safeRelatedProducts.length > 0 && (
-        <div className="max-w-6xl w-full mx-auto mt-12">
-          <h2 className="text-xl md:text-2xl font-bold text-amber-500 mb-6 text-center">
-            ✨ আপনাদের পছন্দের আরও কিছু কালেকশন
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {safeRelatedProducts.map((relProduct: any) => {
-              const relImg = Array.isArray(relProduct.images) ? relProduct.images[0] : relProduct.image;
-              const relSlug = relProduct.slug || relProduct.id;
-              return (
-                <Link
-                  key={relProduct.id}
-                  href={`/product/${relSlug}`}
-                  className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition-all flex flex-col justify-between group"
-                >
-                  <div className="aspect-square bg-neutral-800 overflow-hidden relative">
-                    <img
-                      src={relImg}
-                      alt={relProduct.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="p-3 md:p-4 flex flex-col flex-1 justify-between">
-                    <h3 className="text-xs md:text-sm font-semibold text-neutral-200 line-clamp-2 mb-2 group-hover:text-amber-400 transition-colors">
-                      {relProduct.name}
-                    </h3>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-amber-500 font-extrabold text-sm md:text-base">
-                        {formatBDT(relProduct.price)}
-                      </span>
-                      {relProduct.oldPrice && relProduct.oldPrice > relProduct.price && (
-                        <span className="text-xs text-neutral-500 line-through">
-                          {formatBDT(relProduct.oldPrice)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+    {/* আপনাদের পছন্দের আরও কিছু কালেকশন (Related Products) */}
+{currentStep === 0 && (
+  <div className="max-w-6xl mx-auto mt-12 px-4">
+    <h2 className="text-xl md:text-2xl font-bold text-amber-500 mb-6 text-center">
+      ✨ আপনাদের পছন্দের আরও কিছু কালেকশন
+    </h2>
+
+    {safeRelatedProducts && safeRelatedProducts.length > 0 ? (
+      // ১. প্রোডাক্ট পাওয়া গেলে প্রডাক্ট গ্রিড দেখাবে
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {safeRelatedProducts.map((relProduct: any) => {
+          const relImg = Array.isArray(relProduct.images) ? relProduct.images[0] : relProduct.image;
+          const relSlug = relProduct.slug || relProduct.id;
+          return (
+            <Link
+              key={relProduct.id}
+              href={`/product/${relSlug}`}
+              className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition"
+            >
+              <div className="aspect-square bg-neutral-800 overflow-hidden relative">
+                <img
+                  src={relImg}
+                  alt={relProduct.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-3 md:p-4 flex flex-col flex-1 justify-between">
+                <h3 className="text-xs md:text-sm font-semibold text-neutral-200 line-clamp-2 mb-2 group-hover:text-amber-400">
+                  {relProduct.name}
+                </h3>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    ) : (
+      // ২. কোনো প্রোডাক্টই না পাওয়া গেলে এই লেখাটি দেখাবে
+      <div className="text-center py-8 bg-neutral-900/50 border border-neutral-800 rounded-xl">
+        <p className="text-neutral-400 text-sm md:text-base">
+          😔 এই মুহূর্তে কোনো সম্পর্কিত প্রোডাক্ট খুঁজে পাওয়া যায়নি।
+        </p>
+      </div>
+    )}
+  </div>
+)}
 
       {showThankYou && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md transition-all duration-300">

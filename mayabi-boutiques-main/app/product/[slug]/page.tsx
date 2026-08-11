@@ -34,21 +34,32 @@ export default async function ProductPage({
     console.error("Review fetch error:", err);
   }
 
-  // ২. একই ক্যাটাগরির Related Products (আপনাদের পছন্দের আরও কিছু কালেকশন) ফেচ করা
-  let relatedProducts = [];
+ // ২. একই ক্যাটাগরির Related Products ফেচ করা
+  let relatedProducts: any[] = [];
   try {
-    const { data: relatedData, error: relatedError } = await supabase
+    // ১. একই ক্যাটাগরির প্রোডাক্ট খোঁজার চেষ্টা
+    const { data: categoryData } = await supabase
       .from("products")
       .select("*")
-     .eq("category", (product as any).category) // বর্তমান প্রোডাক্টের ক্যাটাগরি অনুযায়ী
-      .neq("id", product.id)             // বর্তমান প্রোডাক্টটি বাদ দিয়ে
-      .limit(4);                         // সর্বোচ্চ ৪টি প্রোডাক্ট ফেচ করবে
+      .eq("category", (product as any).category)
+      .neq("id", product.id)
+      .limit(4);
 
-    if (!relatedError && relatedData) {
-      relatedProducts = relatedData;
+    if (categoryData && categoryData.length > 0) {
+      relatedProducts = categoryData;
+    } else {
+      // ২. ক্যাটাগরি না মিললে অন্য যেকোনো ৪টি প্রোডাক্ট
+      const { data: latestData } = await supabase
+        .from("products")
+        .select("*")
+        .neq("id", product.id)
+        .limit(4);
+
+      relatedProducts = latestData || [];
     }
   } catch (err) {
     console.error("Related products fetch error:", err);
+    relatedProducts = [];
   }
 
   return (
