@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Product } from "@/lib/products";
 import { engToBdNum, formatBDT } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
@@ -14,8 +15,18 @@ type VariantType = {
   stock?: number;
 };
 
-export default function ProductDetailClient({ product, reviews = [] }: { product: any; reviews?: any[] }) {
+export default function ProductDetailClient({
+  product,
+  reviews = [],
+  relatedProducts = [],
+}: {
+  product: any;
+  reviews?: any[];
+  relatedProducts?: any[];
+}) {
   const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const safeRelatedProducts = Array.isArray(relatedProducts) ? relatedProducts : [];
+
   const [currentStep, setCurrentStep] = useState<0 | 1>(0);
   const [showThankYou, setShowThankYou] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,8 +36,8 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
-  
- // রিভিউ ফর্মের জন্য স্টেট
+
+  // রিভিউ ফর্মের জন্য স্টেট
   const [reviewName, setReviewName] = useState("");
   const [reviewLocation, setReviewLocation] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
@@ -91,7 +102,7 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
   const currentStock = currentVariant && typeof currentVariant.stock === "number"
     ? currentVariant.stock
     : localStock;
-  
+
   const isOutOfStock = isNaN(currentStock) || currentStock <= 0;
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -460,7 +471,7 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
         )}
       </div>
 
-  {currentStep === 0 && (
+      {currentStep === 0 && (
         <div className="max-w-4xl w-full mx-auto mt-10 space-y-4">
           {/* ১. মতামত জানান ড্রপডাউন বাটন */}
           <div className="bg-[#111110] rounded-xl border border-[#c9a054]/20 overflow-hidden">
@@ -577,6 +588,51 @@ export default function ProductDetailClient({ product, reviews = [] }: { product
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ৩. আপনাদের পছন্দের আরও কিছু কালেকশন (Related Products) */}
+      {currentStep === 0 && safeRelatedProducts.length > 0 && (
+        <div className="max-w-6xl w-full mx-auto mt-12">
+          <h2 className="text-xl md:text-2xl font-bold text-amber-500 mb-6 text-center">
+            ✨ আপনাদের পছন্দের আরও কিছু কালেকশন
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {safeRelatedProducts.map((relProduct: any) => {
+              const relImg = Array.isArray(relProduct.images) ? relProduct.images[0] : relProduct.image;
+              const relSlug = relProduct.slug || relProduct.id;
+              return (
+                <Link
+                  key={relProduct.id}
+                  href={`/product/${relSlug}`}
+                  className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition-all flex flex-col justify-between group"
+                >
+                  <div className="aspect-square bg-neutral-800 overflow-hidden relative">
+                    <img
+                      src={relImg}
+                      alt={relProduct.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-3 md:p-4 flex flex-col flex-1 justify-between">
+                    <h3 className="text-xs md:text-sm font-semibold text-neutral-200 line-clamp-2 mb-2 group-hover:text-amber-400 transition-colors">
+                      {relProduct.name}
+                    </h3>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-amber-500 font-extrabold text-sm md:text-base">
+                        {formatBDT(relProduct.price)}
+                      </span>
+                      {relProduct.oldPrice && relProduct.oldPrice > relProduct.price && (
+                        <span className="text-xs text-neutral-500 line-through">
+                          {formatBDT(relProduct.oldPrice)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

@@ -17,6 +17,7 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
+  // ১. রিভিউ ফেচ করা
   let formattedReviews = [];
   try {
     const { data: productReviews, error } = await supabase
@@ -33,9 +34,30 @@ export default async function ProductPage({
     console.error("Review fetch error:", err);
   }
 
+  // ২. একই ক্যাটাগরির Related Products (আপনাদের পছন্দের আরও কিছু কালেকশন) ফেচ করা
+  let relatedProducts = [];
+  try {
+    const { data: relatedData, error: relatedError } = await supabase
+      .from("products")
+      .select("*")
+     .eq("category", (product as any).category) // বর্তমান প্রোডাক্টের ক্যাটাগরি অনুযায়ী
+      .neq("id", product.id)             // বর্তমান প্রোডাক্টটি বাদ দিয়ে
+      .limit(4);                         // সর্বোচ্চ ৪টি প্রোডাক্ট ফেচ করবে
+
+    if (!relatedError && relatedData) {
+      relatedProducts = relatedData;
+    }
+  } catch (err) {
+    console.error("Related products fetch error:", err);
+  }
+
   return (
     <div className="-mt-20 md:-mt-24">
-      <ProductDetailClient product={product} reviews={formattedReviews} />
+      <ProductDetailClient 
+        product={product} 
+        reviews={formattedReviews} 
+        relatedProducts={relatedProducts} 
+      />
     </div>
   );
 }
