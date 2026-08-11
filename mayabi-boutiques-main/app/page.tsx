@@ -1,3 +1,4 @@
+import { HeroSlider } from "@/components/hero-slider";
 import Link from "next/link";
 import { categories, featuredCategorySlugs } from "@/lib/categories";
 import { getSiteSettings } from "@/lib/settings";
@@ -86,20 +87,7 @@ const reviews = (dbReviews && dbReviews.length > 0) ? dbReviews : defaultReviews
           </div>
         </div>
 
-        <div className="w-full max-w-sm mx-auto flex justify-center [perspective:1000px]">
-          <div className="relative h-[440px] w-full rounded-3xl overflow-hidden border border-[#c9a054]/40 bg-black shadow-2xl transition-all duration-700 [transform-style:preserve-3d] [transform:rotateY(-15deg)_rotateZ(-3deg)] hover:[transform:rotateY(0deg)] group">
-            <img
-              src={products?.find((p: any) => p.category_slug === 'hero-section')?.images?.[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop"}
-              alt="Hero 3D"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent flex items-end p-6">
-              <p className="text-[#c9a054] font-serif italic text-lg">
-                {products?.find((p: any) => p.category_slug === 'hero-section')?.name || "মেহেফিল-এ-খাস কালেকশন"}
-              </p>
-            </div>
-          </div>
-        </div>
+ <HeroSlider products={products} />
       </section>
 
       {/* ফিচারড কালেকশন */}
