@@ -181,14 +181,14 @@ const playNotificationSound = () => {
   return (
     <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
       {/* 🔝 ১. প্রফেশনাল হেডার */}
-     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 mb-6 border-b border-[#c9a054]/40">
+    <div className="bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="bg-[#c9a054] text-black font-extrabold text-xs px-3 py-1 rounded tracking-wider uppercase">
+            <div className="bg-[#c9a054] text-black font-extrabold text-xs px-3 py-1.5 rounded-lg tracking-wider uppercase">
               MAYABI BOUTIQUES
             </div>
             <div>
-              <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block">ADMIN PANEL</span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+              <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-0.5">ADMIN PANEL</span>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">নিয়ন্ত্রণ প্যানেল</h1>
             </div>
           </div>
 
@@ -196,14 +196,14 @@ const playNotificationSound = () => {
             <Link
               href="/"
               target="_blank"
-              className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/50 text-[#c9a054] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+              className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/50 text-[#c9a054] px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 shadow-sm"
             >
               🌐 ওয়েবসাইট দেখুন
             </Link>
 
             <button
               onClick={handleLogout}
-              className="bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm"
             >
               লগআউট
             </button>
