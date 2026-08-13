@@ -181,34 +181,34 @@ const playNotificationSound = () => {
   return (
     <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
       {/* 🔝 ১. প্রফেশনাল হেডার */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 py-3 mb-4 border-b border-[#c9a054]/20">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#c9a054] text-black font-extrabold text-[11px] px-2.5 py-1 rounded tracking-wider uppercase">
-            MAYABI BOUTIQUES
+     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 mb-6 border-b border-[#c9a054]/40">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#c9a054] text-black font-extrabold text-xs px-3 py-1 rounded tracking-wider uppercase">
+              MAYABI BOUTIQUES
+            </div>
+            <div>
+              <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block">ADMIN PANEL</span>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+            </div>
           </div>
-          <div>
-            <span className="text-[#c9a054] font-bold text-[9px] uppercase tracking-widest block">ADMIN PANEL</span>
-            <h1 className="text-lg sm:text-xl font-extrabold text-white">নিয়ন্ত্রণ প্যানেল</h1>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/50 text-[#c9a054] px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
+            >
+              🌐 ওয়েবসাইট দেখুন
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            >
+              লগআউট
+            </button>
           </div>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            target="_blank"
-            className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/40 text-[#c9a054] px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            🌐 ওয়েবসাইট দেখুন
-          </Link>
-
-          <button
-            onClick={handleLogout}
-            className="bg-red-950/30 hover:bg-red-900/50 border border-red-900/40 text-red-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-          >
-            লগআউট
-          </button>
-        </div>
-      </div>
 
       {/* 📊 ড্যাশবোর্ড সামারি কার্ডস */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-5">
