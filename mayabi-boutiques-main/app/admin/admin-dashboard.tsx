@@ -179,9 +179,9 @@ const playNotificationSound = () => {
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-0 pb-12 bg-[#0a0a0a] min-h-screen text-zinc-100">
+   <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-0 pb-12 bg-[#0a0a0a] min-h-screen text-zinc-100">
       {/* 🟢 প্রফেশনাল হেডার (Sticky & Top spacing removed) */}
-      <div className="sticky top-0 z-40 bg-[#0a0a0a]/90 backdrop-blur-md py-3 mb-6 border-b border-[#c9a054]/30">
+     <div className="sticky top-0 z-40 bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
           <div className="flex items-center gap-3">
             <div className="bg-[#c9a054] text-black font-extrabold text-xs px-3 py-1.5 rounded-lg tracking-wider uppercase">
