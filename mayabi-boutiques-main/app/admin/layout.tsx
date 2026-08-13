@@ -6,7 +6,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="-mt-20 sm:-mt-28 pt-2 min-h-screen bg-[#070706]">
+    <div className="w-full min-h-screen bg-[#070706] p-0 m-0">
       {children}
     </div>
   );
