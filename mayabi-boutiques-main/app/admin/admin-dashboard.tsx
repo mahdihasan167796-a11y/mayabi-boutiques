@@ -179,7 +179,7 @@ const playNotificationSound = () => {
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-3 sm:px-4 pt-0 pb-8">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-4 pb-12 bg-[#0a0a0a] min-h-screen text-zinc-100">
       {/* 🔝 ১. প্রফেশনাল হেডার */}
     <div className="bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg">
           <div className="flex items-center gap-3">
@@ -211,57 +211,57 @@ const playNotificationSound = () => {
         </div>
 
       {/* 📊 ড্যাশবোর্ড সামারি কার্ডস */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-5">
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">💰 মোট বিক্রি</p>
-          <p className="text-base sm:text-lg font-black text-[#c9a054] mt-1">{formatBDT(totalSales)}</p>
-        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+          <div className="bg-zinc-900/90 border border-zinc-800 hover:border-[#c9a054]/50 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">💰 মোট বিক্রি</p>
+            <p className="text-xl sm:text-2xl font-black text-[#c9a054] mt-2">{formatBDT(totalSales)}</p>
+          </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">🛒 মোট অর্ডার</p>
-          <p className="text-base sm:text-lg font-black text-white mt-1">{totalOrdersCount} টি</p>
-        </div>
+          <div className="bg-zinc-900/90 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">📦 মোট অর্ডার</p>
+            <p className="text-xl sm:text-2xl font-black text-white mt-2">{orders.length} টি</p>
+          </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-amber-500/90 uppercase">⏳ পেন্ডিং অর্ডার</p>
-          <p className="text-base sm:text-lg font-black text-amber-400 mt-1">{pendingOrdersCount} টি</p>
-        </div>
+          <div className="bg-zinc-900/90 border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
+            <p className="text-xs font-bold text-amber-400 uppercase tracking-wider">⏳ পেন্ডিং অর্ডার</p>
+            <p className="text-xl sm:text-2xl font-black text-amber-400 mt-2">{pendingOrdersCount} টি</p>
+          </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-emerald-500/90 uppercase">🚚 ডেলিভারড অর্ডার</p>
-          <p className="text-base sm:text-lg font-black text-emerald-400 mt-1">{deliveredOrdersCount} টি</p>
-        </div>
+          <div className="bg-zinc-900/90 border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider">🚛 ডেলিভারড অর্ডার</p>
+            <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-2">{deliveredOrdersCount} টি</p>
+          </div>
 
-        <div className="bg-[#121211] border border-[#c9a054]/20 rounded-xl p-3 flex flex-col justify-between col-span-2 sm:col-span-1">
-          <p className="text-[10px] font-bold text-rose-500/90 uppercase">🔄 রিটার্ন/ক্যানসেল</p>
-          <p className="text-base sm:text-lg font-black text-rose-400 mt-1">{returnedOrdersCount} টি</p>
+          <div className="bg-zinc-900/90 border border-red-500/20 hover:border-red-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
+            <p className="text-xs font-bold text-red-400 uppercase tracking-wider">🚨 রিটার্ন/ক্যানসেল</p>
+            <p className="text-xl sm:text-2xl font-black text-red-400 mt-2">{returnedOrdersCount} টি</p>
+          </div>
         </div>
-      </div>
 
       {/* 🔘 সাইডবার এবং মেইন কন্টেন্ট */}
       <div className="flex flex-col md:flex-row gap-4 items-start">
-        {/* বাম পাশের সাইডবার */}
-        <div className="w-full md:w-52 shrink-0 flex flex-col gap-2 bg-[#121211] border border-[#c9a054]/15 p-2 rounded-xl">
+       {/* 🔹 বাম পাশের সাইডবার */}
+        <div className="w-full md:w-56 shrink-0 flex flex-col gap-2 bg-zinc-900/90 border border-zinc-800 p-3 rounded-2xl shadow-md">
           <button
             onClick={() => setTab("orders")}
-            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+            className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
               tab === "orders"
-                ? "bg-[#c9a054] text-black shadow-md"
-                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+                ? "bg-[#c9a054] text-black shadow-md font-extrabold"
+                : "bg-zinc-800/50 text-zinc-300 border border-zinc-700/50 hover:bg-zinc-800 hover:text-white"
             }`}
           >
             <span>📦 অর্ডার সমূহ</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tab === "orders" ? "bg-black/20 text-black" : "bg-[#222] text-[#c9a054]"}`}>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${tab === "orders" ? "bg-black/20 text-black font-extrabold" : "bg-zinc-700 text-zinc-300"}`}>
               {orders.length}
             </span>
           </button>
 
           <button
             onClick={() => setTab("customers")}
-            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+            className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
               tab === "customers"
-                ? "bg-[#c9a054] text-black shadow-md"
-                : "bg-[#18181b] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+                ? "bg-[#c9a054] text-black shadow-md font-extrabold"
+                : "bg-zinc-800/50 text-zinc-300 border border-zinc-700/50 hover:bg-zinc-800 hover:text-white"
             }`}
           >
             <span>👥 কাস্টমার লিস্ট (CRM)</span>
@@ -269,10 +269,10 @@ const playNotificationSound = () => {
 
           <button
             onClick={() => setTab("products")}
-            className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+            className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
               tab === "products"
-                ? "bg-[#c9a054] text-black shadow-md"
-                : "bg-[#181817] text-gray-300 border border-[#c9a054]/15 hover:border-[#c9a054]/40"
+                ? "bg-[#c9a054] text-black shadow-md font-extrabold"
+                : "bg-zinc-800/50 text-zinc-300 border border-zinc-700/50 hover:bg-zinc-800 hover:text-white"
             }`}
           >
 
