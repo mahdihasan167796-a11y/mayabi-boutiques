@@ -179,16 +179,17 @@ const playNotificationSound = () => {
   const returnedOrdersCount = orders.filter((o) => o.status === "returned" || o.status === "cancelled").length;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-4 pb-12 bg-[#0a0a0a] min-h-screen text-zinc-100">
-      {/* 🔝 ১. প্রফেশনাল হেডার */}
-    <div className="bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-0 pb-12 bg-[#0a0a0a] min-h-screen text-zinc-100">
+      {/* 🟢 প্রফেশনাল হেডার (Sticky & Top spacing removed) */}
+      <div className="sticky top-0 z-40 bg-[#0a0a0a]/90 backdrop-blur-md py-3 mb-6 border-b border-[#c9a054]/30">
+        <div className="bg-[#121211] border border-[#c9a054]/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
           <div className="flex items-center gap-3">
             <div className="bg-[#c9a054] text-black font-extrabold text-xs px-3 py-1.5 rounded-lg tracking-wider uppercase">
               MAYABI BOUTIQUES
             </div>
             <div>
               <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-0.5">ADMIN PANEL</span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">নিয়ন্ত্রণ প্যানেল</h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">নিয়ন্ত্রণ প্যানেল</h1>
             </div>
           </div>
 
@@ -196,19 +197,20 @@ const playNotificationSound = () => {
             <Link
               href="/"
               target="_blank"
-              className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/50 text-[#c9a054] px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+              className="bg-[#1c1c1a] hover:bg-[#c9a054]/20 border border-[#c9a054]/50 text-[#c9a054] px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all"
             >
-              🌐 ওয়েবসাইট দেখুন
+              🌐 ওয়েবসাইট দেখুন
             </Link>
 
             <button
               onClick={handleLogout}
-              className="bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 px-4 py-2 rounded-xl text-sm font-bold transition-all"
             >
               লগআউট
             </button>
           </div>
         </div>
+      </div>
 
       {/* 🔘 সাইডবার এবং মেইন কন্টেন্ট wrapping div (এখান থেকে সাইডবার ও ডানপাশের অংশ শুরু) */}
       <div className="flex flex-col md:flex-row gap-5 items-start">
