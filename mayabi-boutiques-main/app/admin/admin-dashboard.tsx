@@ -210,36 +210,8 @@ const playNotificationSound = () => {
           </div>
         </div>
 
-      {/* 📊 ড্যাশবোর্ড সামারি কার্ডস */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-          <div className="bg-zinc-900/90 border border-zinc-800 hover:border-[#c9a054]/50 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">💰 মোট বিক্রি</p>
-            <p className="text-xl sm:text-2xl font-black text-[#c9a054] mt-2">{formatBDT(totalSales)}</p>
-          </div>
-
-          <div className="bg-zinc-900/90 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">📦 মোট অর্ডার</p>
-            <p className="text-xl sm:text-2xl font-black text-white mt-2">{orders.length} টি</p>
-          </div>
-
-          <div className="bg-zinc-900/90 border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
-            <p className="text-xs font-bold text-amber-400 uppercase tracking-wider">⏳ পেন্ডিং অর্ডার</p>
-            <p className="text-xl sm:text-2xl font-black text-amber-400 mt-2">{pendingOrdersCount} টি</p>
-          </div>
-
-          <div className="bg-zinc-900/90 border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
-            <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider">🚛 ডেলিভারড অর্ডার</p>
-            <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-2">{deliveredOrdersCount} টি</p>
-          </div>
-
-          <div className="bg-zinc-900/90 border border-red-500/20 hover:border-red-500/40 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between">
-            <p className="text-xs font-bold text-red-400 uppercase tracking-wider">🚨 রিটার্ন/ক্যানসেল</p>
-            <p className="text-xl sm:text-2xl font-black text-red-400 mt-2">{returnedOrdersCount} টি</p>
-          </div>
-        </div>
-
-      {/* 🔘 সাইডবার এবং মেইন কন্টেন্ট */}
-      <div className="flex flex-col md:flex-row gap-4 items-start">
+      {/* 🔘 সাইডবার এবং মেইন কন্টেন্ট wrapping div (এখান থেকে সাইডবার ও ডানপাশের অংশ শুরু) */}
+      <div className="flex flex-col md:flex-row gap-5 items-start">
        {/* 🔹 বাম পাশের সাইডবার */}
         <div className="w-full md:w-56 shrink-0 flex flex-col gap-2 bg-zinc-900/90 border border-zinc-800 p-3 rounded-2xl shadow-md">
           <button
@@ -356,6 +328,45 @@ const playNotificationSound = () => {
             </select>
           </div>
         </div>
+       {/* 👉 ডানপাশের মেইন কন্টেন্ট এলাকা শুরু */}
+        <div className="flex-1 w-full min-w-0 space-y-6">
+
+          {/* 📊 ৩ডি কালারফুল সামারি কার্ডস */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+            
+            {/* ১. মোট বিক্রি */}
+            <div className="bg-gradient-to-b from-amber-500/10 to-amber-950/40 border-t-2 border-amber-400 border-x border-b border-amber-500/30 rounded-2xl p-4 shadow-[0_8px_20px_rgba(245,158,11,0.15)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <p className="text-[11px] font-extrabold text-amber-300 uppercase tracking-wider">💰 মোট বিক্রি</p>
+              <p className="text-xl sm:text-2xl font-black text-amber-400 mt-3 drop-shadow">{formatBDT(totalSales)}</p>
+            </div>
+
+            {/* ২. মোট অর্ডার */}
+            <div className="bg-gradient-to-b from-indigo-500/10 to-indigo-950/40 border-t-2 border-indigo-400 border-x border-b border-indigo-500/30 rounded-2xl p-4 shadow-[0_8px_20px_rgba(99,102,241,0.15)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <p className="text-[11px] font-extrabold text-indigo-300 uppercase tracking-wider">📦 মোট অর্ডার</p>
+              <p className="text-xl sm:text-2xl font-black text-indigo-200 mt-3 drop-shadow">{orders.length} টি</p>
+            </div>
+
+            {/* ৩. পেন্ডিং অর্ডার */}
+            <div className="bg-gradient-to-b from-orange-500/10 to-orange-950/40 border-t-2 border-orange-400 border-x border-b border-orange-500/30 rounded-2xl p-4 shadow-[0_8px_20px_rgba(249,115,22,0.15)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <p className="text-[11px] font-extrabold text-orange-300 uppercase tracking-wider">⏳ পেন্ডিং অর্ডার</p>
+              <p className="text-xl sm:text-2xl font-black text-orange-400 mt-3 drop-shadow">{pendingOrdersCount} টি</p>
+            </div>
+
+            {/* ৪. ডেলিভারড অর্ডার */}
+            <div className="bg-gradient-to-b from-emerald-500/10 to-emerald-950/40 border-t-2 border-emerald-400 border-x border-b border-emerald-500/30 rounded-2xl p-4 shadow-[0_8px_20px_rgba(16,185,129,0.15)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <p className="text-[11px] font-extrabold text-emerald-300 uppercase tracking-wider">🚛 ডেলিভারড</p>
+              <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-3 drop-shadow">{deliveredOrdersCount} টি</p>
+            </div>
+
+            {/* ৫. রিটার্ন/ক্যানসেল */}
+            <div className="bg-gradient-to-b from-rose-500/10 to-rose-950/40 border-t-2 border-rose-400 border-x border-b border-rose-500/30 rounded-2xl p-4 shadow-[0_8px_20px_rgba(244,63,94,0.15)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <p className="text-[11px] font-extrabold text-rose-300 uppercase tracking-wider">🚨 রিটার্ন/ক্যানসেল</p>
+              <p className="text-xl sm:text-2xl font-black text-rose-400 mt-3 drop-shadow">{returnedOrdersCount} টি</p>
+            </div>
+
+          </div>
+
+        
         {newOrderAlert && (
   <div className="fixed top-5 right-5 z-50 bg-[#c9a054] text-black px-6 py-4 rounded-xl shadow-2xl font-bold flex items-center gap-3 animate-bounce border-2 border-white">
     <span className="text-2xl">🔔</span>
@@ -367,7 +378,7 @@ const playNotificationSound = () => {
 )}
 
         {/* ডান পাশের মূল কন্টেন্ট এলাকা */}
-        <div className="flex-1 w-full min-w-0">
+       
           {tab === "orders" && <OrdersTab orders={orders} setOrders={setOrders} sendCustomerSMS={sendCustomerSMS} selectedCourier={selectedCourier} />}
           {tab === "products" && <ProductsTab products={products} setProducts={setProducts} />}
           {tab === "addons" && <AddonsTab />}
