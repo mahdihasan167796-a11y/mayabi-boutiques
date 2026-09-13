@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes textShine {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes textGlow {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(201, 160, 84, 0.4)); }
+  50% { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-text-shine {
+  background: linear-gradient(to right, #c9a054 0%, #ffd700 25%, #ffffff 50%, #ffd700 75%, #c9a054 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 3s linear infinite, textGlow 3s ease-in-out infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===== কাস্টম স্ক্রলবার — লাক্সারি ডার্ক + অ্যাম্বার থিম ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #080808;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  border-radius: 999px;
+  border: 2px solid #080808;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d97706 #080808;
+}
+
+/* ===== লাক্সারি গ্লাস কার্ড + অ্যাম্বার গ্লো ইউটিলিটি ===== */
+.glass-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.luxury-glow-hover {
+  transition: transform 500ms ease-out, box-shadow 500ms ease-out, border-color 500ms ease-out;
+}
+.luxury-glow-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), 0 30px 50px -22px rgba(245, 158, 11, 0.35);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Reduced-motion অনুরোধ থাকলে ভারী মোশন বন্ধ */
+@media (prefers-reduced-motion: reduce) {
+  .luxury-glow-hover,
+  .animate-text-shine,
+  .animate-fadeIn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
