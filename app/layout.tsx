@@ -11,6 +11,9 @@ import { getSiteSettings } from "@/lib/settings";
 import { I18nProvider } from "@/lib/i18n/context";
 import { WhatsappButton } from "@/components/whatsapp-button";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // হেডিং/এডিটোরিয়াল মোমেন্টের জন্য সেরিফ জোড়া — লাতিন টেক্সটে Fraunces, বাংলায় Noto Serif Bengali
 const fraunces = Fraunces({
   subsets: ["latin"],
