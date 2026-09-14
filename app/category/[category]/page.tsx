@@ -6,7 +6,6 @@ import type { Metadata } from "next";
 import {
   getCategoryBySlug,
   getFeaturedCategories,
-  type Category,
 } from "@/lib/categories";
 
 import { getProductsByCategory } from "@/lib/products";
@@ -20,72 +19,48 @@ interface CategoryPageProps {
   };
 }
 
-/* =========================
-   SEO Metadata
-========================= */
-
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
-  const result: Category | undefined =
-    await getCategoryBySlug(params.category);
+  const category = await getCategoryBySlug(params.category);
 
-  if (!result) {
+  if (!category) {
     return {
       title: "ক্যাটাগরি পাওয়া যায়নি | Mayabi Boutiques",
     };
   }
 
   return {
-    title: `${result.name} কালেকশন | Mayabi Boutiques`,
-    description: `মায়াবী বুটিকস-এর ${result.name} কালেকশন — ${result.tag}। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।`,
+    title: `${category.name} কালেকশন | Mayabi Boutiques`,
+    description: `মায়াবী বুটিকস-এর ${category.name} কালেকশন — ${category.tag}। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।`,
     openGraph: {
-      title: `${result.name} কালেকশন | Mayabi Boutiques`,
-      description: `মায়াবী বুটিকস-এর ${result.name} প্রিমিয়াম কালেকশন।`,
-      images: result.image
-        ? [
-            {
-              url: result.image,
-            },
-          ]
+      title: `${category.name} কালেকশন | Mayabi Boutiques`,
+      images: category.image
+        ? [{ url: category.image }]
         : [],
     },
   };
 }
 
-/* =========================
-   Category Page
-========================= */
-
 export default async function CategoryPage({
   params,
 }: CategoryPageProps) {
-  /*
-   * Promise-কে সম্পূর্ণ resolve করে Category object নেওয়া হচ্ছে।
-   * এতে Vercel-এর "Property slug does not exist on type Promise<Category>"
-   * টাইপ error এড়ানো যাবে।
-   */
-  const categoryResult = await Promise.resolve(
-    getCategoryBySlug(params.category)
-  );
-
-  const category: Category | undefined = categoryResult;
+  // অবশ্যই await করতে হবে
+  const category = await getCategoryBySlug(params.category);
 
   if (!category) {
     notFound();
   }
 
+  // এখানে category এখন Category object
   const products = await getProductsByCategory(category.slug);
 
   const featured = await getFeaturedCategories();
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-6 min-h-screen">
-      
-      {/* =========================
-          Category Header
-      ========================= */}
 
+      {/* Category Header */}
       <div className="text-center mb-10">
         <span className="text-amber-400 font-semibold text-xs uppercase tracking-widest block mb-1">
           PREMIUM ARCHIVE
@@ -102,10 +77,7 @@ export default async function CategoryPage({
         <div className="w-16 h-0.5 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto mt-4" />
       </div>
 
-      {/* =========================
-          Products
-      ========================= */}
-
+      {/* Products */}
       {products.length === 0 ? (
         <div className="text-center py-24">
           <p className="text-sm text-gray-500">
@@ -113,20 +85,17 @@ export default async function CategoryPage({
           </p>
 
           <p className="text-xs text-gray-600 mt-2">
-            শীঘ্রই নতুন প্রিমিয়াম কালেকশন আসছে!
+            শীঘ্রই নতুন কালেকশন আসছে!
           </p>
         </div>
       ) : (
         <CategoryFilterGrid products={products} />
       )}
 
-      {/* =========================
-          Featured Categories
-      ========================= */}
-
+      {/* Featured Categories */}
       {featured.length > 0 && (
         <section className="mt-20 pt-12 border-t border-white/10">
-          
+
           <div className="text-center mb-10">
             <span className="text-amber-400 font-semibold text-xs uppercase tracking-widest block mb-1">
               TRENDING CATEGORIES
@@ -140,6 +109,7 @@ export default async function CategoryPage({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+
             {featured.map((cat) => (
               <Link
                 key={cat.id ?? cat.slug}
@@ -151,26 +121,22 @@ export default async function CategoryPage({
                   backdrop-blur-xl
                   hover:border-amber-500/40
                   hover:shadow-amber-500/20
-                  transition-all duration-500 ease-out
+                  transition-all duration-500
                   flex flex-col
                   shadow-[0_20px_45px_-25px_rgba(0,0,0,0.9)]
                   hover:-translate-y-1.5
                 "
               >
-                {/* Image */}
 
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
+
                   {cat.image ? (
                     <Image
                       src={cat.image}
                       alt={cat.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
-                      className="
-                        object-cover
-                        transition-transform duration-500
-                        group-hover:scale-105
-                      "
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
@@ -189,21 +155,19 @@ export default async function CategoryPage({
                       text-black font-bold
                       text-[10px] sm:text-xs
                       px-2.5 py-1
-                      rounded-full
-                      shadow-md
+                      rounded-full shadow-md
                     ">
                       {cat.tag}
                     </span>
                   )}
+
                 </div>
 
-                {/* Category Info */}
-
                 <div className="p-4 text-center flex-1 flex flex-col justify-center">
+
                   <h3 className="
                     font-serif font-semibold
-                    text-white
-                    text-sm sm:text-base
+                    text-white text-sm sm:text-base
                     group-hover:text-amber-400
                     transition-colors duration-500
                   ">
@@ -213,12 +177,16 @@ export default async function CategoryPage({
                   <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
                     এখনই অর্ডার করতে ক্লিক করুন →
                   </p>
+
                 </div>
+
               </Link>
             ))}
+
           </div>
         </section>
       )}
+
     </main>
   );
 }
