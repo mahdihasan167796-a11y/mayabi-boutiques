@@ -23,6 +23,9 @@ export const categories: Category[] = [
   { slug: "lehenga", name: "লেহেঙ্গা", tag: "Lehenga", image: "" },
 ];
 
+// ফিচারড ক্যাটাগরির স্লাগগুলোর লিস্ট
+export const featuredCategorySlugs: string[] = categories.map((c) => c.slug);
+
 function mapRow(row: any): Category {
   return {
     id: row.id,
@@ -46,7 +49,7 @@ export async function getCategories(): Promise<Category[]> {
 
   if (error) {
     console.error("getCategories error:", error.message);
-    return categories; // ডাটাবেজ রেসপন্স না করলে ব্যাকআপ ক্যাটাগরি রিটার্ন করবে
+    return categories;
   }
   return (data ?? []).map(mapRow);
 }
@@ -65,6 +68,11 @@ export async function getCategoryBySlug(slug: string): Promise<Category | undefi
     .eq("slug", slug)
     .maybeSingle();
 
-  if (error || !data) return undefined;
+  if (error || !data) {
+    return categories.find((c) => c.slug === slug);
+  }
   return mapRow(data);
 }
+
+/** getCategoryBySlug এর বিকল্প এলিয়াস (যাতে পুরোনো পেজের ইমপোর্ট ফিক্স হয়) */
+export const getCategory = getCategoryBySlug;
