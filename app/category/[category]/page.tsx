@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import {
   getCategoryBySlug,
   getFeaturedCategories,
+  type Category,
 } from "@/lib/categories";
 
 import { getProductsByCategory } from "@/lib/products";
@@ -22,7 +23,9 @@ interface CategoryPageProps {
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
-  const category = await getCategoryBySlug(params.category);
+  const category = (await getCategoryBySlug(
+    params.category
+  )) as Category | undefined;
 
   if (!category) {
     return {
@@ -35,7 +38,9 @@ export async function generateMetadata({
     description: `মায়াবী বুটিকস-এর ${category.name} কালেকশন — ${category.tag}। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।`,
     openGraph: {
       title: `${category.name} কালেকশন | Mayabi Boutiques`,
-      images: category.image ? [{ url: category.image }] : [],
+      images: category.image
+        ? [{ url: category.image }]
+        : [],
     },
   };
 }
@@ -43,7 +48,9 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: CategoryPageProps) {
-  const category = await getCategoryBySlug(params.category);
+  const category = (await getCategoryBySlug(
+    params.category
+  )) as Category | undefined;
 
   if (!category) {
     notFound();
@@ -55,6 +62,8 @@ export default async function CategoryPage({
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-6 min-h-screen">
+
+      {/* Page Header */}
       <div className="text-center mb-10">
         <span className="text-amber-400 font-semibold text-xs uppercase tracking-widest block mb-1">
           PREMIUM ARCHIVE
@@ -69,6 +78,7 @@ export default async function CategoryPage({
         </p>
       </div>
 
+      {/* Products */}
       {products.length === 0 ? (
         <p className="text-sm text-gray-500 text-center py-24">
           এই ক্যাটাগরিতে এখনো কোনো প্রোডাক্ট যোগ করা হয়নি। শীঘ্রই নতুন
@@ -78,8 +88,9 @@ export default async function CategoryPage({
         <CategoryFilterGrid products={products} />
       )}
 
-      {/* ফিচারড ক্যাটাগরি সেকশন */}
+      {/* Featured Categories */}
       <section className="mt-20 pt-12 border-t border-white/10">
+
         <div className="text-center mb-10">
           <span className="text-amber-400 font-semibold text-xs uppercase tracking-widest block mb-1">
             TRENDING CATEGORIES
@@ -93,28 +104,41 @@ export default async function CategoryPage({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+
           {featured.map((cat) => (
             <Link
               key={cat.slug}
               href={`/category/${cat.slug}`}
               className="group relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-500/40 hover:shadow-amber-500/20 transition-all duration-500 ease-out flex flex-col shadow-[0_20px_45px_-25px_rgba(0,0,0,0.9)] hover:-translate-y-1.5"
             >
+
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+
+                {cat.image ? (
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                    <span className="text-amber-400 text-sm">
+                      {cat.name}
+                    </span>
+                  </div>
+                )}
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
 
                 <span className="absolute top-3 left-3 bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold text-[10px] sm:text-xs px-2.5 py-1 rounded-full shadow-md">
                   {cat.tag}
                 </span>
+
               </div>
 
               <div className="p-4 text-center flex-1 flex flex-col justify-center">
+
                 <h3 className="font-serif font-semibold text-white text-sm sm:text-base group-hover:text-amber-400 transition-colors duration-500">
                   {cat.name}
                 </h3>
@@ -122,11 +146,15 @@ export default async function CategoryPage({
                 <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
                   এখনই অর্ডার করতে ক্লিক করুন &rarr;
                 </p>
+
               </div>
+
             </Link>
           ))}
+
         </div>
       </section>
+
     </main>
   );
 }
