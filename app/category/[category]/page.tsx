@@ -103,4 +103,4 @@ export default async function CategoryPage({ params }: { params: { category: str
       </section>
     </main>
   );
-} 
+}
