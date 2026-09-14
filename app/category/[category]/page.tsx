@@ -2,27 +2,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+
 import {
   getCategoryBySlug,
   getFeaturedCategories,
 } from "@/lib/categories";
+
 import { getProductsByCategory } from "@/lib/products";
 import { CategoryFilterGrid } from "@/components/category-filter-grid";
 
 export const revalidate = 0;
 
 interface CategoryPageProps {
-  params: Promise<{
+  params: {
     category: string;
-  }>;
+  };
 }
 
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
-  const { category: categorySlug } = await params;
-
-  const category = await getCategoryBySlug(categorySlug);
+  const category = await getCategoryBySlug(params.category);
 
   if (!category) {
     return {
@@ -43,9 +43,7 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: CategoryPageProps) {
-  const { category: categorySlug } = await params;
-
-  const category = await getCategoryBySlug(categorySlug);
+  const category = await getCategoryBySlug(params.category);
 
   if (!category) {
     notFound();
