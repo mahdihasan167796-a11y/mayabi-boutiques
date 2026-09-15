@@ -1,53 +1,74 @@
 import { HeroBanner } from "@/components/hero-banner";
+import { ProductCard } from "@/components/product-card";
 import Link from "next/link";
-import { getFeaturedCategories } from "@/lib/categories";
+import { getCategories, getFeaturedCategories } from "@/lib/categories";
+import { getRecentProducts } from "@/lib/products";
 import { getSiteSettings } from "@/lib/settings";
 import { supabase } from "@/lib/supabase";
 export const revalidate = 0; // এটি পেজটিকে ক্যাশ করতে বাধা দেবে
+
 export default async function HomePage() {
-  // "hero-section" ক্যাটাগরিতে প্রোডাক্ট থাকলে সেগুলো হিরো স্লাইডারে দেখাবে,
-  // "featured-collection" থাকলে ফিচারড ব্যানার দেখাবে — না থাকলে আগের মতোই fallback ছবি ব্যবহার হবে
-  const { data: homeProductsData } = await supabase
-    .from("products")
-    .select("*")
-    .in("category_slug", ["hero-section", "featured-collection"]);
-  const products = homeProductsData || [];
   const settings = await getSiteSettings();
 
-  const featured = await getFeaturedCategories();
-  const { data: promoData } = await supabase.from("promo_sections").select("*").eq("is_active", true).order("sort_order", { ascending: true });
-  const promoSections = promoData || [];
+  // "প্রোমো/হোম ব্যানার" ম্যানেজার থেকে placement অনুযায়ী হিরো ও মিড-পেজ ব্যানার আলাদা করে আনা হচ্ছে
+  const { data: heroPromoData } = await supabase
+    .from("promo_sections")
+    .select("*")
+    .eq("is_active", true)
+    .eq("placement", "hero")
+    .order("sort_order", { ascending: true });
+  const heroBanners = heroPromoData || [];
 
-// প্রথমে ডেটাবেজ থেকে অ্যাডমিনের হোম পেজের জন্য টিক দেওয়া রিভিউগুলো আনব
-let { data: dbReviews } = await supabase
-  .from("reviews")
-  .select("*")
-  .eq("show_on_home", true)
-  .order("created_at", { ascending: false });
-// যদি ডেটাবেজে কোনো রিভিউ না থাকে, তবে ডিফল্ট এই রিভিউগুলো দেখাবে
-const defaultReviews = [
-  { 
-    name: "ফারজানা রহমান", 
-    location: "ঢাকা", 
-    rating: 5, 
-    comment: "পোশাকের ফ্যাব্রিকটি অসাধারণ ছিল। রেশমি সুতের কাজটা খুব নিখুঁত, ঠিক যেমনটা ছবিতে দেখেছি।" 
-  },
-  { 
-    name: "তানভীর আহমেদ", 
-    location: "সিলেট", 
-    rating: 5, 
-    comment: "পাঞ্জাবির ফিটিং এবং কাপড়ের কোয়ালিটি দারুণ হয়েছে। প্যাকেজিংটা ভীষণ গর্জিয়াস লেগেছে।" 
-  },
-  { 
-    name: "নূসরাত জাহান", 
-    location: "চট্টগ্রাম", 
-    rating: 5, 
-    comment: "খুব দ্রুত ডেলিভারি পেয়েছি। কাপড়ের প্রিমিয়াম কোয়ালিটি নিয়ে কোনো কম্প্রোমাইজ নেই।" 
-  }
-];
+  const { data: midPromoData } = await supabase
+    .from("promo_sections")
+    .select("*")
+    .eq("is_active", true)
+    .eq("placement", "mid")
+    .order("sort_order", { ascending: true });
+  const midBanners = midPromoData || [];
 
-// ডেটাবেজে রিভিউ থাকলে সেটি দেখাবে, না থাকলে ডিফল্টগুলো দেখাবে
-const reviews = (dbReviews && dbReviews.length > 0) ? dbReviews : defaultReviews;
+  // ফিচার্ড কালেকশন — শুধু যেগুলোতে অ্যাডমিন থেকে "হোমে ফিচারড" চালু আছে
+  const featuredCategories = await getFeaturedCategories();
+  // সকল ক্যাটাগরি — গোল আইকন সেকশনের জন্য, ফিচারড না হলেও দেখাবে
+  const allCategories = await getCategories();
+
+  // সাম্প্রতিক প্রোডাক্ট শোকেস — আগের hero-section/featured-collection ট্যাগের কোনো লিগ্যাসি প্রোডাক্ট
+  // থেকে গেলে সেগুলো এখানে বাদ দেওয়া হচ্ছে
+  const recentRaw = await getRecentProducts(12);
+  const showcaseProducts = recentRaw
+    .filter((p: any) => p.categorySlug !== "hero-section" && p.categorySlug !== "featured-collection")
+    .slice(0, 8);
+
+  // প্রথমে ডেটাবেজ থেকে অ্যাডমিনের হোম পেজের জন্য টিক দেওয়া রিভিউগুলো আনব
+  let { data: dbReviews } = await supabase
+    .from("reviews")
+    .select("*")
+    .eq("show_on_home", true)
+    .order("created_at", { ascending: false });
+  // যদি ডেটাবেজে কোনো রিভিউ না থাকে, তবে ডিফল্ট এই রিভিউগুলো দেখাবে
+  const defaultReviews = [
+    {
+      name: "ফারজানা রহমান",
+      location: "ঢাকা",
+      rating: 5,
+      comment: "পোশাকের ফ্যাব্রিকটি অসাধারণ ছিল। রেশমি সুতের কাজটা খুব নিখুঁত, ঠিক যেমনটা ছবিতে দেখেছি।",
+    },
+    {
+      name: "তানভীর আহমেদ",
+      location: "সিলেট",
+      rating: 5,
+      comment: "পাঞ্জাবির ফিটিং এবং কাপড়ের কোয়ালিটি দারুণ হয়েছে। প্যাকেজিংটা ভীষণ গর্জিয়াস লেগেছে।",
+    },
+    {
+      name: "নূসরাত জাহান",
+      location: "চট্টগ্রাম",
+      rating: 5,
+      comment: "খুব দ্রুত ডেলিভারি পেয়েছি। কাপড়ের প্রিমিয়াম কোয়ালিটি নিয়ে কোনো কম্প্রোমাইজ নেই।",
+    },
+  ];
+
+  // ডেটাবেজে রিভিউ থাকলে সেটি দেখাবে, না থাকলে ডিফল্টগুলো দেখাবে
+  const reviews = dbReviews && dbReviews.length > 0 ? dbReviews : defaultReviews;
 
   const whyUs = [
     { icon: "✨", title: "১০০% প্রিমিয়াম ফেব্রিক", desc: "আমরা সরাসরি বিশ্বস্ত সোর্স থেকে সবচেয়ে আরামদায়ক লাক্সারি সুতা ও ফেব্রিক সংগ্রহ করি।" },
@@ -63,45 +84,42 @@ const reviews = (dbReviews && dbReviews.length > 0) ? dbReviews : defaultReviews
 
   return (
     <>
-      {/* হিরো সেকশন */}
+      {/* ১. হিরো সেকশন — একাধিক ব্যানার/ভিডিও (এডমিনের "প্রোমো/হোম ব্যানার" → placement: হিরো) */}
       <div id="home">
-        <HeroBanner products={products} videoUrl={settings.heroVideoUrl} />
+        <HeroBanner banners={heroBanners} />
       </div>
 
-      {/* ফিচারড কালেকশন */}
+      {/* ২. ফিচার্ড কালেকশন — বড় কার্ড + Shop Now (শুধু "হোমে ফিচারড" চালু থাকা ক্যাটাগরি) */}
       <section id="featured" className="bg-[#0b0b0a] border-t border-[#c9a054]/10 py-16 scroll-mt-32">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-10">
-            <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-2">TRENDING CATEGORIES</span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white">আমাদের আকর্ষণীয় প্রিমিয়াম ক্যাটাগরি</h2>
+            <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-2">CURATED FOR YOU</span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white">আমাদের ফিচার্ড কালেকশন</h2>
           </div>
 
-          {products?.find((p: any) => p.category_slug === 'featured-collection') && (
-            <div className="w-full mb-10 rounded-2xl overflow-hidden border border-[#c9a054]/20 shadow-2xl">
-              <img 
-                src={products.find((p: any) => p.category_slug === 'featured-collection')?.images?.[0]} 
-                alt="Featured Banner" 
-                className="w-full h-auto max-h-[300px] object-cover" 
-              />
-            </div>
-          )}
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {featured.filter((col: any) => col.slug !== 'hero-section' && col.slug !== 'featured-collection').map((col: any) => (
+            {featuredCategories.map((col: any) => (
               <Link
                 key={col.slug}
                 href={`/category/${col.slug}`}
-                className="bg-[#121211] rounded-2xl overflow-hidden border border-[#c9a054]/15 p-3 flex flex-col justify-between group cursor-pointer shadow-xl transition-all duration-500 hover:border-[#c9a054]/50 hover:-translate-y-2"
+                className="group relative rounded-2xl overflow-hidden border border-[#c9a054]/15 shadow-xl aspect-[3/4] block transition-all duration-500 hover:border-[#c9a054]/50 hover:-translate-y-2"
               >
-                <div className="h-44 sm:h-56 w-full overflow-hidden rounded-xl bg-black relative mb-4">
-                  <img src={col.image} alt={col.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <span className="absolute top-2 left-2 bg-[#c9a054] text-black text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+                <img
+                  src={col.image}
+                  alt={col.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                {col.tag && (
+                  <span className="absolute top-3 left-3 bg-[#c9a054] text-black text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
                     {col.tag}
                   </span>
-                </div>
-                <div className="text-center pb-2">
-                  <h3 className="font-bold text-sm sm:text-base text-white group-hover:text-[#c9a054]">{col.name}</h3>
-                  <p className="text-[10px] text-gray-500 mt-1">এখনি অর্ডার করতে ক্লিক করুন →</p>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4 flex flex-col items-center text-center gap-2.5">
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-white">{col.name}</h3>
+                  <span className="inline-block bg-white text-black text-[10px] font-black uppercase tracking-wide px-4 py-2 rounded-full group-hover:bg-[#c9a054] transition-colors">
+                    Shop Now
+                  </span>
                 </div>
               </Link>
             ))}
@@ -109,28 +127,90 @@ const reviews = (dbReviews && dbReviews.length > 0) ? dbReviews : defaultReviews
         </div>
       </section>
 
-      {/* সাব-ব্র্যান্ড / প্রোমো সেকশন (অ্যাডমিন কন্টেন্ট স্টুডিও থেকে নিয়ন্ত্রিত) */}
-      {promoSections.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 gap-6">
-          {promoSections.map((promo: any) => (
-            <Link
-              key={promo.id}
-              href={promo.cta_link || "/"}
-              className="group relative rounded-3xl overflow-hidden border border-white/10 aspect-[16/10] block"
-            >
-              {promo.image && (
-                <img src={promo.image} alt={promo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6">
-                <h3 className="font-serif text-xl font-bold text-white">{promo.title}</h3>
-                {promo.subtitle && <p className="text-sm text-gray-300 mb-3">{promo.subtitle}</p>}
-                <span className="inline-block w-fit text-xs font-bold text-amber-400 border-b border-amber-500">
-                  {promo.cta_label || "কালেকশন দেখুন"}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+      {/* ৩. সকল ক্যাটাগরি — গোল ছবিতে (isFeatured নির্বিশেষে সব ক্যাটাগরি দেখাবে) */}
+      {allCategories.length > 0 && (
+        <section id="all-categories" className="bg-[#070706] border-t border-[#c9a054]/10 py-16 scroll-mt-32">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-2">BROWSE BY CATEGORY</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">সকল ক্যাটাগরি</h2>
+            </div>
+            <div className="flex flex-wrap justify-center gap-x-7 gap-y-8 sm:gap-x-10">
+              {allCategories.map((cat: any) => (
+                <Link key={cat.slug} href={`/category/${cat.slug}`} className="group flex flex-col items-center gap-3 w-24 sm:w-28">
+                  <span className="w-20 h-20 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-[#c9a054]/30 group-hover:border-[#c9a054] transition-all duration-500 block shadow-lg">
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-gray-300 group-hover:text-[#c9a054] text-center transition-colors">
+                    {cat.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ৪. মিড-পেজ ব্যানার/ভিডিও (এডমিনের "প্রোমো/হোম ব্যানার" → placement: মিড-পেজ) */}
+      {midBanners.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-10">
+          <div className={midBanners.length === 1 ? "grid grid-cols-1 gap-6" : "grid sm:grid-cols-2 gap-6"}>
+            {midBanners.map((promo: any) => (
+              <Link
+                key={promo.id}
+                href={promo.cta_link || "/"}
+                className={`group relative rounded-3xl overflow-hidden border border-white/10 block ${
+                  midBanners.length === 1 ? "aspect-[21/9]" : "aspect-[16/10]"
+                }`}
+              >
+                {promo.media_type === "video" ? (
+                  promo.image && (
+                    <video
+                      src={promo.image}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  )
+                ) : (
+                  promo.image && (
+                    <img
+                      src={promo.image}
+                      alt={promo.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  )
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6">
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">{promo.title}</h3>
+                  {promo.subtitle && <p className="text-sm text-gray-300 mb-3">{promo.subtitle}</p>}
+                  <span className="inline-block w-fit text-xs font-bold text-amber-400 border-b border-amber-500">
+                    {promo.cta_label || "কালেকশন দেখুন"}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ৫. প্রোডাক্ট শোকেস — বিভিন্ন ক্যাটাগরি থেকে সাম্প্রতিক প্রোডাক্ট, দামসহ */}
+      {showcaseProducts.length > 0 && (
+        <section id="new-arrivals" className="bg-[#0b0b0a] border-t border-[#c9a054]/10 py-16 scroll-mt-32">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <span className="text-[#c9a054] font-bold text-xs uppercase tracking-widest block mb-2">SHOP THE LATEST</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">আমাদের নতুন সংগ্রহ</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {showcaseProducts.map((p: any) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
       {/* আমাদের গল্প */}
