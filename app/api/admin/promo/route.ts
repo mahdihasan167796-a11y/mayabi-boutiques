@@ -33,6 +33,8 @@ export async function POST(request: Request) {
           image: body.image || "",
           cta_label: body.cta_label || "কালেকশন দেখুন",
           cta_link: body.cta_link || "/",
+          placement: body.placement === "hero" ? "hero" : "mid",
+          media_type: body.media_type === "video" ? "video" : "image",
           sort_order: (maxRow?.sort_order ?? 0) + 1,
           is_active: true,
         },
