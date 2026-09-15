@@ -2832,7 +2832,7 @@ function ContentStudioTab() {
 
 function PromoManager() {
   const [items, setItems] = useState<any[]>([]);
-  const [form, setForm] = useState({ title: "", subtitle: "", image: "", cta_label: "কালেকশন দেখুন", cta_link: "/" });
+  const [form, setForm] = useState({ title: "", subtitle: "", image: "", cta_label: "কালেকশন দেখুন", cta_link: "/", placement: "mid", media_type: "image" });
   const [loading, setLoading] = useState(false);
 
   const load = async () => {
@@ -2846,7 +2846,7 @@ function PromoManager() {
     e.preventDefault();
     setLoading(true);
     await fetch("/api/admin/promo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-    setForm({ title: "", subtitle: "", image: "", cta_label: "কালেকশন দেখুন", cta_link: "/" });
+    setForm({ title: "", subtitle: "", image: "", cta_label: "কালেকশন দেখুন", cta_link: "/", placement: "mid", media_type: "image" });
     setLoading(false);
     load();
   };
@@ -2864,12 +2864,20 @@ function PromoManager() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-500">হোমপেজে দেখানো সিজনাল/সাব-ব্র্যান্ড প্রোমো ব্যানার (যেমন: "Festive Luxe", "Eid Collection")।</p>
+      <p className="text-xs text-gray-500">হোমপেজের হিরো স্লাইডার ও মাঝের ব্যানার/ভিডিও সেকশন — দুটোই এখান থেকে ম্যানেজ হয়। "কোথায় দেখাবে" থেকে বেছে নিন।</p>
       <form onSubmit={handleAdd} className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <select value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white">
+            <option value="hero">🏠 হিরো সেকশন (উপরে, বড় স্লাইডার)</option>
+            <option value="mid">🖼️ মিড-পেজ ব্যানার</option>
+          </select>
+          <select value={form.media_type} onChange={(e) => setForm({ ...form, media_type: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white">
+            <option value="image">ছবি</option>
+            <option value="video">ভিডিও</option>
+          </select>
           <input required placeholder="শিরোনাম (যেমন: Festive Luxe)" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white" />
           <input placeholder="সাবটাইটেল" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white" />
-          <input placeholder="ছবির URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white" />
+          <input placeholder="ছবি বা ভিডিওর URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white" />
           <input placeholder="বাটনের লিংক (যেমন: /category/saree)" value={form.cta_link} onChange={(e) => setForm({ ...form, cta_link: e.target.value })} className="bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white" />
         </div>
         <button disabled={loading} className="px-5 py-2 bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold rounded-xl text-sm">যোগ করুন</button>
@@ -2877,8 +2885,13 @@ function PromoManager() {
       <div className="space-y-2">
         {items.map((item) => (
           <div key={item.id} className="flex items-center gap-3 bg-white/[0.04] border border-white/10 rounded-2xl p-3">
-            {item.image && <img src={item.image} className="w-12 h-12 rounded-lg object-cover" alt="" />}
+            {item.media_type === "video" ? (
+              <span className="w-12 h-12 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-lg shrink-0">🎬</span>
+            ) : (
+              item.image && <img src={item.image} className="w-12 h-12 rounded-lg object-cover shrink-0" alt="" />
+            )}
             <div className="flex-1"><p className="text-sm font-bold text-white">{item.title}</p><p className="text-[11px] text-gray-500">{item.subtitle}</p></div>
+            <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.placement === "hero" ? "bg-amber-500/15 text-amber-400" : "bg-white/5 text-gray-400"}`}>{item.placement === "hero" ? "হিরো" : "মিড"}</span>
             <button onClick={() => toggleActive(item)} className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${item.is_active ? "bg-green-500/15 text-green-400" : "bg-white/5 text-gray-500"}`}>{item.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}</button>
             <button onClick={() => remove(item.id)} className="text-red-400 text-xs px-1.5">🗑️</button>
           </div>
