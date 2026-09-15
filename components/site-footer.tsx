@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import { Phone, Mail, MapPin, ShieldCheck, Truck, RotateCcw, Headphones } from "lucide-react";
 
 export default function SiteFooter() {
   return (
@@ -9,24 +8,24 @@ export default function SiteFooter() {
       <div className="border-b border-neutral-800 py-8">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex flex-col items-center gap-2">
-            <Truck className="w-8 h-8 text-amber-500" />
+            <span className="text-amber-500 text-2xl">🚚</span>
             <h4 className="font-semibold text-white">দ্রুত ডেলিভারি</h4>
             <p className="text-xs text-gray-400">সারা বাংলাদেশে হোম ডেলিভারি</p>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <ShieldCheck className="w-8 h-8 text-amber-500" />
+            <span className="text-amber-500 text-2xl">🛡️</span>
             <h4 className="font-semibold text-white">১০০% প্রিমিয়াম কোয়ালিটি</h4>
             <p className="text-xs text-gray-400">সেরা ফেব্রিক ও ইউনিক ডিজাইন</p>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <RotateCcw className="w-8 h-8 text-amber-500" />
+            <span className="text-amber-500 text-2xl">🔄</span>
             <h4 className="font-semibold text-white">সহজ রিটার্ন পলিসি</h4>
             <p className="text-xs text-gray-400">সমস্যা হলে পরিবর্তনের সুযোগ</p>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <Headphones className="w-8 h-8 text-amber-500" />
+            <span className="text-amber-500 text-2xl">🎧</span>
             <h4 className="font-semibold text-white">২৪/৭ কাস্টমার সাপোর্ট</h4>
-            <p className="text-xs text-gray-400">যেেকোনো প্রয়োজনে কল করুন</p>
+            <p className="text-xs text-gray-400">যেকোনো প্রয়োজনে কল করুন</p>
           </div>
         </div>
       </div>
@@ -69,9 +68,9 @@ export default function SiteFooter() {
             যোগাযোগের ঠিকানা
           </h4>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-3"><MapPin className="w-5 h-5 text-amber-500 shrink-0" /> <span>ঢাকা, বাংলাদেশ</span></li>
-            <li className="flex items-center gap-3"><Phone className="w-5 h-5 text-amber-500 shrink-0" /> <span>+880 1700-000000</span></li>
-            <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-amber-500 shrink-0" /> <span>support@mayabiboutiques.com</span></li>
+            <li className="flex items-center gap-3">📍 <span>ঢাকা, বাংলাদেশ</span></li>
+            <li className="flex items-center gap-3">📞 <span>+880 1700-000000</span></li>
+            <li className="flex items-center gap-3">✉️ <span>support@mayabiboutiques.com</span></li>
           </ul>
         </div>
       </div>
