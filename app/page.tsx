@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, User, Heart, ShoppingBag, Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 import HeroBanner from "@/components/hero-banner";
 import { ProductCard } from "@/components/product-card";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -20,11 +19,8 @@ const CIRCULAR_CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  // ১. ডাইনামিক ব্যানার ফেচ
   const { data: promoData } = await supabaseAdmin.from("promo_sections").select("*").order("sort_order", { ascending: true });
-  // ২. ডাইনামিক সাইট সেটিংস/যোগাযোগ তথ্য ফেচ
   const { data: siteSettings } = await supabaseAdmin.from("site_settings").select("*").single();
-  // ৩. প্রোডাক্ট ফেচ
   const { data: allProducts } = await supabaseAdmin.from("products").select("*").order("created_at", { ascending: false }).limit(12);
 
   const heroBanners = promoData?.filter((i) => i.placement === "hero") || [];
@@ -33,13 +29,13 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-white text-gray-900 flex flex-col font-sans">
       
-      {/* ১. ছবি ১: মেনুবার ও নাম (মায়াবী বুটিক্স) */}
+      {/* ১. মেনুবার ও নাম */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold tracking-wider text-black">
             MAYABI BOUTIQUES
           </Link>
-          <nav className="hidden md:flex items-center space-gap-6 gap-6 text-xs font-semibold tracking-widest text-gray-800">
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-widest text-gray-800">
             <Link href="/" className="hover:text-amber-600 transition">HOME</Link>
             <Link href="/products?category=new" className="hover:text-amber-600 transition">NEW IN</Link>
             <Link href="/products?category=summer" className="hover:text-amber-600 transition">SUMMER</Link>
@@ -49,15 +45,15 @@ export default async function HomePage() {
             <Link href="/products?category=accessories" className="hover:text-amber-600 transition">ACCESSORIES</Link>
           </nav>
           <div className="flex items-center gap-4 text-gray-700">
-            <Search className="w-5 h-5 cursor-pointer hover:text-black" />
-            <User className="w-5 h-5 cursor-pointer hover:text-black" />
-            <Heart className="w-5 h-5 cursor-pointer hover:text-black" />
-            <ShoppingBag className="w-5 h-5 cursor-pointer hover:text-black" />
+            <svg className="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg className="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <svg className="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <svg className="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
           </div>
         </div>
       </header>
 
-      {/* ২. ছবি ২: ব্যানার এবং ভিডিও বসানোর জায়গা (Hero Section) */}
+      {/* ২. ব্যানার এবং ভিডিও বসানোর জায়গা (Hero Section) */}
       <section className="w-full">
         {heroBanners.length > 0 ? (
           <HeroBanner banners={heroBanners} />
@@ -68,7 +64,7 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* ৩. ছবি ৩: ফিচারড কালেকশন (Grid Banners) */}
+      {/* ৩. ফিচারড কালেকশন */}
       <section className="py-12 max-w-7xl mx-auto px-4 w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
@@ -90,7 +86,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ৪. ছবি ৪: ক্যাটাগরি (গোল সার্কেল) */}
+      {/* ৪. গোল ক্যাটাগরি */}
       <section className="py-8 border-y border-gray-100 max-w-7xl mx-auto px-4 w-full flex items-center gap-8">
         <div className="shrink-0">
           <h3 className="text-xl font-bold tracking-tight">WHAT'S<br />NEW</h3>
@@ -107,7 +103,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ৫. ছবি ৫: আরেকটি ব্যানার ও ভিডিও যোগ করার জায়গা (Mid Banner) */}
+      {/* ৫. মিড-পেজ ব্যানার/ভিডিও */}
       <section className="py-12 max-w-7xl mx-auto px-4 w-full">
         {midBanners.length > 0 ? (
           <div className="relative w-full h-[400px] overflow-hidden rounded-lg">
@@ -124,7 +120,7 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* ৬. ছবি ৬: সকল ক্যাটাগরির প্রোডাক্ট গ্রিড */}
+      {/* ৬. সকল প্রোডাক্টস */}
       <section className="py-10 max-w-7xl mx-auto px-4 w-full">
         <h2 className="text-xl font-bold mb-6 text-center tracking-widest uppercase">ALL PRODUCTS</h2>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -134,7 +130,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ৭. ছবি ৭: ক্লাবহাউস/স্পেশাল ব্যানার লেআউট */}
+      {/* ৭. এক্সক্লুসিভ ব্র্যান্ড কালেকশন */}
       <section className="py-12 bg-stone-50">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="grid grid-cols-2 gap-2">
@@ -150,27 +146,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ৮. ছবি ৮: নিউজলেটার এবং ডাইনামিক ফুটার (অ্যাডমিন থেকে নিয়ন্ত্রিত) */}
+      {/* ৮. ফুটার সেকশন */}
       <footer className="bg-stone-100 pt-12 pb-6 border-t border-gray-200 text-xs text-gray-600">
         <div className="max-w-7xl mx-auto px-4 space-y-10">
-          
-          {/* নিউজলেটার */}
           <div className="text-center max-w-md mx-auto space-y-3">
             <h3 className="text-base font-bold text-gray-900">Subscribe to Our Newsletter</h3>
             <div className="flex border border-gray-400">
               <input type="email" placeholder="Your email address" className="w-full px-3 py-2 outline-none bg-white text-gray-800" />
               <button className="bg-black text-white px-5 py-2 font-bold uppercase tracking-wider">Subscribe</button>
             </div>
-            <div className="flex justify-center gap-4 text-gray-700 pt-2">
-              <Facebook className="w-4 h-4 cursor-pointer" />
-              <Twitter className="w-4 h-4 cursor-pointer" />
-              <Instagram className="w-4 h-4 cursor-pointer" />
-              <Linkedin className="w-4 h-4 cursor-pointer" />
-              <Youtube className="w-4 h-4 cursor-pointer" />
-            </div>
           </div>
 
-          {/* যোগাযোগের তথ্য ও লিঙ্কসমূহ */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 border-t border-gray-200 pt-8">
             <div className="space-y-2">
               <h4 className="font-bold text-gray-900 mb-3">Mayabi Outfitters</h4>
