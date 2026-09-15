@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-export default function SiteFooter() {
+export function SiteFooter() {
   return (
     <footer className="bg-neutral-900 text-gray-300 border-t border-neutral-800">
       {/* সার্ভিস হাইলাইটস */}
@@ -81,3 +81,5 @@ export default function SiteFooter() {
     </footer>
   );
 }
+
+export default SiteFooter;
