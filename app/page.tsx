@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import HeroBanner from "@/components/hero-banner";
-import SiteFooter from "@/components/site-footer";
 import { ProductCard } from "@/components/product-card";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -25,13 +24,13 @@ const CIRCULAR_CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  // ১. প্রমো ব্যানার ডেটা ফেচ
+  // ১. প্রমো ব্যানার ফেচ
   const { data: promoData } = await supabaseAdmin
     .from("promo_sections")
     .select("*")
     .order("sort_order", { ascending: true });
 
-  // ২. আসল প্রোডাক্ট ডেটা ফেচ
+  // ২. প্রোডাক্ট ডেটা ফেচ
   const { data: featuredProducts } = await supabaseAdmin
     .from("products")
     .select("*")
@@ -51,17 +50,30 @@ export default async function HomePage() {
     <div className="min-h-screen bg-black text-white flex flex-col">
       
       {/* ১. হিরো স্লাইডার সেকশন */}
-      {heroBanners.length > 0 ? (
-        <HeroBanner banners={heroBanners} />
-      ) : (
-        <div className="relative w-full h-[40vh] md:h-[60vh] bg-neutral-900/50 flex items-center justify-center border-b border-neutral-800">
-          <p className="text-gray-400">অ্যাডমিন ড্যাশবোর্ড থেকে হিরো ব্যানার যোগ করুন</p>
-        </div>
-      )}
+      {heroBanners.length > 0 && <HeroBanner banners={heroBanners} />}
 
-      {/* ২. ফিচারড কালেকশন সেকশন */}
+      {/* ২. ১২টি গোল সার্কুলার ক্যাটাগরি বার */}
+      <section className="py-10 max-w-7xl mx-auto px-4 w-full">
+        <h2 className="text-lg md:text-2xl font-bold text-center mb-8 tracking-wide text-amber-500">
+          ক্যাটাগরি অনুযায়ী শপিং করুন
+        </h2>
+        <div className="flex items-center gap-6 overflow-x-auto pb-4 scrollbar-none justify-start md:justify-center">
+          {CIRCULAR_CATEGORIES.map((cat, idx) => (
+            <Link key={idx} href={cat.link} className="flex flex-col items-center gap-3 shrink-0 group">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-amber-500/50 group-hover:border-amber-500 group-hover:scale-105 transition-all relative bg-neutral-800">
+                <Image src={cat.image} alt={cat.name} fill className="object-cover" />
+              </div>
+              <span className="text-xs md:text-sm font-medium group-hover:text-amber-500 transition text-center text-gray-200">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ৩. ফিচারড কালেকশন সেকশন */}
       {featuredProducts && featuredProducts.length > 0 && (
-        <section className="py-12 max-w-7xl mx-auto px-4 w-full">
+        <section className="py-10 max-w-7xl mx-auto px-4 w-full border-t border-neutral-800">
           <div className="flex justify-between items-end mb-6">
             <div>
               <h2 className="text-xl md:text-3xl font-bold tracking-wide">ফিচারড কালেকশন</h2>
@@ -79,28 +91,9 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ৩. ১২টি গোল সার্কুলার ক্যাটাগরি বার */}
-      <section className="py-10 max-w-7xl mx-auto px-4 w-full border-t border-b border-neutral-900">
-        <h2 className="text-lg md:text-2xl font-bold text-center mb-8 tracking-wide">
-          ক্যাটাগরি অনুযায়ী শপিং করুন
-        </h2>
-        <div className="flex items-center gap-6 overflow-x-auto pb-4 scrollbar-none justify-start md:justify-center">
-          {CIRCULAR_CATEGORIES.map((cat, idx) => (
-            <Link key={idx} href={cat.link} className="flex flex-col items-center gap-3 shrink-0 group">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-amber-500/40 group-hover:border-amber-500 group-hover:scale-105 transition-all relative">
-                <Image src={cat.image} alt={cat.name} fill className="object-cover" />
-              </div>
-              <span className="text-xs md:text-sm font-medium group-hover:text-amber-500 transition text-center">
-                {cat.name}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* ৪. মিড-পেজ প্রমোশনাল ব্যানার/ভিডিও সেকশন */}
       {midBanners.length > 0 && (
-        <section className="py-10 max-w-7xl mx-auto px-4 w-full">
+        <section className="py-10 max-w-7xl mx-auto px-4 w-full border-t border-neutral-800">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {midBanners.map((banner) => (
               <div key={banner.id} className="relative h-64 md:h-80 rounded-2xl overflow-hidden group border border-neutral-800">
@@ -123,9 +116,9 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ৫. সকল ক্যাটাগরির প্রোডাক্টস গ্রিড */}
+      {/* ৫. সকল কালেকশন সেকশন */}
       {allProducts && allProducts.length > 0 && (
-        <section className="py-12 max-w-7xl mx-auto px-4 w-full">
+        <section className="py-10 max-w-7xl mx-auto px-4 w-full border-t border-neutral-800">
           <div className="flex justify-between items-end mb-6">
             <div>
               <h2 className="text-xl md:text-3xl font-bold tracking-wide">নতুন কালেকশন</h2>
@@ -143,8 +136,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ৬. ফুটার সেকশন (আমাদের গল্প, গ্রাহকদের মন্তব্য বাদ দেওয়া হয়েছে) */}
-      <SiteFooter />
     </div>
   );
 }
