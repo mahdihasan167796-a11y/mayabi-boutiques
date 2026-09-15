@@ -38,7 +38,7 @@ export async function SiteFooter() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
         <div className="space-y-3.5">
           <h4 className="font-serif text-white font-bold tracking-wide text-base">⚜ MAYABI BOUTIQUES</h4>
           <p className="leading-relaxed text-gray-500">
@@ -79,6 +79,15 @@ export async function SiteFooter() {
             <li><Link href="/privacy-policy" className="hover:text-amber-400 transition-colors duration-300">Privacy Policy</Link></li>
             <li><Link href="/terms" className="hover:text-amber-400 transition-colors duration-300">Terms &amp; Conditions</Link></li>
             <li><Link href="/refund-policy" className="hover:text-amber-400 transition-colors duration-300">Refund/Return Policy</Link></li>
+          </ul>
+        </div>
+
+        <div className="space-y-2.5">
+          <h4 className="text-white font-semibold text-xs uppercase tracking-wider">অ্যাকাউন্ট</h4>
+          <ul className="space-y-1.5">
+            <li><Link href="/account" className="hover:text-amber-400 transition-colors duration-300">আমার অ্যাকাউন্ট</Link></li>
+            <li><Link href="/account/login" className="hover:text-amber-400 transition-colors duration-300">লগইন</Link></li>
+            <li><Link href="/wishlist" className="hover:text-amber-400 transition-colors duration-300">উইশলিস্ট</Link></li>
           </ul>
         </div>
 
