@@ -1,107 +1,83 @@
+import React from "react";
 import Link from "next/link";
-import { getSiteSettings } from "@/lib/settings";
-import { supabaseAdmin } from "@/lib/supabase";
-import { FacebookIcon, InstagramIcon, TiktokIcon, MessengerIcon } from "@/components/social-icons";
-import { NewsletterForm } from "@/components/newsletter-form";
+import { Phone, Mail, MapPin, ShieldCheck, Truck, RotateCcw, Headphones } from "lucide-react";
 
-export async function SiteFooter() {
-  const settings = await getSiteSettings();
-  const { data: igItems } = await supabaseAdmin.from("instagram_showcase").select("*").order("sort_order", { ascending: true }).limit(6);
-
-  const socialLinks = [
-    { url: settings.facebookUrl, label: "Facebook", Icon: FacebookIcon },
-    { url: settings.instagramUrl, label: "Instagram", Icon: InstagramIcon },
-    { url: settings.tiktokUrl, label: "TikTok", Icon: TiktokIcon },
-    { url: settings.messengerUrl, label: "Messenger", Icon: MessengerIcon },
-  ].filter((s) => s.url);
-
+export default function SiteFooter() {
   return (
-    <footer id="footer" className="bg-[#080808] border-t border-white/10 py-14 text-xs text-gray-400 font-medium relative z-10 scroll-mt-32">
-      {igItems && igItems.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 mb-12">
-          <p className="text-center text-[11px] text-gray-500 uppercase tracking-widest mb-4">Follow @mayabiboutiques</p>
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-            {igItems.map((item: any) => (
-              <a key={item.id} href={item.post_link || "#"} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-xl overflow-hidden border border-white/10 hover:border-amber-500/40 transition-colors">
-                <img src={item.image} alt="" className="w-full h-full object-cover" />
-              </a>
-            ))}
+    <footer className="bg-neutral-900 text-gray-300 border-t border-neutral-800">
+      {/* সার্ভিস হাইলাইটস */}
+      <div className="border-b border-neutral-800 py-8">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <Truck className="w-8 h-8 text-amber-500" />
+            <h4 className="font-semibold text-white">দ্রুত ডেলিভারি</h4>
+            <p className="text-xs text-gray-400">সারা বাংলাদেশে হোম ডেলিভারি</p>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <ShieldCheck className="w-8 h-8 text-amber-500" />
+            <h4 className="font-semibold text-white">১০০% প্রিমিয়াম কোয়ালিটি</h4>
+            <p className="text-xs text-gray-400">সেরা ফেব্রিক ও ইউনিক ডিজাইন</p>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <RotateCcw className="w-8 h-8 text-amber-500" />
+            <h4 className="font-semibold text-white">সহজ রিটার্ন পলিসি</h4>
+            <p className="text-xs text-gray-400">সমস্যা হলে পরিবর্তনের সুযোগ</p>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Headphones className="w-8 h-8 text-amber-500" />
+            <h4 className="font-semibold text-white">২৪/৭ কাস্টমার সাপোর্ট</h4>
+            <p className="text-xs text-gray-400">যেেকোনো প্রয়োজনে কল করুন</p>
           </div>
         </div>
-      )}
-
-      <div className="max-w-3xl mx-auto px-4 text-center mb-12 pb-12 border-b border-white/10">
-        <h3 className="font-serif text-lg font-bold text-white mb-2">নিউজলেটার সাবস্ক্রাইব করুন</h3>
-        <p className="text-gray-500 mb-5">নতুন কালেকশন ও এক্সক্লুসিভ অফারের খবর সবার আগে পেতে ইমেইল দিন</p>
-        <div className="max-w-sm mx-auto">
-          <NewsletterForm />
-        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
-        <div className="space-y-3.5">
-          <h4 className="font-serif text-white font-bold tracking-wide text-base">⚜ MAYABI BOUTIQUES</h4>
-          <p className="leading-relaxed text-gray-500">
-            পণ্য এবং সার্ভিসের আভিজাত্যের এক অনন্য মেলবন্ধন। আপনার প্রতিটি উৎসবের অনবদ্য ফ্যাশন পার্টনার।
+      {/* মূল ইনফরমেশন ফুটার বক্স */}
+      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 className="text-2xl font-bold text-amber-500 mb-4">মায়াবী বুটিকস</h3>
+          <p className="text-sm text-gray-400 leading-relaxed mb-4">
+            অভিজাত ও আধুনিক পোশাকের বিশ্বস্ত স্থান। আমরা আপনার সৌন্দর্য ও ব্যক্তিত্বকে ফুটিয়ে তুলতে প্রতিশ্রুতিবদ্ধ।
           </p>
-          {socialLinks.length > 0 && (
-            <div className="flex flex-wrap gap-3 pt-2">
-              {socialLinks.map(({ url, label, Icon }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-gray-400 hover:border-amber-500/50 hover:text-amber-400 hover:shadow-[0_0_20px_-6px_rgba(245,158,11,0.5)] transition-all duration-500 ease-out"
-                >
-                  <Icon />
-                </a>
-              ))}
-            </div>
-          )}
         </div>
 
-        <div className="space-y-2.5">
-          <h4 className="text-white font-semibold text-xs uppercase tracking-wider">কুইক লিঙ্ক</h4>
-          <ul className="space-y-1.5">
-            <li><Link href="/" className="hover:text-amber-400 transition-colors duration-300">হোম পেজ</Link></li>
-            <li><Link href="/#featured" className="hover:text-amber-400 transition-colors duration-300">এক্সক্লুসিভ কালেকশন</Link></li>
-            <li><Link href="/#our-story" className="hover:text-amber-400 transition-colors duration-300">আমাদের গল্প</Link></li>
-            <li><Link href="/#pricing" className="hover:text-amber-400 transition-colors duration-300">সেরা অফার সমূহ</Link></li>
+        <div>
+          <h4 className="text-lg font-semibold text-white mb-4 border-b border-amber-500/30 pb-2 inline-block">
+            কুইক লিঙ্কস
+          </h4>
+          <ul className="space-y-2 text-sm">
+            <li><Link href="/products?category=women" className="hover:text-amber-500 transition">উইমেন কালেকশন</Link></li>
+            <li><Link href="/products?category=men" className="hover:text-amber-500 transition">মেন কালেকশন</Link></li>
+            <li><Link href="/products?category=kids" className="hover:text-amber-500 transition">কিডস কালেকশন</Link></li>
+            <li><Link href="/products" className="hover:text-amber-500 transition">সকল প্রোডাক্টস</Link></li>
           </ul>
         </div>
 
-        <div className="space-y-2.5">
-          <h4 className="text-white font-semibold text-xs uppercase tracking-wider">জরুরি পলিসি</h4>
-          <ul className="space-y-1.5">
-            <li><Link href="/faq" className="hover:text-amber-400 transition-colors duration-300">FAQ</Link></li>
-            <li><Link href="/privacy-policy" className="hover:text-amber-400 transition-colors duration-300">Privacy Policy</Link></li>
-            <li><Link href="/terms" className="hover:text-amber-400 transition-colors duration-300">Terms &amp; Conditions</Link></li>
-            <li><Link href="/refund-policy" className="hover:text-amber-400 transition-colors duration-300">Refund/Return Policy</Link></li>
+        <div>
+          <h4 className="text-lg font-semibold text-white mb-4 border-b border-amber-500/30 pb-2 inline-block">
+            গ্রাহক সেবা
+          </h4>
+          <ul className="space-y-2 text-sm">
+            <li><Link href="/cart/track" className="hover:text-amber-500 transition">অর্ডার ট্র্যাকিং</Link></li>
+            <li><Link href="/terms" className="hover:text-amber-500 transition">টার্মস ও কন্ডিশনস</Link></li>
+            <li><Link href="/privacy" className="hover:text-amber-500 transition">প্রাইভেসি পলিসি</Link></li>
+            <li><Link href="/return-policy" className="hover:text-amber-500 transition">রিটার্ন ও রিফান্ড</Link></li>
           </ul>
         </div>
 
-        <div className="space-y-2.5">
-          <h4 className="text-white font-semibold text-xs uppercase tracking-wider">অ্যাকাউন্ট</h4>
-          <ul className="space-y-1.5">
-            <li><Link href="/account" className="hover:text-amber-400 transition-colors duration-300">আমার অ্যাকাউন্ট</Link></li>
-            <li><Link href="/account/login" className="hover:text-amber-400 transition-colors duration-300">লগইন</Link></li>
-            <li><Link href="/wishlist" className="hover:text-amber-400 transition-colors duration-300">উইশলিস্ট</Link></li>
-          </ul>
-        </div>
-
-        <div className="space-y-2.5">
-          <h4 className="text-white font-semibold text-xs uppercase tracking-wider">যোগাযোগ</h4>
-          <ul className="space-y-1.5 text-gray-500">
-            {settings.phoneNumber && <li>📞 {settings.phoneNumber}</li>}
-            <li>✉️ support@mayabiboutiques.com</li>
-            <li>📍 পদুয়ার বাজার বিশ্বরোড, কুমিল্লা।</li>
+        <div>
+          <h4 className="text-lg font-semibold text-white mb-4 border-b border-amber-500/30 pb-2 inline-block">
+            যোগাযোগের ঠিকানা
+          </h4>
+          <ul className="space-y-3 text-sm">
+            <li className="flex items-center gap-3"><MapPin className="w-5 h-5 text-amber-500 shrink-0" /> <span>ঢাকা, বাংলাদেশ</span></li>
+            <li className="flex items-center gap-3"><Phone className="w-5 h-5 text-amber-500 shrink-0" /> <span>+880 1700-000000</span></li>
+            <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-amber-500 shrink-0" /> <span>support@mayabiboutiques.com</span></li>
           </ul>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 border-t border-white/10 mt-10 pt-6 text-center text-[11px] text-gray-600">
-        © ২০২৬ মায়াবী বুটিকস। সর্বস্বত্ব সংরক্ষিত।
+
+      <div className="bg-black/50 py-4 text-center text-xs text-gray-500 border-t border-neutral-800">
+        © {new Date().getFullYear()} Mayabi Boutiques. All rights reserved.
       </div>
     </footer>
   );
