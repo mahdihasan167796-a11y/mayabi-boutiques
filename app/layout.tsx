@@ -68,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <I18nProvider>
           <CartProvider>
             <WishlistProvider>
-              <SiteHeader categories={categories} />
+              <SiteHeader categories={categories} announcementText={settings.announcementText} />
               <div className="pt-32 sm:pt-40 relative z-10">{children}</div>
               <SiteFooter />
               <CartDrawer freeShippingThreshold={settings.freeShippingThreshold} />
