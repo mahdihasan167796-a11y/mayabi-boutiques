@@ -13,7 +13,7 @@ interface CategoryItem {
   image?: string;
 }
 
-export function CategoryMegaMenu({ categories }: { categories: CategoryItem[] }) {
+export function CategoryMegaMenu({ categories, label }: { categories: CategoryItem[]; label?: string }) {
   const { locale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ export function CategoryMegaMenu({ categories }: { categories: CategoryItem[] })
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 hover:text-amber-400 transition-all duration-300"
       >
-        <span>{locale === "en" ? "Categories" : "ক্যাটাগরি"}</span>
+        <span>{label || (locale === "en" ? "Categories" : "ক্যাটাগরি")}</span>
         <span className={`text-[9px] transition-transform duration-300 ${open ? "rotate-180" : ""}`}>▼</span>
       </button>
 
