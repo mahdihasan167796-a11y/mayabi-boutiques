@@ -13,6 +13,7 @@ export interface Category {
   image: string;
   isFeatured?: boolean;
   sortOrder?: number;
+  group?: "men" | "women" | "kids" | null;
 }
 
 // অ্যাডমিন ড্যাশবোর্ড ও বিভিন্ন পেজের ক্যাশ/ব্যাকআপ ক্যাটাগরি লিস্ট
@@ -37,6 +38,7 @@ function mapRow(row: any): Category {
     image: row.image || "",
     isFeatured: row.is_featured ?? true,
     sortOrder: row.sort_order ?? 0,
+    group: row.group_name || null,
   };
 }
 
