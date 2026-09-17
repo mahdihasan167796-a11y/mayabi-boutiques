@@ -79,17 +79,30 @@ interface CategoryItem {
   slug: string;
   name: string;
   name_en?: string;
+  group?: string | null;
 }
 
-export function SiteHeader({ products = [], categories = [] }: { products?: Product[]; categories?: CategoryItem[] }) {
+export function SiteHeader({
+  products = [],
+  categories = [],
+  announcementText,
+}: {
+  products?: Product[];
+  categories?: CategoryItem[];
+  announcementText?: string;
+}) {
   const { locale, t } = useI18n();
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>(products);
   const searchRef = useRef<HTMLDivElement>(null);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  // মেন/উইমেন/কিডস — অ্যাডমিনে ক্যাটাগরির "গ্রুপ" অনুযায়ী আলাদা করা, যাতে হেডারে
+  // প্রতিটার নিজস্ব ড্রপডাউন থাকে আর পরে নতুন ক্যাটাগরি এই গ্রুপে যোগ করলেই এখানে আসবে
+  const menCategories = categories.filter((c) => c.group === "men");
+  const womenCategories = categories.filter((c) => c.group === "women");
+  const kidsCategories = categories.filter((c) => c.group === "kids");
 
   // 🚫 এডমিন প্যানেল হলে হেডার পুরোপুরি হাইড হয়ে যাবে
   if (pathname?.startsWith("/admin")) {
@@ -119,22 +132,19 @@ export function SiteHeader({ products = [], categories = [] }: { products?: Prod
         product.category_slug.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-  // সার্চ বার ও More ড্রপডাউনের বাইরে ক্লিক করলে পপআপ বন্ধ করা
+  // সার্চ বারের বাইরে ক্লিক করলে রেজাল্ট বন্ধ করা
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-      }
-      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
-        setIsMoreOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // প্রোডাক্ট পেজ অথবা ধন্যবাদ পেজ কিনা পরীক্ষা করা
-  const isMinimal = pathname?.startsWith("/product") || pathname?.startsWith("/thank-you");
+  // প্রোডাক্ট পেজ কিনা পরীক্ষা করা (Thank You স্টেপ চেকআউট পেজেই ইনলাইনভাবে দেখানো হয়, আলাদা রুট নেই)
+  const isMinimal = pathname?.startsWith("/product");
 
   // 🛍️ ১. প্রোডাক্ট এবং থ্যাংক ইউ পেজের জন্য স্লিম মিনিমাল হেডার
   if (isMinimal) {
@@ -178,7 +188,7 @@ export function SiteHeader({ products = [], categories = [] }: { products?: Prod
   return (
     <div className="fixed top-0 left-0 right-0 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.9)] border-b border-white/10 bg-black/60 backdrop-blur-md">
       <div className="bg-gradient-to-r from-amber-700 via-amber-500 to-amber-700 text-black text-center py-2 text-[10px] sm:text-sm font-bold tracking-wide px-2">
-        &ldquo;আভিজাত্য রাঙাক আপনার উৎসব! আমাদের লাক্সারি কালেকশন থেকে সেরাটি বেছে নিন আজই।&rdquo;
+        &ldquo;{announcementText || "আভিজাত্য রাঙাক আপনার উৎসব! আমাদের লাক্সারি কালেকশন থেকে সেরাটি বেছে নিন আজই।"}&rdquo;
       </div>
 
       <nav className="relative h-16 sm:h-20 flex items-center justify-between max-w-7xl mx-auto px-3 sm:px-4 w-full gap-2 md:gap-4">
@@ -273,57 +283,12 @@ export function SiteHeader({ products = [], categories = [] }: { products?: Prod
             <Link href="/sale" className="text-red-400 font-bold hover:text-red-300 transition-all flex items-center gap-1">
               🔥 SALE
             </Link>
-            <CategoryMegaMenu categories={categories} />
-
-            {/* 🍔 More (আরও) ড্রপডাউন মেনু */}
-            <div ref={moreMenuRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setIsMoreOpen(!isMoreOpen)}
-                className="flex items-center gap-1.5 hover:text-amber-400 transition-all text-amber-400 font-bold bg-white/[0.04] px-3 py-1.5 rounded-full border border-amber-500/30 cursor-pointer"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <span>More</span>
-                <span className="text-[10px]">{isMoreOpen ? "▲" : "▼"}</span>
-              </button>
-
-              {/* ড্রপডাউন আইটেমসমূহ */}
-              {isMoreOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white/[0.04] border border-amber-500/30 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.9)] py-2 z-50 text-xs normal-case tracking-normal">
-                  <Link
-                    href="/#our-story"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="block px-4 py-2.5 text-gray-200 hover:bg-[#1a1a18] hover:text-amber-400 transition-colors"
-                  >
-                    📖 আমাদের গল্প
-                  </Link>
-                  <Link
-                    href="/#why-us"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="block px-4 py-2.5 text-gray-200 hover:bg-[#1a1a18] hover:text-amber-400 transition-colors"
-                  >
-                    ⭐ কেন আমরা সেরা
-                  </Link>
-                  <Link
-                    href="/#reviews"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="block px-4 py-2.5 text-gray-200 hover:bg-[#1a1a18] hover:text-amber-400 transition-colors"
-                  >
-                    💬 গ্রাহকদের মন্তব্য
-                  </Link>
-                  <div className="border-t border-amber-500/15 my-1"></div>
-                  <Link
-                    href="/#footer"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="block px-4 py-2.5 text-gray-200 hover:bg-[#1a1a18] hover:text-amber-400 transition-colors font-bold"
-                  >
-                    📞 যোগাযোগ
-                  </Link>
-                </div>
-              )}
-            </div>
+            <CategoryMegaMenu categories={menCategories} label={locale === "en" ? "Men" : "মেন"} />
+            <CategoryMegaMenu categories={womenCategories} label={locale === "en" ? "Women" : "উইমেন"} />
+            <CategoryMegaMenu categories={kidsCategories} label={locale === "en" ? "Kids" : "কিডস"} />
+            <Link href="/#contact" className="hover:text-amber-400 transition-all">
+              {locale === "en" ? "Contact" : "যোগাযোগ"}
+            </Link>
           </div>
 
           <LanguageSwitcher className="hidden sm:flex" />
