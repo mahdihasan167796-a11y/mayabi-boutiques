@@ -20,6 +20,16 @@ export interface SiteSettings {
   combo2Price?: string;
   combo2OldPrice?: string;
   combo2Features?: string;
+  announcementText?: string;
+  exclusiveTitle?: string;
+  exclusiveSubtitle?: string;
+  exclusiveButtonText?: string;
+  exclusiveButtonLink?: string;
+  exclusiveImage1?: string;
+  exclusiveImage2?: string;
+  exclusiveImage3?: string;
+  contactEmail?: string;
+  contactAddress?: string;
 }
 
 const DEFAULTS: SiteSettings = {
@@ -40,6 +50,13 @@ const DEFAULTS: SiteSettings = {
   combo2Price: "৬,৮০০",
   combo2OldPrice: "৯,৫০০",
   combo2Features: "১টি এক্সক্লুসিভ কাতান/জামদানি শাড়ি\n১টি প্রিমিয়াম সিকোয়েন্স থ্রি-পিস সেট\nরাজকীয় কাস্টমাইজড গিফট বক্সিং\n২৪ ঘণ্টার সুপার-ফাস্ট ডেলিভারি",
+  announcementText: "আভিজাত্য রাঙাক আপনার উৎসব! আমাদের লাক্সারি কালেকশন থেকে সেরাটি বেছে নিন আজই।",
+  exclusiveTitle: "মায়াবী এক্সক্লুসিভ শাড়ি",
+  exclusiveSubtitle: "প্রেজেন্ট করছে",
+  exclusiveButtonText: "কালেকশন দেখুন",
+  exclusiveButtonLink: "/category/saree",
+  contactEmail: "support@mayabiboutiques.com",
+  contactAddress: "পদুয়ার বাজার বিশ্বরোড, কুমিল্লা।",
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -67,5 +84,15 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     combo2Price: data.combo2_price ?? DEFAULTS.combo2Price,
     combo2OldPrice: data.combo2_old_price ?? DEFAULTS.combo2OldPrice,
     combo2Features: data.combo2_features ?? DEFAULTS.combo2Features,
+    announcementText: data.announcement_text ?? DEFAULTS.announcementText,
+    exclusiveTitle: data.exclusive_title ?? DEFAULTS.exclusiveTitle,
+    exclusiveSubtitle: data.exclusive_subtitle ?? DEFAULTS.exclusiveSubtitle,
+    exclusiveButtonText: data.exclusive_button_text ?? DEFAULTS.exclusiveButtonText,
+    exclusiveButtonLink: data.exclusive_button_link ?? DEFAULTS.exclusiveButtonLink,
+    exclusiveImage1: data.exclusive_image_1 ?? "",
+    exclusiveImage2: data.exclusive_image_2 ?? "",
+    exclusiveImage3: data.exclusive_image_3 ?? "",
+    contactEmail: data.contact_email ?? DEFAULTS.contactEmail,
+    contactAddress: data.contact_address ?? DEFAULTS.contactAddress,
   };
 }
