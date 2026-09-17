@@ -224,6 +224,22 @@ const playNotificationSound = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">নিয়ন্ত্রণ প্যানেল</h1>
           </div>
         </div>
+        {/* মাঝের ফাঁকা জায়গায় আজকের তারিখ + পেন্ডিং অর্ডারের কুইক ইনডিকেটর */}
+        <div className="hidden md:flex items-center gap-4 text-xs text-gray-400">
+          <span>
+            📅{" "}
+            {new Date().toLocaleDateString("bn-BD", { weekday: "long", day: "numeric", month: "long" })}
+          </span>
+          {pendingOrdersCount > 0 && (
+            <button
+              onClick={() => setTab("orders")}
+              className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/30 text-orange-400 font-bold px-3 py-1.5 rounded-full hover:bg-orange-500/20 transition-all"
+            >
+              ⏳ {pendingOrdersCount}টি অর্ডার পেন্ডিং
+            </button>
+          )}
+        </div>
+
 
         <div className="flex items-center gap-3">
           <Link
@@ -619,6 +635,14 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
     freeShippingThreshold: (initialSettings as any).freeShippingThreshold || "",
     heroVideoUrl: (initialSettings as any).heroVideoUrl || "",
     sslcommerzEnabled: (initialSettings as any).sslcommerzEnabled || false,
+    announcementText: (initialSettings as any).announcementText || "",
+    exclusiveTitle: (initialSettings as any).exclusiveTitle || "মায়াবী এক্সক্লুসিভ শাড়ি",
+    exclusiveSubtitle: (initialSettings as any).exclusiveSubtitle || "প্রেজেন্ট করছে",
+    exclusiveButtonText: (initialSettings as any).exclusiveButtonText || "কালেকশন দেখুন",
+    exclusiveButtonLink: (initialSettings as any).exclusiveButtonLink || "/category/saree",
+    exclusiveImage1: (initialSettings as any).exclusiveImage1 || "",
+    exclusiveImage2: (initialSettings as any).exclusiveImage2 || "",
+    exclusiveImage3: (initialSettings as any).exclusiveImage3 || "",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -889,6 +913,51 @@ function SettingsTab({ initialSettings }: { initialSettings: SiteSettings }) {
             ক্রেডেনশিয়াল বসাতে হবে (sslcommerz.com-এ মার্চেন্ট অ্যাকাউন্ট খুলে পাবেন) — নাহলে কাস্টমার চেকআউটে গিয়ে এরর
             পাবেন।
           </p>
+        </div>
+      </div>
+
+      {/* 📣 অ্যানাউন্সমেন্ট বার + এক্সক্লুসিভ কালেকশন সেকশন */}
+      <div className="bg-white/[0.04] border border-amber-500/30 rounded-xl p-4 space-y-3">
+        <h3 className="text-xs font-bold text-amber-400 flex items-center gap-1.5 border-b border-amber-500/10 pb-2">
+          📣 অ্যানাউন্সমেন্ট বার ও এক্সক্লুসিভ কালেকশন
+        </h3>
+        <div>
+          <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">হেডারের উপরের অ্যানাউন্সমেন্ট টেক্সট</label>
+          <input
+            type="text" value={form.announcementText} onChange={handleChange("announcementText")}
+            placeholder="আভিজাত্য রাঙাক আপনার উৎসব!..."
+            className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50"
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">এক্সক্লুসিভ সেকশনের সাবটাইটেল</label>
+            <input type="text" value={form.exclusiveSubtitle} onChange={handleChange("exclusiveSubtitle")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">এক্সক্লুসিভ সেকশনের টাইটেল</label>
+            <input type="text" value={form.exclusiveTitle} onChange={handleChange("exclusiveTitle")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">বাটনের লেখা</label>
+            <input type="text" value={form.exclusiveButtonText} onChange={handleChange("exclusiveButtonText")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">বাটনের লিংক</label>
+            <input type="text" value={form.exclusiveButtonLink} onChange={handleChange("exclusiveButtonLink")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">বড় ছবি URL (এটা না দিলে সেকশনটাই হাইড থাকবে)</label>
+            <input type="text" value={form.exclusiveImage1} onChange={handleChange("exclusiveImage1")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">ছোট ছবি ১ URL (ঐচ্ছিক)</label>
+            <input type="text" value={form.exclusiveImage2} onChange={handleChange("exclusiveImage2")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
+          <div>
+            <label className="text-[11px] font-bold text-gray-400 uppercase block mb-1">ছোট ছবি ২ URL (ঐচ্ছিক)</label>
+            <input type="text" value={form.exclusiveImage3} onChange={handleChange("exclusiveImage3")} className="w-full bg-black/40 border border-amber-500/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500/50" />
+          </div>
         </div>
       </div>
 
@@ -2521,7 +2590,7 @@ function CategoriesTab({ initialCategories }: { initialCategories: any[] }) {
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const emptyForm = { name: "", name_en: "", slug: "", tag: "", image: "", is_featured: true };
+  const emptyForm = { name: "", name_en: "", slug: "", tag: "", image: "", is_featured: true, group_name: "" };
   const [form, setForm] = useState(emptyForm);
 
   const reload = async () => {
@@ -2530,8 +2599,9 @@ function CategoriesTab({ initialCategories }: { initialCategories: any[] }) {
     if (result.ok) setCategories(result.categories);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
@@ -2568,6 +2638,7 @@ function CategoriesTab({ initialCategories }: { initialCategories: any[] }) {
       tag: cat.tag || "",
       image: cat.image || "",
       is_featured: cat.is_featured ?? true,
+      group_name: cat.group_name || "",
     });
   };
 
@@ -2579,7 +2650,7 @@ function CategoriesTab({ initialCategories }: { initialCategories: any[] }) {
       const res = await fetch(`/api/admin/categories/${editingId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, name_en: form.name_en, tag: form.tag, image: form.image, is_featured: form.is_featured }),
+        body: JSON.stringify({ name: form.name, name_en: form.name_en, tag: form.tag, image: form.image, is_featured: form.is_featured, group_name: form.group_name || null }),
       });
       const result = await res.json();
       if (!result.ok) {
@@ -2705,6 +2776,20 @@ function CategoriesTab({ initialCategories }: { initialCategories: any[] }) {
               className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50"
             />
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 mb-1">গ্রুপ (হেডারের মেন/উইমেন/কিডস মেনুতে দেখাবে)</label>
+            <select
+              name="group_name"
+              value={form.group_name}
+              onChange={handleChange}
+              className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50"
+            >
+              <option value="">— কোনো গ্রুপ না —</option>
+              <option value="men">মেন</option>
+              <option value="women">উইমেন</option>
+              <option value="kids">কিডস</option>
+            </select>
+          </div>
         </div>
         <label className="flex items-center gap-2 text-xs text-gray-300">
           <input type="checkbox" name="is_featured" checked={form.is_featured} onChange={handleChange} className="accent-amber-500" />
@@ -2795,7 +2880,7 @@ function ContentStudioTab() {
   const [subTab, setSubTab] = useState<"promo" | "lookbook" | "instagram" | "delivery" | "stores">("promo");
 
   const SUBTABS: { key: typeof subTab; label: string }[] = [
-    { key: "promo", label: "🎯 প্রোমো/সাব-ব্র্যান্ড" },
+    { key: "promo", label: "🎯 হোম ব্যানার/প্রোমো" },
     { key: "lookbook", label: "📸 লুকবুক" },
     { key: "instagram", label: "📷 ইনস্টাগ্রাম শোকেস" },
     { key: "delivery", label: "🚚 ডেলিভারি-চেকার" },
